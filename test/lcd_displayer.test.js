@@ -6,7 +6,7 @@ describe('testing the lcd display', function () {
     var lcdDisplay;
     before(function () {
         lcdDisplay = new LcdDisplay();
-        firstResult =
+        firstResult = 
 `    
     |
      

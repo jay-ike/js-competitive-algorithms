@@ -2,19 +2,19 @@
 
 // compute the longest increasing subsequence algorithm 
 // if provided the comparatorCallback will be use to make the comparison between elements
-function longestIncreasingSubsequence(array) {
-    //ToDo: adapt it for any type of object
+function longestIncreasingSubsequence(array,comparatorCallback) {
     let heads = [undefined], longestSubsequence = [-Infinity];
     let predecessors = arrayGenerator(array.length, (index) => undefined);
+    let callback = (comparatorCallback ?? defaultComparator);
     for (let index = 0; index < array.length; index++) {
         const element = array[index];
-        if (element > longestSubsequence[longestSubsequence.length - 1]) {
+        if (callback(element,  longestSubsequence[longestSubsequence.length - 1])>0) {
             predecessors[index] = heads[heads.length - 1];
             heads.push(index);
             longestSubsequence.push(element);
 
         } else {
-            let position = positionInSortedArray(longestSubsequence, element);
+            let position = positionInSortedArray(longestSubsequence, element,callback);
             heads[position] = index;
             predecessors[index] = heads[position - 1];
             longestSubsequence[position] = element
@@ -38,7 +38,7 @@ function positionInSortedArray(array, element,comparatorCallback) {
         if (array[mid] === element) {
             return mid;
         }
-        if (array[mid] < element  ) {
+        if ((comparatorCallback??defaultComparator)( array[mid] , element) <0  ) {
             left = mid+1;
         } else {
             right = mid;
@@ -52,8 +52,7 @@ defaultComparator = (elt1, elt2) => elt1 < elt2?-1:1;
 function arrayGenerator(items, creationCallback) {
     let result = Array(items);
     for (let index = 0; index < result.length; index++) {
-        result[index] = creationCallback(index);
-        
+        result[index] = creationCallback(index);   
     }
     return result;
 }
@@ -67,14 +66,11 @@ class Salary{
     }
 
     compareTo(other) {
-        if (typeof (other) != typeof(this)) {
-            throw new Error('cannot compare with different object');
-        } else {
-            return amount < other.amount ? -1 : 1;
-        }    
+        return this.amount < (other.hasOwnProperty('amount')? other.amount:other)?-1:1    
     }
 }
 
-salaryComparatorCallback = (salary1, salary2) => salary1.compareTo(salary2);
+salaryComparatorCallback = (salary1, salary2) => (salary1.hasOwnProperty('amount') ? salary1.amount : salary1) <
+    (salary2.hasOwnProperty('amount') ? salary2.amount : salary2) ? -1 : 1;
 
 module.exports ={ longestIncreasingSubsequence,Salary,salaryComparatorCallback,arrayGenerator };

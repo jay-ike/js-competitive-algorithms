@@ -24,11 +24,12 @@ describe('longestIncreasing subsequence test', function () {
             assert.deepEqual(result, expected);
         });
         
-    it('should return the longest increasing salaries subsequence', function () {
-        var result = longestIncreasingSubsequence(salaries, salaryComparatorCallback);
-        var expectedSalaries = expected.map((el) => new Salary('my_test', 1000 * el));
-        assert.deepEqual(result, expectedSalaries);
-    })
+        it('should return the longest increasing salaries subsequence', function () {
+            var result = longestIncreasingSubsequence(salaries, salaryComparatorCallback);
+            var expectedSalaries = expected.map((el) => new Salary('my_test', 1000 * el));
+            assert.deepEqual(result, expectedSalaries);
+        })
+        
     
 
 });

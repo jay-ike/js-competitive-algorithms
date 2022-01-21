@@ -1,4 +1,3 @@
-var { assert } = require("chai");
 var {
   Executor,
 } = require("../src/coding_interviews_algorithms/executor_chain");

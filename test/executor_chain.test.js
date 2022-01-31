@@ -1,10 +1,9 @@
 var {
   Executor,
 } = require("../src/coding_interviews_algorithms/executor_chain");
-
+var { assert } = require("chai");
 describe("executor chain test", function () {
   function printEven(value) {
-    console.log(`running with ${value}`);
     if (value % 2 !== 0) {
       throw new Error(`cannot print Odd value of ${value}`);
     } else {

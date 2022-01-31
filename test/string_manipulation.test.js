@@ -4,15 +4,8 @@ const {
   generateFrequencyMap,
   decrementKeyValue,
   incrementKeyValue,
-  findAnagramIndices,
-  isPalindrome,
-  generateIndexesDictionary,
   palindromePairsIndices,
   getRowSpace,
-  zigzagString,
-  throwIfContains,
-  longestPalindromeSubstring,
-  replaceTokens,
 } = require("../src/coding_interviews_algorithms/string_manipulation");
 describe("finding anagrams indices test", function () {
   var dictionary;
@@ -51,9 +44,6 @@ describe("palindrome unique pairs test", function () {
   before(function () {
     inputs = ["code", "edoc", "da", "d"];
   });
-  it("should return true if given a palindrome", function () {
-    assert.isTrue(isPalindrome("dad"));
-  });
   it("should return the list of palindrome pairs", function () {
     assert.deepEqual(palindromePairsIndices(inputs), [
       [1, 0],
@@ -62,13 +52,11 @@ describe("palindrome unique pairs test", function () {
     ]);
   });
 
-  it("should generate a dictionary of words in a list with indexes", function () {
-    assert.deepEqual(generateIndexesDictionary(inputs), {
-      code: 0,
-      edoc: 1,
-      da: 2,
-      d: 3,
-    });
+  it("should be empty if there's no palindrome", function () {
+    assert.deepEqual(
+      palindromePairsIndices(["code", "da", "data", "nobody"]),
+      []
+    );
   });
 });
 
@@ -112,7 +100,7 @@ describe("zigzag printing algorithms test", function () {
   });
 
   it("should print text in zigzag", function () {
-    assert.equal(zigzagString(text, 4), zigzag);
+    assert.equal(text.zigzag(4), zigzag);
   });
 });
 
@@ -127,7 +115,7 @@ describe("longest palindrome substring test", function () {
   });
   it("should throw error if text contains forbidden token", function () {
     assert.throws(
-      () => throwIfContains(forbiddenTokens, "$dkjd"),
+      () => "$dkjd".longestPalindromeSubstring(),
       Error,
       "should not have forbidden token in text"
     );

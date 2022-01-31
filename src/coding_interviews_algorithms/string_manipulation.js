@@ -198,13 +198,15 @@ function groupAnagrams(list) {
   return result;
 }
 
-function replaceTokens(template, valuesObject) {
+function replaceTokens(template, valuesObject, tokenIndicator = "$") {
   let properties = Object.keys(valuesObject).filter((val) =>
     typeIsPermitted(["number", "string"], valuesObject[val])
   );
   let result = template;
   properties.forEach(function (value) {
-    result = result.split(`$${value}`).join(`${valuesObject[value]}`);
+    result = result
+      .split(`${tokenIndicator}${value}`)
+      .join(`${valuesObject[value]}`);
   });
   return result;
 }
@@ -221,8 +223,8 @@ String.prototype.zigzag = function (totalRows) {
 String.prototype.longestPalindromeSubstring = function () {
   return longestPalindromeSubstring(this);
 };
-String.prototype.replaceTokens = function (valuesObject) {
-  return replaceTokens(this, valuesObject);
+String.prototype.replaceTokens = function (valuesObject, tokenIndicator) {
+  return replaceTokens(this, valuesObject, tokenIndicator);
 };
 module.exports = {
   deleteIfZero,

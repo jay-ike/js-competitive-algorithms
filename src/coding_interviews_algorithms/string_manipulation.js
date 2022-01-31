@@ -48,7 +48,7 @@ function incrementKeyValue(dictionary, key, step = 1) {
   dictionary[key] = (dictionary[key] ?? 0) + step;
 }
 
-function PalindromePairsIndices(wordList) {
+function palindromePairsIndices(wordList) {
   let result = [];
   let dictionary = generateIndexesDictionary(wordList);
   for (let index = 0; index < wordList.length; index++) {
@@ -181,7 +181,6 @@ function throwIfContains(tokens, text) {
   }
 }
 
-// this function group anagrams in a list of items
 function groupAnagrams(list) {
   var anagramDict = {};
   var result = [];
@@ -199,6 +198,32 @@ function groupAnagrams(list) {
   return result;
 }
 
+function replaceTokens(template, valuesObject) {
+  let properties = Object.keys(valuesObject).filter((val) =>
+    typeIsPermitted(["number", "string"], valuesObject[val])
+  );
+  let result = template;
+  properties.forEach(function (value) {
+    result = result.split(`$${value}`).join(`${valuesObject[value]}`);
+  });
+  return result;
+}
+
+function typeIsPermitted(permittedTypes, value) {
+  return permittedTypes.some((x) => x === typeof value);
+}
+String.prototype.findAnagramIndices = function (word) {
+  return findAnagramIndices(word, this);
+};
+String.prototype.zigzag = function (totalRows) {
+  return zigzagString(this, totalRows);
+};
+String.prototype.longestPalindromeSubstring = function () {
+  return longestPalindromeSubstring(this);
+};
+String.prototype.replaceTokens = function (valuesObject) {
+  return replaceTokens(this, valuesObject);
+};
 module.exports = {
   deleteIfZero,
   generateFrequencyMap,
@@ -207,10 +232,11 @@ module.exports = {
   findAnagramIndices,
   isPalindrome,
   generateIndexesDictionary,
-  PalindromePairsIndices,
+  palindromePairsIndices,
   getRowSpace,
   zigzagString,
   throwIfContains,
   longestPalindromeSubstring,
   groupAnagrams,
+  replaceTokens,
 };

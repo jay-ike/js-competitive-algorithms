@@ -1,7 +1,0 @@
-node_modules/
-coverage/
-.vsode/
-.nyc_out/
-package.json
-package-lock.json
-.gitignore

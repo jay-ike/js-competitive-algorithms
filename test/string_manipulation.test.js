@@ -133,3 +133,11 @@ describe("tokenized string substitution", function () {
     assert.equal(template.replaceTokens(valuesObject), expected);
   });
 });
+
+describe("longest string with k distinct characters", function () {
+  var input = "araaci";
+  it("should return the length of that longest string", function () {
+    let result = input.longestSubstringWithDistinctChars(2);
+    assert.equal(result, 4);
+  });
+});

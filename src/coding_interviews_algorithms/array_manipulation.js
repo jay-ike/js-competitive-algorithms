@@ -7,9 +7,7 @@ function maximumArraySum(array, size) {
     sum += array[endIndex];
     endIndex++;
     if (endIndex - startIndex >= size - 1) {
-      if (sum > currentMaxSum) {
-        currentMaxSum = sum;
-      }
+      currentMaxSum = Math.max(sum, currentMaxSum);
       sum -= array[startIndex];
     }
   }

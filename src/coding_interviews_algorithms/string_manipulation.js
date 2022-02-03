@@ -42,7 +42,12 @@ function deleteIfZero(dictionary, key) {
   }
 }
 function decrementKeyValue(dictionary, key, step = 1) {
-  dictionary[key] = (dictionary[key] ?? 0) - step;
+  if (dictionary[key] === step) {
+    dictionary[key] = (dictionary[key] ?? 0) - step;
+    deleteIfZero(dictionary, key);
+  } else {
+    dictionary[key] = (dictionary[key] ?? 0) - step;
+  }
 }
 function incrementKeyValue(dictionary, key, step = 1) {
   dictionary[key] = (dictionary[key] ?? 0) + step;
@@ -214,6 +219,35 @@ function replaceTokens(template, valuesObject, tokenIndicator = "$") {
 function typeIsPermitted(permittedTypes, value) {
   return permittedTypes.some((x) => x === typeof value);
 }
+function longestSubstringWithDistinctChars(input, distinctChars) {
+  let charsDictionary = {},
+    result = "",
+    subString = "",
+    start = 0,
+    end = 0;
+  while (end <= input.length) {
+    if (
+      Object.keys(charsDictionary).length < distinctChars ||
+      typeof charsDictionary[input[end]] !== "undefined"
+    ) {
+      subString = input.slice(start, end + 1);
+      incrementKeyValue(charsDictionary, input[end]);
+      end++;
+    } else {
+      result = longestString(subString, result);
+      while (Object.keys(charsDictionary).length >= distinctChars) {
+        decrementKeyValue(charsDictionary, input[start]);
+        start++;
+      }
+    }
+  }
+  return result.length;
+}
+
+function longestString(string1, string2) {
+  return string1.length > string2.length ? string1 : string2;
+}
+
 String.prototype.findAnagramIndices = function (word) {
   return findAnagramIndices(word, this);
 };
@@ -225,6 +259,9 @@ String.prototype.longestPalindromeSubstring = function () {
 };
 String.prototype.replaceTokens = function (valuesObject, tokenIndicator) {
   return replaceTokens(this, valuesObject, tokenIndicator);
+};
+String.prototype.longestSubstringWithDistinctChars = function (distinctChars) {
+  return longestSubstringWithDistinctChars(this, distinctChars);
 };
 module.exports = {
   deleteIfZero,

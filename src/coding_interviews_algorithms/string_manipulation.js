@@ -1,3 +1,4 @@
+require("../utils");
 function findAnagramIndices(word, text) {
   var result = [];
   var [wordLength, textLength] = [word.length, text.length];
@@ -8,19 +9,17 @@ function findAnagramIndices(word, text) {
   }
   var frequencyMap = generateFrequencyMap(word);
   for (let i = 0; i < wordLength; i++) {
-    decrementKeyValue(frequencyMap, text[i]);
-    deleteIfZero(frequencyMap, text[i]);
+    frequencyMap.decrementKeyValue(text[i]);
   }
   if (Object.keys(frequencyMap).length === 0) {
     result.push(0);
   }
   for (let i = wordLength; i < textLength; i++) {
     let [startIndex, endIndex] = [i - wordLength, i];
-    incrementKeyValue(frequencyMap, text[startIndex]);
-    deleteIfZero(frequencyMap, text[startIndex]);
+    frequencyMap.incrementKeyValue(text[startIndex]);
+    frequencyMap.deleteIfZero(text[startIndex]);
 
-    decrementKeyValue(frequencyMap, text[endIndex]);
-    deleteIfZero(frequencyMap, text[endIndex]);
+    frequencyMap.decrementKeyValue(text[endIndex]);
     if (Object.keys(frequencyMap).length === 0) {
       result.push(i - wordLength + 1);
     }
@@ -31,7 +30,7 @@ function findAnagramIndices(word, text) {
 function generateFrequencyMap(word) {
   let map = {};
   for (character of word) {
-    incrementKeyValue(map, character);
+    map.incrementKeyValue(character);
   }
   return map;
 }
@@ -231,12 +230,12 @@ function longestSubstringWithDistinctChars(input, distinctChars) {
       typeof charsDictionary[input[end]] !== "undefined"
     ) {
       subString = input.slice(start, end + 1);
-      incrementKeyValue(charsDictionary, input[end]);
+      charsDictionary.incrementKeyValue(input[end]);
       end++;
     } else {
       result = longestString(subString, result);
       while (Object.keys(charsDictionary).length >= distinctChars) {
-        decrementKeyValue(charsDictionary, input[start]);
+        charsDictionary.decrementKeyValue(input[start]);
         start++;
       }
     }
@@ -264,10 +263,7 @@ String.prototype.longestSubstringWithDistinctChars = function (distinctChars) {
   return longestSubstringWithDistinctChars(this, distinctChars);
 };
 module.exports = {
-  deleteIfZero,
   generateFrequencyMap,
-  decrementKeyValue,
-  incrementKeyValue,
   findAnagramIndices,
   isPalindrome,
   generateIndexesDictionary,

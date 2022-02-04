@@ -10,7 +10,7 @@ const {
 describe("finding anagrams indices test", function () {
   var dictionary;
   before(function () {
-    dictionary = { a: 0 };
+    dictionary = { a: 1 };
   });
   it("should return the list of anagram indices", function () {
     assert.deepEqual(
@@ -21,20 +21,16 @@ describe("finding anagrams indices test", function () {
   it("should throw an exception if the wordLength is lesser than the textLength", function () {
     assert.throws(() => "ab".findAnagramIndices("ababababa"), Error);
   });
-  it("should empty a map key if its value is 0", function () {
-    deleteIfZero(dictionary, "a");
-    assert.deepEqual(dictionary, {});
-  });
   it("should return the frequencyMap of a String", function () {
     assert.deepEqual(generateFrequencyMap("ababa"), { a: 3, b: 2 });
   });
 
   it("should decrement the value of a given key", function () {
-    decrementKeyValue(dictionary, "a");
-    assert.equal(dictionary["a"], -1);
+    dictionary.decrementKeyValue("a");
+    assert.equal(dictionary["a"], undefined);
   });
   it("should increment the value of a given key", function () {
-    incrementKeyValue(dictionary, "b");
+    dictionary.incrementKeyValue("b");
     assert.equal(dictionary["b"], 1);
   });
 });

@@ -35,23 +35,6 @@ function generateFrequencyMap(word) {
   return map;
 }
 
-function deleteIfZero(dictionary, key) {
-  if (dictionary[key] === 0) {
-    delete dictionary[key];
-  }
-}
-function decrementKeyValue(dictionary, key, step = 1) {
-  if (dictionary[key] === step) {
-    dictionary[key] = (dictionary[key] ?? 0) - step;
-    deleteIfZero(dictionary, key);
-  } else {
-    dictionary[key] = (dictionary[key] ?? 0) - step;
-  }
-}
-function incrementKeyValue(dictionary, key, step = 1) {
-  dictionary[key] = (dictionary[key] ?? 0) + step;
-}
-
 function palindromePairsIndices(wordList) {
   let result = [];
   let dictionary = generateIndexesDictionary(wordList);
@@ -227,7 +210,7 @@ function longestSubstringWithDistinctChars(input, distinctChars) {
   while (end <= input.length) {
     if (
       Object.keys(charsDictionary).length < distinctChars ||
-      typeof charsDictionary[input[end]] !== "undefined"
+      charsDictionary[input[end]] != null
     ) {
       subString = input.slice(start, end + 1);
       charsDictionary.incrementKeyValue(input[end]);

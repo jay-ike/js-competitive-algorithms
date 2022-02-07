@@ -226,6 +226,28 @@ function longestSubstringWithDistinctChars(input, distinctChars) {
   return result.length;
 }
 
+function longestSubstringNoRepeatingChars(string) {
+  var charsDictionary = {},
+    result = "",
+    substring = "",
+    startIndex = 0,
+    endIndex = 0;
+  while (endIndex <= string.length) {
+    if (charsDictionary[string[endIndex]] == null) {
+      substring = string.slice(startIndex, endIndex + 1);
+      charsDictionary.incrementKeyValue(string[endIndex]);
+      endIndex++;
+    } else {
+      result = longestString(result, substring);
+      while (charsDictionary[string[endIndex]] != null) {
+        charsDictionary.decrementKeyValue(string[startIndex]);
+        startIndex++;
+      }
+    }
+  }
+  return result.length;
+}
+
 function longestString(string1, string2) {
   return string1.length > string2.length ? string1 : string2;
 }
@@ -244,6 +266,9 @@ String.prototype.replaceTokens = function (valuesObject, tokenIndicator) {
 };
 String.prototype.longestSubstringWithDistinctChars = function (distinctChars) {
   return longestSubstringWithDistinctChars(this, distinctChars);
+};
+String.prototype.longestSubstringNoRepeatingChars = function () {
+  return longestSubstringNoRepeatingChars(this);
 };
 module.exports = {
   generateFrequencyMap,

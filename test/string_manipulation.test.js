@@ -1,9 +1,6 @@
 const { assert } = require("chai");
 const {
-  deleteIfZero,
   generateFrequencyMap,
-  decrementKeyValue,
-  incrementKeyValue,
   palindromePairsIndices,
   getRowSpace,
 } = require("../src/coding_interviews_algorithms/string_manipulation");
@@ -135,5 +132,14 @@ describe("longest string with k distinct characters", function () {
   it("should return the length of that longest string", function () {
     let result = input.longestSubstringWithDistinctChars(2);
     assert.equal(result, 4);
+  });
+});
+
+describe("longest substring with no repeating character", function () {
+  it("should return the length of that substring", function () {
+    assert.equal("aabccbb".longestSubstringNoRepeatingChars(), 3);
+    assert.equal("abbbbbb".longestSubstringNoRepeatingChars(), 2);
+    assert.equal("abccde".longestSubstringNoRepeatingChars(), 3);
+    assert.equal("".longestSubstringNoRepeatingChars(), 0);
   });
 });

@@ -26,8 +26,10 @@ describe("find the max sum in an array", function () {
   });
 });
 describe("find the maximum number of elements in each basket", function () {
-  var array = ["A", "B", "C", "A", "C"];
   it("should return the maximum number of elements in the array", function () {
+    let array = ["A", "B", "C", "A", "C"],
+      longList = ["A", "B", "C", "B", "B", "C"];
     assert.equal(array.maxElementsInBaskets(), 3);
+    assert.equal(longList.maxElementsInBaskets(), 5);
   });
 });

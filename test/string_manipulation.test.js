@@ -98,10 +98,9 @@ describe("zigzag printing algorithms test", function () {
 });
 
 describe("longest palindrome substring test", function () {
-  var text, forbiddenTokens;
+  var text;
   before(function () {
     text = "thisisatieddeitasi";
-    forbiddenTokens = ["^", "$", "#"];
   });
   it("should return the longest palindrome substring of a given string", function () {
     assert.equal(text.longestPalindromeSubstring(), "isatieddeitasi");

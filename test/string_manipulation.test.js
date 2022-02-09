@@ -143,3 +143,20 @@ describe("longest substring with no repeating character", function () {
     assert.equal("".longestSubstringNoRepeatingChars(), 0);
   });
 });
+
+describe("longest substring with same letters after replacement", function () {
+  it("should return the length of that substring", function () {
+    assert.equal(
+      "aabccbb".longestSubstringWithSameLettersAfterKReplacement(2),
+      5
+    );
+    assert.equal(
+      "abbcb".longestSubstringWithSameLettersAfterKReplacement(1),
+      4
+    );
+    assert.equal(
+      "abccde".longestSubstringWithSameLettersAfterKReplacement(1),
+      3
+    );
+  });
+});

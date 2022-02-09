@@ -248,6 +248,50 @@ function longestSubstringNoRepeatingChars(string) {
   return result.length;
 }
 
+function longestSubstringWithSameLettersAfterKReplacement(
+  string,
+  replacements
+) {
+  var charsDictionary = {},
+    result = "",
+    substring = "",
+    startIndex = 0,
+    toBeReplaced = 0,
+    endIndex = 0;
+  while (endIndex < string.length) {
+    if (
+      toBeReplaced <= replacements ||
+      string[startIndex] === string[endIndex]
+    ) {
+      toBeReplaced += addReplacement(
+        charsDictionary,
+        string[endIndex],
+        string[startIndex]
+      );
+      charsDictionary.incrementKeyValue(string[endIndex]);
+      endIndex++;
+      substring = string.slice(startIndex, endIndex);
+    } else {
+      while (toBeReplaced > replacements) {
+        toBeReplaced -= removeReplacement(charsDictionary, string[startIndex]);
+        charsDictionary.decrementKeyValue(string[startIndex]);
+        startIndex++;
+      }
+    }
+    result = longestString(result, substring);
+  }
+  return result.length;
+}
+function addReplacement(charsDictionary, currentChar, firstChar) {
+  return charsDictionary[currentChar] == null || currentChar !== firstChar
+    ? 1
+    : 0;
+}
+
+function removeReplacement(charsDictionary, currentChar) {
+  return charsDictionary[currentChar] == 1 ? 1 : 0;
+}
+
 function longestString(string1, string2) {
   return string1.length > string2.length ? string1 : string2;
 }
@@ -269,6 +313,12 @@ String.prototype.longestSubstringWithDistinctChars = function (distinctChars) {
 };
 String.prototype.longestSubstringNoRepeatingChars = function () {
   return longestSubstringNoRepeatingChars(this);
+};
+
+String.prototype.longestSubstringWithSameLettersAfterKReplacement = function (
+  replacements
+) {
+  return longestSubstringWithSameLettersAfterKReplacement(this, replacements);
 };
 module.exports = {
   generateFrequencyMap,

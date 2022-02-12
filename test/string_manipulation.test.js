@@ -159,3 +159,12 @@ describe("longest substring with same letters after replacement", function () {
     );
   });
 });
+
+describe("string has a permutation of a given pattern", function () {
+  it("should tell if it's true or not", function () {
+    assert.isTrue("oidbcaf".hasPermutationOf("abc"));
+    assert.isTrue("aaacb".hasPermutationOf("abc"));
+    assert.isFalse("odicf".hasPermutationOf("dc"));
+    assert.isTrue("bcdxabcdy".hasPermutationOf("bcdyabcdx"));
+  });
+});

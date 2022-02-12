@@ -282,6 +282,33 @@ function longestSubstringWithSameLettersAfterKReplacement(
   }
   return result.length;
 }
+
+function hasPermutationOf(string, pattern) {
+  var startIndex = 0,
+    endIndex = 0,
+    charactersDictionary = {},
+    patternCharacters = generateFrequencyMap(pattern);
+  while (endIndex < string.length) {
+    if (endIndex - startIndex < pattern.length) {
+      charactersDictionary.incrementKeyValue(string[endIndex]);
+      endIndex++;
+    } else {
+      if (
+        Object.keys(charactersDictionary).every(
+          (key) => charactersDictionary[key] === patternCharacters[key]
+        )
+      )
+        return true;
+      while (endIndex - startIndex >= pattern.length) {
+        charactersDictionary.decrementKeyValue(string[startIndex]);
+        startIndex++;
+      }
+    }
+  }
+  return Object.keys(charactersDictionary).every(
+    (key) => charactersDictionary[key] === patternCharacters[key]
+  );
+}
 function addReplacement(charsDictionary, currentChar, firstChar) {
   return charsDictionary[currentChar] == null || currentChar !== firstChar
     ? 1
@@ -319,6 +346,9 @@ String.prototype.longestSubstringWithSameLettersAfterKReplacement = function (
   replacements
 ) {
   return longestSubstringWithSameLettersAfterKReplacement(this, replacements);
+};
+String.prototype.hasPermutationOf = function (pattern) {
+  return hasPermutationOf(this, pattern);
 };
 module.exports = {
   generateFrequencyMap,

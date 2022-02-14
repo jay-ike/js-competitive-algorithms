@@ -55,12 +55,13 @@ function deleteIfZero(dictionary, key) {
     delete dictionary[key];
   }
 }
-function decrementKeyValue(dictionary, key, step = 1) {
+function decrementKeyValue(dictionary, key, { step, deleteIfZero }) {
+  let defaultStep = step ?? 1;
   if (dictionary[key] == null) return;
-  if (dictionary[key] === step) {
+  if (dictionary[key] === defaultStep && deleteIfZero) {
     delete dictionary[key];
   } else {
-    dictionary[key] = (dictionary[key] ?? 0) - step;
+    dictionary[key] = (dictionary[key] ?? 0) - defaultStep;
   }
 }
 function incrementKeyValue(dictionary, key, { step, condition }) {
@@ -74,8 +75,11 @@ Object.prototype.incrementKeyValue = function (
 ) {
   incrementKeyValue(this, key, { step, condition });
 };
-Object.prototype.decrementKeyValue = function (key, step = 1) {
-  decrementKeyValue(this, key, step);
+Object.prototype.decrementKeyValue = function (
+  key,
+  { step, deleteIfZero } = { step: 1, deleteIfZero: true }
+) {
+  decrementKeyValue(this, key, { step, deleteIfZero });
 };
 Object.prototype.deleteIfZero = function (key) {
   deleteIfZero(this, key);

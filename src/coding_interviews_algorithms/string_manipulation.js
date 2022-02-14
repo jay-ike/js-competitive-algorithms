@@ -1,27 +1,36 @@
 require("../utils");
 function findAnagramIndices(word, text) {
-  var result = [];
-  var [wordLength, textLength] = [word.length, text.length];
+  var result = [],
+    [wordLength, textLength] = [word.length, text.length];
   if (wordLength > textLength) {
     throw new Error(
       `${word} length should be lesser or equal to ${text} length`
     );
   }
-  var frequencyMap = generateFrequencyMap(word);
-  for (let i = 0; i < wordLength; i++) {
-    frequencyMap.decrementKeyValue(text[i]);
-  }
-  if (Object.keys(frequencyMap).length === 0) {
-    result.push(0);
-  }
-  for (let i = wordLength; i < textLength; i++) {
-    let [startIndex, endIndex] = [i - wordLength, i];
-    frequencyMap.incrementKeyValue(text[startIndex]);
-    frequencyMap.deleteIfZero(text[startIndex]);
-
-    frequencyMap.decrementKeyValue(text[endIndex]);
-    if (Object.keys(frequencyMap).length === 0) {
-      result.push(i - wordLength + 1);
+  var frequencyMap = generateFrequencyMap(word),
+    startIndex = 0,
+    endIndex = 0,
+    currentMatches = 0,
+    expectedMatches = Object.keys(frequencyMap).reduce(
+      (prev, current) => prev + frequencyMap[current],
+      0
+    );
+  while (endIndex < textLength) {
+    if (endIndex - startIndex < wordLength) {
+      frequencyMap.decrementKeyValue(text[endIndex], {
+        deleteIfZero: false,
+        step: 1,
+      });
+      if (frequencyMap[text[endIndex]] === 0) currentMatches++;
+      endIndex++;
+    }
+    if (currentMatches === expectedMatches) {
+      result.push(startIndex);
+    }
+    if (endIndex - startIndex >= wordLength) {
+      if (frequencyMap[text[startIndex]] === 0) currentMatches--;
+      frequencyMap.incrementKeyValue(text[startIndex]);
+      startIndex++;
     }
   }
   return result;

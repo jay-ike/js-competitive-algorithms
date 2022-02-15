@@ -168,3 +168,11 @@ describe("string has a permutation of a given pattern", function () {
     assert.isTrue("bcdxabcdy".hasPermutationOf("bcdyabcdx"));
   });
 });
+
+describe("smallest substring containing all pattern's characters", function () {
+  it("should return that substring", function () {
+    assert.equal("aabdec".smallestSubstringContaining("abc"), "abdec");
+    assert.equal("abdabbc".smallestSubstringContaining("abc"), "abbc");
+    assert.equal("adcad".smallestSubstringContaining("abc"), "");
+  });
+});

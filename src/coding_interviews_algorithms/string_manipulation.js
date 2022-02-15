@@ -1,12 +1,28 @@
 require("../utils");
+function throwIfLongerThan(pattern, text) {
+  if (pattern.length > text.length) {
+    throw new ArgumentError(
+      `${pattern} length should be lesser or equal to ${text} length`
+    );
+  }
+}
+function decrementValueIfTrue(
+  condition,
+  dictionary,
+  key,
+  incrementIndex,
+  incrementMatch
+) {
+  if (condition) {
+    dictionary.decrementKeyValue(key, { deleteIfZero: false, step: 1 });
+  }
+  if (dictionary[key] === 0) incrementMatch();
+  incrementIndex();
+}
 function findAnagramIndices(word, text) {
   var result = [],
     [wordLength, textLength] = [word.length, text.length];
-  if (wordLength > textLength) {
-    throw new Error(
-      `${word} length should be lesser or equal to ${text} length`
-    );
-  }
+  throwIfLongerThan(word, text);
   var frequencyMap = generateFrequencyMap(word),
     startIndex = 0,
     endIndex = 0,
@@ -16,14 +32,13 @@ function findAnagramIndices(word, text) {
       0
     );
   while (endIndex < textLength) {
-    if (endIndex - startIndex < wordLength) {
-      frequencyMap.decrementKeyValue(text[endIndex], {
-        deleteIfZero: false,
-        step: 1,
-      });
-      if (frequencyMap[text[endIndex]] === 0) currentMatches++;
-      endIndex++;
-    }
+    decrementValueIfTrue(
+      endIndex - startIndex < wordLength,
+      frequencyMap,
+      text[endIndex],
+      () => endIndex++,
+      () => currentMatches++
+    );
     if (currentMatches === expectedMatches) {
       result.push(startIndex);
     }
@@ -332,6 +347,39 @@ function longestString(string1, string2) {
   return string1.length > string2.length ? string1 : string2;
 }
 
+function smallestSubstringContaining(text, pattern) {
+  var result = "";
+  throwIfLongerThan(pattern, text);
+  var frequencyMap = generateFrequencyMap(pattern),
+    startIndex = 0,
+    endIndex = 0,
+    currentMatches = 0,
+    expectedMatches = Object.keys(frequencyMap).reduce(
+      (prev, current) => prev + frequencyMap[current],
+      0
+    );
+  while (endIndex < text.length) {
+    decrementValueIfTrue(
+      currentMatches < expectedMatches,
+      frequencyMap,
+      text[endIndex],
+      () => endIndex++,
+      () => currentMatches++
+    );
+    if (currentMatches === expectedMatches) {
+      result = longestString(result, text.slice(startIndex, endIndex + 1));
+    }
+    if (
+      frequencyMap[text[startIndex]] < 0 ||
+      frequencyMap[text[startIndex]] == null
+    ) {
+      frequencyMap.incrementKeyValue(text[startIndex]);
+      startIndex++;
+    }
+  }
+  return result;
+}
+
 String.prototype.findAnagramIndices = function (word) {
   return findAnagramIndices(word, this);
 };
@@ -358,6 +406,9 @@ String.prototype.longestSubstringWithSameLettersAfterKReplacement = function (
 };
 String.prototype.hasPermutationOf = function (pattern) {
   return hasPermutationOf(this, pattern);
+};
+String.prototype.smallestSubstringContaining = function (pattern) {
+  return smallestSubstringContaining(this, pattern);
 };
 module.exports = {
   generateFrequencyMap,

@@ -176,3 +176,15 @@ describe("smallest substring containing all pattern's characters", function () {
     assert.equal("adcad".smallestSubstringContaining("abc"), "");
   });
 });
+
+describe("words concatenation indexes", function () {
+  it("should return an array of all those indexes", function () {
+    assert.deepEqual(
+      "catfoxtofcat".concatenatedWordsIndexes(["cat", "tof", "fox"]),
+      [0, 3]
+    );
+    assert.deepEqual("catcatfoxfox".concatenatedWordsIndexes(["cat", "fox"]), [
+      3,
+    ]);
+  });
+});

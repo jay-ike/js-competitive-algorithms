@@ -380,6 +380,33 @@ function smallestSubstringContaining(text, pattern) {
   return result;
 }
 
+function concatenatedWordsIndexes(string, words) {
+  var result = [],
+    wordLength = words[0].length,
+    wordFrequency = {},
+    wordSeen = {},
+    concatenatedWordsLength = words.join("").length;
+  words.forEach((word) => wordFrequency.incrementKeyValue(word));
+  for (
+    let index = 0;
+    index < string.length - concatenatedWordsLength + 1;
+    index++
+  ) {
+    wordSeen = {};
+    for (let j = 0; j < words.length; j++) {
+      let nextWordIndex = index + j * wordLength;
+      let word = string.slice(nextWordIndex, nextWordIndex + wordLength);
+      if (wordFrequency[word] == null) break;
+      wordSeen.incrementKeyValue(word);
+      if (wordSeen[word] > (wordFrequency[word] || 0)) break;
+      if (j + 1 === words.length) {
+        result.push(index);
+      }
+    }
+  }
+  return result;
+}
+
 String.prototype.findAnagramIndices = function (word) {
   return findAnagramIndices(word, this);
 };
@@ -409,6 +436,9 @@ String.prototype.hasPermutationOf = function (pattern) {
 };
 String.prototype.smallestSubstringContaining = function (pattern) {
   return smallestSubstringContaining(this, pattern);
+};
+String.prototype.concatenatedWordsIndexes = function (wordList) {
+  return concatenatedWordsIndexes(this, wordList);
 };
 module.exports = {
   generateFrequencyMap,

@@ -188,3 +188,11 @@ describe("words concatenation indexes", function () {
     ]);
   });
 });
+describe("comparing strings containing backspaces", function () {
+  it("should check equality after backspace replacement ", function () {
+    assert.isTrue("xy#z".equalAfterBackspaceWith("xzz#"));
+    assert.isFalse("x#yz".equalAfterBackspaceWith("xzz#"));
+    assert.isTrue("xp#".equalAfterBackspaceWith("xyz##"));
+    assert.isTrue("xywrrmp".equalAfterBackspaceWith("xywrrmu#p"));
+  });
+});

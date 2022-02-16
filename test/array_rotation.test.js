@@ -1,7 +1,7 @@
 var assert = require("chai").assert;
 const {
   rotateArray,
-} = require("../src/coding_interviews_algorithms/array_rotation");
+} = require("../src/coding_interviews_algorithms/array_manipulation");
 describe("array rotation", function () {
   var input, expected;
   before(function () {
@@ -10,12 +10,12 @@ describe("array rotation", function () {
   });
 
   it("should rotate an array with a given pivot", function () {
-    assert.deepEqual(rotateArray(input, 2), expected);
+    assert.deepEqual(input.rotate(2), expected);
   });
   it("should rotate an array even with a pivot bigger than the arrayLength", function () {
-    assert.deepEqual(rotateArray(input, 8), [4, 5, 1, 2, 3]);
+    assert.deepEqual(input.rotate(8), [4, 5, 1, 2, 3]);
   });
   it("should make a right rotation when the pivot is negative", function () {
-    assert.deepEqual(rotateArray(input, -2), [4, 5, 1, 2, 3]);
+    assert.deepEqual(input.rotate(-2), [4, 5, 1, 2, 3]);
   });
 });

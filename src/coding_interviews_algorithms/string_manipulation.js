@@ -406,6 +406,29 @@ function concatenatedWordsIndexes(string, words) {
   }
   return result;
 }
+function equalAfterBackspace(str1, str2, bacKspaceChar = "#") {
+  return (
+    computeBackspace(str1, bacKspaceChar) ===
+    computeBackspace(str2, bacKspaceChar)
+  );
+}
+function computeBackspace(str, backspaceChar) {
+  let result = "",
+    backspace = 0;
+  for (let index = str.length - 1; index >= 0; index--) {
+    if (str[index] === backspaceChar) {
+      backspace++;
+    } else {
+      if (backspace > 0) {
+        backspace--;
+        continue;
+      } else {
+        result += str[index];
+      }
+    }
+  }
+  return result;
+}
 
 String.prototype.findAnagramIndices = function (word) {
   return findAnagramIndices(word, this);
@@ -439,6 +462,9 @@ String.prototype.smallestSubstringContaining = function (pattern) {
 };
 String.prototype.concatenatedWordsIndexes = function (wordList) {
   return concatenatedWordsIndexes(this, wordList);
+};
+String.prototype.equalAfterBackspaceWith = function (str, backspaceChar) {
+  return equalAfterBackspace(this, str, backspaceChar);
 };
 module.exports = {
   generateFrequencyMap,

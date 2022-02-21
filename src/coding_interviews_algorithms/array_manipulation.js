@@ -121,11 +121,11 @@ function sortedSquares(array) {
   return result.reverse();
 }
 function tripletsWhichSumIsZero(array) {
-  array.sort((a, b) => a - b);
+  var sortedArray = [...array].sort((a, b) => a - b);
   var triplets = [];
-  for (let index = 0; index < array.length; index++) {
-    if (index > 0 && array[index] === array[index + 1]) continue;
-    searchPairSum(array, index + 1, -array[index], triplets);
+  for (let index = 0; index < sortedArray.length; index++) {
+    if (index > 0 && sortedArray[index] === sortedArray[index + 1]) continue;
+    searchPairSum(sortedArray, index + 1, -sortedArray[index], triplets);
   }
   return triplets;
 }
@@ -148,13 +148,14 @@ function searchPairSum(array, startIndex, targetSum, currentTriplets) {
   }
 }
 function smallestTripletSumCloseTo(array, target) {
-  array.sort((a, b) => a - b);
+  var sortedArray = [...array].sort((a, b) => a - b);
   var sum = Number.NEGATIVE_INFINITY;
-  for (let index = 0; index < array.length; index++) {
-    let endIndex = array.length - 1;
+  for (let index = 0; index < sortedArray.length; index++) {
+    let endIndex = sortedArray.length - 1;
     let startIndex = index + 1;
     while (endIndex > startIndex) {
-      let currentSum = array[index] + array[startIndex] + array[endIndex];
+      let currentSum =
+        sortedArray[index] + sortedArray[startIndex] + sortedArray[endIndex];
       if (currentSum > target) {
         endIndex--;
       } else {
@@ -166,18 +167,23 @@ function smallestTripletSumCloseTo(array, target) {
   return sum;
 }
 function tripletsSumSmallerThan(array, targetSum) {
-  array.sort((a, b) => a - b);
+  var sortedArray = [...array].sort((a, b) => a - b);
   var triplets = [];
-  for (let index = 0; index < array.length; index++) {
-    let endIndex = array.length - 1;
+  for (let index = 0; index < sortedArray.length; index++) {
+    let endIndex = sortedArray.length - 1;
     let startIndex = index + 1;
     while (endIndex > startIndex) {
-      let currentSum = array[index] + array[startIndex] + array[endIndex];
+      let currentSum =
+        sortedArray[index] + sortedArray[startIndex] + sortedArray[endIndex];
       if (currentSum >= targetSum) {
         endIndex--;
       } else {
         for (let endMarker = endIndex; endMarker > startIndex; endMarker--) {
-          triplets.push([array[index], array[startIndex], array[endMarker]]);
+          triplets.push([
+            sortedArray[index],
+            sortedArray[startIndex],
+            sortedArray[endMarker],
+          ]);
         }
         startIndex++;
       }
@@ -219,26 +225,31 @@ function sortInPlace(array) {
   return array;
 }
 function quadrupletsWithSum(array, target) {
-  array.sort((a, b) => a - b);
+  var sortedArray = [...array].sort((a, b) => a - b);
   var result = [];
-  for (let first = 0; first <= array.length - 4; first++) {
-    for (let second = first + 1; second <= array.length - 3; second++) {
+  for (let first = 0; first <= sortedArray.length - 4; first++) {
+    for (let second = first + 1; second <= sortedArray.length - 3; second++) {
       let startIndex = second + 1,
-        endIndex = array.length - 1;
+        endIndex = sortedArray.length - 1;
       while (startIndex < endIndex) {
         let currentSum =
-          array[first] + array[second] + array[startIndex] + array[endIndex];
+          sortedArray[first] +
+          sortedArray[second] +
+          sortedArray[startIndex] +
+          sortedArray[endIndex];
         if (target === currentSum) {
           result.push([
-            array[first],
-            array[second],
-            array[startIndex],
-            array[endIndex],
+            sortedArray[first],
+            sortedArray[second],
+            sortedArray[startIndex],
+            sortedArray[endIndex],
           ]);
           startIndex++;
           endIndex--;
-          while (array[startIndex] === array[startIndex - 1]) startIndex++;
-          while (array[endIndex] === array[endIndex + 1]) endIndex--;
+          while (sortedArray[startIndex] === sortedArray[startIndex - 1])
+            startIndex++;
+          while (sortedArray[endIndex] === sortedArray[endIndex + 1])
+            endIndex--;
         } else if (currentSum < target) {
           startIndex++;
         } else {
@@ -285,6 +296,34 @@ function indexBiggerThan(array, value) {
     }
   }
 }
+function hasCycle(array) {
+  for (let index = 0; index < array.length; index++) {
+    let isForward = array[index] >= 0;
+    let fast = index,
+      slow = index;
+    while (true) {
+      slow = nextIndex(array, isForward, slow);
+      fast = nextIndex(array, isForward, fast);
+      if (fast !== -1) {
+        fast = nextIndex(array, isForward, fast);
+      }
+      if (slow === -1 || fast === -1 || fast === slow) break;
+    }
+    if (slow !== -1 && fast === slow) return true;
+  }
+  return false;
+}
+function nextIndex(array, isForward, currentIndex) {
+  var direction = array[currentIndex] >= 0,
+    nextPosition;
+  if (isForward !== direction) return -1;
+  nextPosition = (currentIndex + array[currentIndex]) % array.length;
+  if (nextPosition < 0) {
+    nextPosition += array.length;
+  }
+  if (nextPosition === currentIndex) return -1;
+  return nextPosition;
+}
 Array.prototype.maxSubArraySum = function (size) {
   return maximumArraySum(this, size);
 };
@@ -329,4 +368,7 @@ Array.prototype.quadrupletsWithSum = function (targetSum) {
 };
 Array.prototype.minimumArrayToBeSorted = function () {
   return minimumArrayToBeSorted(this);
+};
+Array.prototype.hasCycle = function () {
+  return hasCycle(this);
 };

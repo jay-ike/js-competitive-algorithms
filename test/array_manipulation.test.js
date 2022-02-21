@@ -154,3 +154,10 @@ describe("minimum window sort", function () {
     assert.deepEqual([3, 2, 1].minimumArrayToBeSorted(), [3, 2, 1]);
   });
 });
+describe("cycle in circular array", function () {
+  it("should check if array has cycle", function () {
+    assert.isTrue([1, 2 - 1, 2, 2].hasCycle());
+    assert.isTrue([2, 2, -1, 2].hasCycle());
+    assert.isFalse([2, 1, -1, -2].hasCycle());
+  });
+});

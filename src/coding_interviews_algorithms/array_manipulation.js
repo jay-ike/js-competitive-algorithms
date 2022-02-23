@@ -1,4 +1,4 @@
-require("../utils");
+const { interval, buildHeap, job } = require("../utils");
 function maximumArraySum(array, size) {
   let endIndex = 0,
     startIndex = 0,
@@ -324,6 +324,162 @@ function nextIndex(array, isForward, currentIndex) {
   if (nextPosition === currentIndex) return -1;
   return nextPosition;
 }
+function mergeOverlappingIntervals(intervals) {
+  var result = [];
+  let sortedIntervals = intervals
+      .map(interval)
+      .sort((a, b) => a.begin - b.begin),
+    start = sortedIntervals[0].begin,
+    end = sortedIntervals[0].end;
+  for (let index = 1; index < sortedIntervals.length; index++) {
+    let currentInterval = sortedIntervals[index];
+    if (currentInterval.begin <= end) {
+      end = Math.max(currentInterval.end, end);
+    } else {
+      result.push([start, end]);
+      start = currentInterval.begin;
+      end = currentInterval.end;
+    }
+  }
+  result.push([start, end]);
+  return result;
+}
+function hasOverlappingIntervals(intervals) {
+  var sortedIntervals = intervals
+    .map(interval)
+    .sort((a, b) => a.begin - b.begin);
+  for (let index = 1; index < sortedIntervals.length; index++) {
+    if (sortedIntervals[index].begin < sortedIntervals[index - 1].end)
+      return true;
+  }
+  return false;
+}
+function minimumRoomHoldingIntervals(intervals) {
+  var minimumRoom = 0;
+  var sortedIntervals = intervals
+    .map(interval)
+    .sort((a, b) => a.begin - b.begin);
+  const heap = buildHeap([], (a, b) => a.end < b.end);
+  for (let index = 0; index < sortedIntervals.length; index++) {
+    let begin = sortedIntervals[index].begin;
+    while (heap.length() > 0 && begin >= heap.peek().end) {
+      heap.pop();
+    }
+    heap.push(sortedIntervals[index]);
+    minimumRoom = Math.max(heap.length(), minimumRoom);
+  }
+  return minimumRoom;
+}
+
+function maximumCpuLoad(jobs) {
+  var maxLoad = 0,
+    currentLoad = 0,
+    sortedJobs = jobs.map(job).sort((a, b) => a.begin - b.begin),
+    heap = buildHeap([], (a, b) => a.end < b.end);
+  for (let i = 0; i < sortedJobs.length; i++) {
+    let currentJob = sortedJobs[i];
+    while (heap.length() > 0 && currentJob.begin >= heap.peek().end) {
+      currentLoad -= heap.pop().load;
+    }
+    heap.push(currentJob);
+    currentLoad += currentJob.load;
+    maxLoad = Math.max(maxLoad, currentLoad);
+  }
+  return maxLoad;
+}
+function freeIntervals(schedules) {
+  function employeeInterval(employeeInterval, employeeIndex, intervalIndex) {
+    return {
+      employeeIndex,
+      interval: interval(employeeInterval),
+      intervalIndex,
+    };
+  }
+  var heap = buildHeap([], (a, b) => a.interval.begin < b.interval.begin),
+    result = [];
+  for (let i = 0; i < schedules.length; i++) {
+    heap.push(employeeInterval(schedules[i][0], i, 0));
+  }
+  let previousInterval = heap.peek().interval;
+  while (heap.length() > 0) {
+    let heapTop = heap.pop();
+    if (previousInterval.end < heapTop.interval.begin) {
+      result.push([previousInterval.end, heapTop.interval.begin]);
+      previousInterval = heapTop.interval;
+    } else {
+      if (previousInterval.end < heapTop.interval.end) {
+        previousInterval = heapTop.interval;
+      }
+    }
+    let employeeSchedule = schedules[heapTop.employeeIndex];
+    if (employeeSchedule.length > heapTop.intervalIndex + 1) {
+      heap.push(
+        employeeInterval(
+          schedules[heapTop.employeeIndex][heapTop.intervalIndex + 1],
+          heapTop.employeeIndex,
+          heapTop.intervalIndex + 1
+        )
+      );
+    }
+  }
+  return result;
+}
+function mergeOverlappingIntervalsAfterInsert(intervals, newInterval) {
+  var nextPosition = 0,
+    result = [],
+    start,
+    end;
+
+  while (
+    nextPosition < intervals.length &&
+    intervals[nextPosition][1] < newInterval[0]
+  ) {
+    start = intervals[nextPosition][0];
+    end = intervals[nextPosition][1];
+    result.push([start, end]);
+    nextPosition++;
+  }
+  start = Math.min(newInterval[0], intervals[nextPosition][0]);
+  end = Math.max(newInterval[1], intervals[nextPosition][1]);
+  nextPosition++;
+
+  for (let index = nextPosition; index < intervals.length; index++) {
+    let newStart = intervals[nextPosition][0],
+      newEnd = intervals[nextPosition][1];
+    if (newStart <= end) {
+      end = Math.max(end, newEnd);
+    } else {
+      result.push([start, end]);
+      start = newStart;
+      end = newEnd;
+    }
+  }
+  result.push([start, end]);
+
+  return result;
+}
+function intersectionWithInterval(intervals, otherIntervals) {
+  var result = [],
+    firstIndex = 0,
+    secondIndex = 0;
+  while (firstIndex < intervals.length && secondIndex < otherIntervals.length) {
+    let start = intervals[firstIndex][0],
+      end = intervals[firstIndex][1],
+      otherStart = otherIntervals[secondIndex][0],
+      otherEnd = otherIntervals[secondIndex][1];
+    let firstOverlapSecond = start >= otherStart && start <= otherEnd,
+      secondOverlapFirst = otherStart >= start && otherStart <= end;
+    if (firstOverlapSecond || secondOverlapFirst) {
+      result.push([Math.max(start, otherStart), Math.min(end, otherEnd)]);
+    }
+    if (end < otherEnd) {
+      firstIndex++;
+    } else {
+      secondIndex++;
+    }
+  }
+  return result;
+}
 Array.prototype.maxSubArraySum = function (size) {
   return maximumArraySum(this, size);
 };
@@ -371,4 +527,25 @@ Array.prototype.minimumArrayToBeSorted = function () {
 };
 Array.prototype.hasCycle = function () {
   return hasCycle(this);
+};
+Array.prototype.mergeOverlappingIntervals = function () {
+  return mergeOverlappingIntervals(this);
+};
+Array.prototype.mergeOverlappingIntervalsAfterInsert = function (newInterval) {
+  return mergeOverlappingIntervalsAfterInsert(this, newInterval);
+};
+Array.prototype.intersectionWithInterval = function (newInterval) {
+  return intersectionWithInterval(this, newInterval);
+};
+Array.prototype.hasOverlappingIntervals = function () {
+  return hasOverlappingIntervals(this);
+};
+Array.prototype.minimumRoomHoldingIntervals = function () {
+  return minimumRoomHoldingIntervals(this);
+};
+Array.prototype.maximumCpuLoad = function () {
+  return maximumCpuLoad(this);
+};
+Array.prototype.freeIntervals = function () {
+  return freeIntervals(this);
 };

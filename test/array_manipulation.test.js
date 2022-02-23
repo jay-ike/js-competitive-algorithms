@@ -161,3 +161,185 @@ describe("cycle in circular array", function () {
     assert.isFalse([2, 1, -1, -2].hasCycle());
   });
 });
+
+describe("intervals problems", function () {
+  it("should merge overlapping intervals", function () {
+    var range1 = [
+        [1, 4],
+        [2, 5],
+        [7, 9],
+      ],
+      range2 = [
+        [6, 7],
+        [2, 4],
+        [5, 9],
+      ],
+      range3 = [
+        [1, 4],
+        [2, 6],
+        [3, 5],
+      ];
+    assert.deepEqual(range1.mergeOverlappingIntervals(), [
+      [1, 5],
+      [7, 9],
+    ]);
+    assert.deepEqual(range2.mergeOverlappingIntervals(), [
+      [2, 4],
+      [5, 9],
+    ]);
+    assert.deepEqual(range3.mergeOverlappingIntervals(), [[1, 6]]);
+  });
+  it("should merge overlapping interval after insertion", function () {
+    var range1 = [
+        [1, 3],
+        [5, 7],
+        [8, 12],
+      ],
+      range3 = [
+        [2, 3],
+        [5, 7],
+      ];
+    assert.deepEqual(range1.mergeOverlappingIntervalsAfterInsert([4, 6]), [
+      [1, 3],
+      [4, 7],
+      [8, 12],
+    ]);
+    assert.deepEqual(range1.mergeOverlappingIntervalsAfterInsert([4, 9]), [
+      [1, 3],
+      [4, 12],
+    ]);
+    assert.deepEqual(range3.mergeOverlappingIntervalsAfterInsert([1, 4]), [
+      [1, 4],
+      [5, 7],
+    ]);
+  });
+  it("should return the intersection of two range of sorted intervals", function () {
+    var range1 = [
+      [1, 3],
+      [5, 6],
+      [9, 12],
+    ];
+    assert.deepEqual(
+      range1.intersectionWithInterval([
+        [2, 3],
+        [5, 9],
+      ]),
+      [
+        [2, 3],
+        [5, 6],
+        [9, 9],
+      ]
+    );
+    assert.deepEqual(range1.intersectionWithInterval([[5, 10]]), [
+      [5, 6],
+      [9, 10],
+    ]);
+  });
+  it("should check if overlapping intervals exists", function () {
+    var range1 = [
+        [1, 4],
+        [2, 5],
+        [7, 9],
+      ],
+      range2 = [
+        [6, 7],
+        [2, 4],
+        [8, 12],
+      ],
+      range3 = [
+        [4, 5],
+        [2, 3],
+        [3, 6],
+      ];
+    assert.isTrue(range1.hasOverlappingIntervals());
+    assert.isTrue(range3.hasOverlappingIntervals());
+    assert.isFalse(range2.hasOverlappingIntervals());
+  });
+  it("should return the minimum rooms to hold all intervals", function () {
+    var ranges = [
+      [
+        [1, 4],
+        [2, 5],
+        [7, 9],
+      ],
+      [
+        [6, 7],
+        [2, 4],
+        [8, 12],
+      ],
+      [
+        [1, 4],
+        [2, 3],
+        [3, 6],
+      ],
+      [
+        [4, 5],
+        [2, 3],
+        [2, 4],
+        [3, 5],
+      ],
+    ];
+    assert.equal(ranges[0].minimumRoomHoldingIntervals(), 2);
+    assert.equal(ranges[1].minimumRoomHoldingIntervals(), 1);
+    assert.equal(ranges[2].minimumRoomHoldingIntervals(), 2);
+    assert.equal(ranges[3].minimumRoomHoldingIntervals(), 2);
+  });
+  it("should compute the maximum cpu load", function () {
+    var ranges = [
+      [
+        [1, 4, 3],
+        [2, 5, 4],
+        [7, 9, 6],
+      ],
+      [
+        [6, 7, 10],
+        [2, 4, 11],
+        [8, 12, 15],
+      ],
+      [
+        [1, 4, 2],
+        [2, 4, 1],
+        [3, 6, 5],
+      ],
+    ];
+    assert.equal(ranges[0].maximumCpuLoad(), 7);
+    assert.equal(ranges[1].maximumCpuLoad(), 15);
+    assert.equal(ranges[2].maximumCpuLoad(), 8);
+  });
+  it("should return the employees free times", function () {
+    var schedules = [
+      [
+        [
+          [1, 3],
+          [5, 6],
+        ],
+        [
+          [2, 3],
+          [6, 8],
+        ],
+      ],
+      [
+        [
+          [1, 3],
+          [9, 12],
+        ],
+        [[2, 4]],
+        [[6, 8]],
+      ],
+      [
+        [[1, 3]],
+        [[2, 4]],
+        [
+          [3, 5],
+          [7, 9],
+        ],
+      ],
+    ];
+    assert.deepEqual(schedules[0].freeIntervals(), [[3, 5]]);
+    assert.deepEqual(schedules[1].freeIntervals(), [
+      [4, 6],
+      [8, 9],
+    ]);
+    assert.deepEqual(schedules[2].freeIntervals(), [[5, 7]]);
+  });
+});

@@ -40,6 +40,74 @@ class Node {
     return true;
   }
 }
+function validateInterval(arr) {
+  let begin = arr[0],
+    end = arr[1];
+  if (begin > end) throw new RangeError(`${arr} is an invalid interval`);
+}
+function interval(arr) {
+  if (arr.length !== 2) throw new TypeError(`${arr} is not an interval`);
+  validateInterval(arr);
+  return {
+    begin: arr[0],
+    end: arr[1],
+  };
+}
+function job(arr) {
+  validateInterval(arr);
+  return {
+    begin: arr[0],
+    end: arr[1],
+    load: arr[2],
+  };
+}
+function buildHeap(array, comparator) {
+  var heap = array;
+  function heapify(arr, index) {
+    var left = 2 * index,
+      peek,
+      right = 2 * index + 1;
+    if (left < arr.length && comparator(heap[left], heap[index]) === true) {
+      peek = left;
+    } else peek = index;
+    if (right < arr.length && comparator(heap[right], heap[peek]) === true) {
+      peek = right;
+    }
+    if (peek !== index) {
+      [arr[peek], arr[index]] = [arr[index], arr[peek]];
+      heapify(arr, peek);
+    }
+  }
+  for (let i = 0; i < Math.floor(heap.length / 2); i++) {
+    heapify(heap, i);
+  }
+  return {
+    heap,
+    length() {
+      return heap.length;
+    },
+    pop() {
+      let peek = heap[0];
+      heap = heap.slice(1);
+      heapify(heap, 0);
+      return peek;
+    },
+    push(element) {
+      heap.push(element);
+      let index = heap.length - 1,
+        parent = Math.floor(index / 2);
+
+      while (index > 0 && comparator(heap[index], heap[parent]) === true) {
+        [heap[index], heap[parent]] = [heap[parent], heap[index]];
+        index = parent;
+        parent = Math.floor(index / 2);
+      }
+    },
+    peek() {
+      return heap[0];
+    },
+  };
+}
 function squareDigitsSum(number) {
   let digit = 0,
     result = 0,
@@ -141,4 +209,4 @@ Object.prototype.decrementKeyValue = function (
 Object.prototype.deleteIfZero = function (key) {
   deleteIfZero(this, key);
 };
-module.exports = { generateArray, throwIfNaN, Node };
+module.exports = { generateArray, throwIfNaN, Node, interval, buildHeap, job };

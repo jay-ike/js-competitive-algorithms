@@ -480,6 +480,104 @@ function intersectionWithInterval(intervals, otherIntervals) {
   }
   return result;
 }
+function cyclicSort(array) {
+  var index = 0,
+    comparator = defaultComparator(array);
+  cyclicSwap(index, array, (index) => array[index] - 1, comparator);
+}
+function missingNumber(array) {
+  var index = 0,
+    n = array.length,
+    comparator = (index, iterator) =>
+      array[index] < n && array[index] !== array[iterator];
+  cyclicSwap(index, array, (index) => array[index], comparator);
+  for (let index = 0; index < array.length; index++) {
+    if (array[index] !== index) return index;
+  }
+  return n;
+}
+var defaultComparator = (array) => {
+  let result = (index, iterator) => array[index] !== array[iterator];
+  return result;
+};
+/**
+ *
+ * @param {Array} array
+ * @returns Array<Number>
+ * @description find all missing numbers in an array ranged from 1 to n
+ *
+ */
+function allMissingNumbers(array) {
+  var result = [],
+    index = 0,
+    comparator = defaultComparator(array);
+  cyclicSwap(index, array, (index) => array[index] - 1, comparator);
+  for (let index = 0; index < array.length; index++) {
+    if (array[index] !== index + 1) result.push(index + 1);
+  }
+  return result;
+}
+function cyclicSwap(index, array, iterator, comparator) {
+  while (index < array.length) {
+    let j = iterator(index);
+    if (comparator(index, j)) {
+      [array[index], array[j]] = [array[j], array[index]];
+    } else index++;
+  }
+  return index;
+}
+
+function duplicatedNumber(array) {
+  var index = 0;
+  while (index < array.length) {
+    if (array[index] !== index + 1) {
+      let j = array[index] - 1;
+      if (array[index] !== array[j]) {
+        [array[index], array[j]] = [array[j], array[index]];
+      } else return array[index];
+    } else index++;
+  }
+  return -1;
+}
+function findCorruptPair(array) {
+  let index = 0,
+    result = [],
+    comparator = defaultComparator(array);
+  cyclicSwap(index, array, (index) => array[index] - 1, comparator);
+  for (let i = 0; i < array.length; i++) {
+    if (array[i] !== i + 1) result = [array[i], i + 1];
+  }
+  return result;
+}
+function firstKPositiveMissingNumbers(array, k) {
+  let index = 0,
+    totalSeen = 0,
+    extraNumbers = {},
+    result = [],
+    n = array.length,
+    comparator = (index, iterator) =>
+      array[index] > 0 &&
+      array[index] - 1 < n &&
+      array[index] !== array[iterator];
+  cyclicSwap(index, array, (index) => array[index] - 1, comparator);
+  for (let j = 0; j < array.length; j++) {
+    if (array[j] !== j + 1 && totalSeen < k) {
+      result.push(j + 1);
+      totalSeen++;
+    }
+    if (array[j] >= n + 1) {
+      extraNumbers[array[j]] = j;
+    }
+  }
+  while (totalSeen < k) {
+    if (extraNumbers[n + 1] == null) {
+      result.push(n + 1);
+      totalSeen++;
+    }
+    n++;
+  }
+  return result;
+}
 Array.prototype.maxSubArraySum = function (size) {
   return maximumArraySum(this, size);
 };
@@ -548,4 +646,22 @@ Array.prototype.maximumCpuLoad = function () {
 };
 Array.prototype.freeIntervals = function () {
   return freeIntervals(this);
+};
+Array.prototype.cyclicSort = function () {
+  return cyclicSort(this);
+};
+Array.prototype.missingNumber = function () {
+  return missingNumber(this);
+};
+Array.prototype.allMissingNumbers = function () {
+  return allMissingNumbers(this);
+};
+Array.prototype.duplicatedNumber = function () {
+  return duplicatedNumber(this);
+};
+Array.prototype.findCorruptPair = function () {
+  return findCorruptPair(this);
+};
+Array.prototype.firstKPositiveMissingNumbers = function (k) {
+  return firstKPositiveMissingNumbers(this, k);
 };

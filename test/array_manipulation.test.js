@@ -343,3 +343,69 @@ describe("intervals problems", function () {
     assert.deepEqual(schedules[2].freeIntervals(), [[5, 7]]);
   });
 });
+
+describe("cyclic sort problems", function () {
+  var duplicatedArrays = [
+    [2, 3, 1, 8, 2, 3, 5, 1],
+    [4, 4, 1, 2],
+    [2, 3, 2, 1],
+    [2, 3, 3, 1, 3, 4, 5],
+  ];
+  var arrayWithNegative = [
+    [-3, 1, 5, 4, 2],
+    [3, -2, 0, 1, 2],
+    [3, -1, 4, 5, 5],
+    [2, 3, 4],
+    [-2, -3, 4],
+  ];
+  it("should sort in-place an array of numbers", function () {
+    var arrays = [
+        [3, 1, 5, 4, 2],
+        [2, 6, 4, 3, 1, 5],
+        [1, 5, 6, 4, 3, 2],
+      ],
+      expected = [1, 2, 3, 4, 5];
+    arrays[0].cyclicSort();
+    assert.deepEqual(arrays[0], expected);
+    arrays[1].cyclicSort();
+    arrays[2].cyclicSort();
+    expected.push(6);
+    assert.deepEqual(arrays[1], expected);
+    assert.deepEqual(arrays[2], expected);
+  });
+  it("should find the missing number", function () {
+    var arrays = [
+      [4, 0, 3, 1],
+      [6, 3, 5, 2, 4, 6, 0, 1],
+    ];
+    assert.equal(arrays[0].missingNumber(), 2);
+    assert.equal(arrays[1].missingNumber(), 7);
+  });
+  it("should find all missing numbers", function () {
+    assert.deepEqual(duplicatedArrays[0].allMissingNumbers(), [4, 6, 7]);
+    assert.deepEqual(duplicatedArrays[1].allMissingNumbers(), [3]);
+    assert.deepEqual(duplicatedArrays[2].allMissingNumbers(), [4]);
+  });
+  it("should return duplicated number", function () {
+    assert.equal(duplicatedArrays[1].duplicatedNumber(), 4);
+    assert.equal(duplicatedArrays[2].duplicatedNumber(), 2);
+    assert.equal(duplicatedArrays[3].duplicatedNumber(), 3);
+  });
+  it("should return the corrupt pair", function () {
+    assert.deepEqual(duplicatedArrays[1].findCorruptPair(), [4, 3]);
+    assert.deepEqual(duplicatedArrays[2].findCorruptPair(), [2, 4]);
+  });
+  it("should return the smallest missing positive number", function () {
+    assert.deepEqual(arrayWithNegative[0].firstKPositiveMissingNumbers(1), [3]);
+    assert.deepEqual(arrayWithNegative[1].firstKPositiveMissingNumbers(1), [4]);
+    assert.deepEqual(
+      arrayWithNegative[2].firstKPositiveMissingNumbers(3),
+      [1, 2, 6]
+    );
+    assert.deepEqual(
+      arrayWithNegative[3].firstKPositiveMissingNumbers(3),
+      [1, 5, 6]
+    );
+    assert.deepEqual(duplicatedArrays[2].firstKPositiveMissingNumbers(1), [4]);
+  });
+});

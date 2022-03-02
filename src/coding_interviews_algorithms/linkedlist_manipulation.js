@@ -103,6 +103,124 @@ function alternateBothHalves(linkedList) {
     firstHalf.next = null;
   }
 }
+function reverseInPlace(linkedList) {
+  if (linkedList.next == null) return linkedList;
+  var previous = null,
+    current = linkedList.clone();
+  while (current != null) {
+    let currentNext = current.next;
+    current.next = previous;
+    previous = current;
+    current = currentNext;
+  }
+  return previous;
+}
+function reverseRange(linkedList, startIndex, endIndex) {
+  var previous = null,
+    current = linkedList.clone(),
+    result = current;
+  index = 0;
+  while (current != null && index < startIndex - 1) {
+    previous = current;
+    current = current.next;
+    index++;
+  }
+  var firstHalfLastNode = previous;
+  var subListLastNode = current;
+  index = 0;
+  while (current != null && index < endIndex - startIndex + 1) {
+    let currentNext = current.next;
+    current.next = previous;
+    previous = current;
+    current = currentNext;
+    index++;
+  }
+  subListLastNode.next = current;
+  if (firstHalfLastNode != null) {
+    firstHalfLastNode.next = previous;
+  } else {
+    result = previous;
+  }
+  return result;
+}
+function reverseSublistsOfSize(linkedList, size) {
+  if (linkedList == null || size <= 1) return linkedList;
+  var current = linkedList.clone(),
+    previous = null,
+    head = null;
+  while (true) {
+    let firstHalfLastNode = previous,
+      subListLastNode = current,
+      index = 0;
+    while (current != null && index < size) {
+      let next = current.next;
+      current.next = previous;
+      previous = current;
+      current = next;
+      index++;
+    }
+
+    if (firstHalfLastNode == null) {
+      head = previous;
+    } else {
+      firstHalfLastNode.next = previous;
+    }
+    subListLastNode.next = current;
+    previous = subListLastNode;
+    if (current == null) break;
+  }
+  return head;
+}
+function alternatelyReverseSublistsOfSize(linkedList, size) {
+  var current = linkedList.clone(),
+    previous = null,
+    head = null;
+  while (true) {
+    let firstHalfLastNode = previous,
+      subListLastNode = current,
+      index = 0;
+    while (current != null && index < size) {
+      let next = current.next;
+      current.next = previous;
+      previous = current;
+      current = next;
+      index++;
+    }
+    if (firstHalfLastNode == null) {
+      head = previous;
+    } else {
+      firstHalfLastNode.next = previous;
+    }
+    subListLastNode.next = current;
+    while (current != null && index < 2 * size) {
+      previous = current;
+      current = current.next;
+      index++;
+    }
+    if (current == null) break;
+  }
+  return head;
+}
+function rotateBy(linkedList, size) {
+  if (linkedList == null || linkedList.next == null || size < 1)
+    return linkedList;
+  var lastNode = linkedList.clone(),
+    head = lastNode,
+    listLength = 1;
+  while (lastNode.next != null) {
+    lastNode = lastNode.next;
+    listLength++;
+  }
+  let rotatedListLastNode = head,
+    rotations = listLength - (size % listLength);
+  lastNode.next = head;
+  for (let index = 0; index < rotations - 1; index++) {
+    rotatedListLastNode = rotatedListLastNode.next;
+  }
+  head = rotatedListLastNode.next;
+  rotatedListLastNode.next = null;
+  return head;
+}
 Node.prototype.hasCycle = function () {
   return hasCycle(this);
 };
@@ -120,5 +238,20 @@ Node.prototype.isPalindrome = function () {
 };
 Node.prototype.alternateBothHalves = function () {
   alternateBothHalves(this);
+};
+Node.prototype.reverseInPlace = function () {
+  return reverseInPlace(this);
+};
+Node.prototype.reverseRange = function (startIndex, endIndex) {
+  return reverseRange(this, startIndex, endIndex);
+};
+Node.prototype.reverseSublistsOfSize = function (size) {
+  return reverseSublistsOfSize(this, size);
+};
+Node.prototype.alternatelyReverseSublistsOfSize = function (size) {
+  return alternatelyReverseSublistsOfSize(this, size);
+};
+Node.prototype.rotateBy = function (size) {
+  return rotateBy(this, size);
 };
 module.exports = { Node };

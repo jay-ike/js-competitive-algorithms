@@ -14,6 +14,14 @@ class Node {
     }
     return moves;
   }
+  static fromArray(arr) {
+    if (arr.length < 1) throw new Error(`${arr} cannot be empty`);
+    var node = new Node(arr[0]);
+    for (let index = 1; index < arr.length; index++) {
+      node.appendNode(new Node(arr[index]));
+    }
+    return node;
+  }
   makeNMoves(n) {
     let index = 0,
       child = this;
@@ -38,6 +46,16 @@ class Node {
     }
     if (pointer1 !== null || pointer2 !== null) return false;
     return true;
+  }
+  clone() {
+    let pointer = this,
+      node = new Node(pointer.value);
+    pointer = pointer.next;
+    while (pointer != null) {
+      node.appendNode(new Node(pointer.value));
+      pointer = pointer.next;
+    }
+    return node;
   }
 }
 function validateInterval(arr) {

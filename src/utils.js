@@ -58,6 +58,54 @@ class Node {
     return node;
   }
 }
+class TreeNode {
+  constructor(value) {
+    this.value = value;
+    this.left = null;
+    this.right = null;
+    this.next = null;
+  }
+  static fromArray(array) {
+    if (array.length < 1) return null;
+    function buildNode(node, array, index) {
+      var leftNode, rightNode;
+      if (2 * index + 1 < array.length) {
+        leftNode = new TreeNode(array[2 * index + 1]);
+        node.left = leftNode;
+        buildNode(leftNode, array, 2 * index + 1);
+      }
+      if (2 * (index + 1) < array.length) {
+        rightNode = new TreeNode(array[2 * (index + 1)]);
+        node.right = rightNode;
+        buildNode(rightNode, array, 2 * (index + 1));
+      }
+    }
+    var index = 0,
+      node = new TreeNode(array[index]);
+    buildNode(node, array, index);
+    return node;
+  }
+  printLevelsOrder() {
+    var nextLevelRoot = this,
+      result = [];
+    while (nextLevelRoot != null) {
+      let current = nextLevelRoot,
+        levelValue = "";
+      nextLevelRoot = null;
+      while (current != null) {
+        levelValue += ` ${current.value} ->`;
+        if (nextLevelRoot == null) {
+          if (current.left != null) nextLevelRoot = current.left;
+          else if (current.right != null) nextLevelRoot = current.right;
+        }
+        current = current.next;
+      }
+
+      result.push(`${levelValue} null`.trim());
+    }
+    return result;
+  }
+}
 function validateInterval(arr) {
   let begin = arr[0],
     end = arr[1];
@@ -82,9 +130,9 @@ function job(arr) {
 function buildHeap(array, comparator) {
   var heap = array;
   function heapify(arr, index) {
-    var left = 2 * index,
+    var left = 2 * index + 1,
       peek,
-      right = 2 * index + 1;
+      right = 2 * (index + 1);
     if (left < arr.length && comparator(heap[left], heap[index]) === true) {
       peek = left;
     } else peek = index;
@@ -212,6 +260,7 @@ function incrementKeyValue(dictionary, key, { step, condition }) {
     dictionary[key] = (dictionary[key] ?? 0) + (step ?? 1);
   }
 }
+function emptyCallback() {}
 Object.prototype.incrementKeyValue = function (
   key,
   { step, condition } = { step: 1, condition: true }
@@ -227,4 +276,13 @@ Object.prototype.decrementKeyValue = function (
 Object.prototype.deleteIfZero = function (key) {
   deleteIfZero(this, key);
 };
-module.exports = { generateArray, throwIfNaN, Node, interval, buildHeap, job };
+module.exports = {
+  generateArray,
+  throwIfNaN,
+  Node,
+  interval,
+  buildHeap,
+  job,
+  TreeNode,
+  emptyCallback,
+};

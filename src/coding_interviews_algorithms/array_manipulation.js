@@ -345,7 +345,7 @@ function mergeOverlappingIntervals(intervals) {
   return result;
 }
 function hasOverlappingIntervals(intervals) {
-  var sortedIntervals = intervals
+  var sortedIntervals = [...intervals]
     .map(interval)
     .sort((a, b) => a.begin - b.begin);
   for (let index = 1; index < sortedIntervals.length; index++) {
@@ -356,7 +356,7 @@ function hasOverlappingIntervals(intervals) {
 }
 function minimumRoomHoldingIntervals(intervals) {
   var minimumRoom = 0;
-  var sortedIntervals = intervals
+  var sortedIntervals = [...intervals]
     .map(interval)
     .sort((a, b) => a.begin - b.begin);
   const heap = buildHeap([], (a, b) => a.end < b.end);
@@ -374,7 +374,7 @@ function minimumRoomHoldingIntervals(intervals) {
 function maximumCpuLoad(jobs) {
   var maxLoad = 0,
     currentLoad = 0,
-    sortedJobs = jobs.map(job).sort((a, b) => a.begin - b.begin),
+    sortedJobs = [...jobs].map(job).sort((a, b) => a.begin - b.begin),
     heap = buildHeap([], (a, b) => a.end < b.end);
   for (let i = 0; i < sortedJobs.length; i++) {
     let currentJob = sortedJobs[i];

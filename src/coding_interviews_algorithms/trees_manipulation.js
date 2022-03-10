@@ -138,6 +138,122 @@ function rightView(tree) {
   });
   return result;
 }
+function hasRootToLeafPathWithSum(tree, sum) {
+  if (tree == null) return false;
+  if (tree.left == null && tree.right == null) {
+    if (sum === tree.value) return true;
+    else return false;
+  }
+  return (
+    hasRootToLeafPathWithSum(tree.left, sum - tree.value) ||
+    hasRootToLeafPathWithSum(tree.right, sum - tree.value)
+  );
+}
+function searchPath(node, sum, path, onFound) {
+  if (node == null) return;
+  if (node.left == null && node.right == null) {
+    if (sum === node.value) onFound(`${path} ${node.value} -> null`);
+  }
+  searchPath(node.left, sum - node.value, `${path} ${node.value} ->`, onFound);
+  searchPath(node.right, sum - node.value, `${path} ${node.value} ->`, onFound);
+}
+function allRootToLeafPathsWithSum(tree, sum) {
+  var result = [];
+  searchPath(tree, sum, "", (value) => {
+    result.push(value.trim());
+  });
+  return result;
+}
+function pathNumbersSum(tree, num) {
+  if (tree == null) return 0;
+  var currentNumber = 10 * (num ?? 0) + tree.value;
+  if (tree.left == null && tree.right == null) return currentNumber;
+  return (
+    pathNumbersSum(tree.left, currentNumber) +
+    pathNumbersSum(tree.right, currentNumber)
+  );
+}
+function hasPathOfSequence(tree, sequence) {
+  if (
+    tree == null ||
+    typeof sequence.slice !== "function" ||
+    sequence.length < 1
+  )
+    return false;
+  var currentValue = sequence[0];
+  if (tree.value !== currentValue) return false;
+  if (tree.left == null && tree.right == null) return true;
+  return (
+    hasPathOfSequence(tree.left, sequence.slice(1)) ||
+    hasPathOfSequence(tree.right, sequence.slice(1))
+  );
+}
+function allPathsWithNodeValueSumEqualsTo(tree, sum) {
+  var paths = [];
+  recursiveTreeWalk(tree, sum, (val) => paths.push(val), []);
+  return paths;
+}
+function recursiveTreeWalk(tree, sum, onFound, currentPath) {
+  if (tree == null) return;
+  let nodes = [],
+    pathSum = 0;
+  currentPath.push(tree.value);
+  for (let i = currentPath.length - 1; i >= 0; i--) {
+    pathSum += currentPath[i];
+    nodes.push(currentPath[i]);
+    if (pathSum === sum) onFound(nodes.reverse().join(" -> "));
+  }
+  recursiveTreeWalk(tree.left, sum, onFound, currentPath);
+  recursiveTreeWalk(tree.right, sum, onFound, currentPath);
+  currentPath.pop();
+}
+function totalNodesOnDiameter(tree) {
+  function getNodeHeight(node, updateDiameter) {
+    if (node == null) return 0;
+    let leftHeight = getNodeHeight(node.left, updateDiameter);
+    let rightHeight = getNodeHeight(node.right, updateDiameter);
+    updateDiameter(leftHeight + rightHeight + 1);
+    return Math.max(leftHeight, rightHeight) + 1;
+  }
+  var diameter = Number.NEGATIVE_INFINITY;
+  getNodeHeight(tree, (val) => {
+    diameter = Math.max(diameter, val);
+  });
+  return diameter;
+}
+function maximumSumPath(tree) {
+  function getNodePath(node, updateSumPath) {
+    var result = [];
+    if (node == null) return [0, null];
+    let leftMaxSum = getNodePath(node.left, updateSumPath);
+    let rightMaxSum = getNodePath(node.right, updateSumPath);
+    let path = [];
+    if (leftMaxSum[0] >= rightMaxSum[0]) {
+      path = [...(leftMaxSum[1] ?? []), node.value];
+      result = [leftMaxSum[0] + node.value, path];
+    } else {
+      path = [...(rightMaxSum[1] ?? []), node.value];
+      result = [rightMaxSum[0] + node.value, path];
+    }
+    let newSum = leftMaxSum[0] + node.value + rightMaxSum[0];
+    updateSumPath(newSum, [
+      ...(leftMaxSum[1] ?? []),
+      node.value,
+      ...(rightMaxSum[1] ?? []).reverse(),
+    ]);
+    return result;
+  }
+  var maxSum = Number.NEGATIVE_INFINITY,
+    path = [];
+  getNodePath(tree, (sum, maxPath) => {
+    if (sum > maxSum) {
+      maxSum = sum;
+      path = maxPath;
+    }
+  });
+  return path;
+}
+
 TreeNode.prototype.levelOrderTraversal = function () {
   return levelOrderTraversal(this);
 };
@@ -167,5 +283,26 @@ TreeNode.prototype.printTree = function () {
 };
 TreeNode.prototype.rightView = function () {
   return rightView(this);
+};
+TreeNode.prototype.hasRootToLeafPathWithSum = function (value) {
+  return hasRootToLeafPathWithSum(this, value);
+};
+TreeNode.prototype.allRootToLeafPathsWithSum = function (value) {
+  return allRootToLeafPathsWithSum(this, value);
+};
+TreeNode.prototype.pathNumbersSum = function () {
+  return pathNumbersSum(this);
+};
+TreeNode.prototype.hasPathOfSequence = function (value) {
+  return hasPathOfSequence(this, value);
+};
+TreeNode.prototype.allPathsWithNodeValueSumEqualsTo = function (value) {
+  return allPathsWithNodeValueSumEqualsTo(this, value);
+};
+TreeNode.prototype.totalNodesOnDiameter = function () {
+  return totalNodesOnDiameter(this);
+};
+TreeNode.prototype.maximumSumPath = function () {
+  return maximumSumPath(this);
 };
 module.exports = { TreeNode };

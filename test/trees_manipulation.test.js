@@ -88,4 +88,78 @@ describe("tree manipulations", function () {
     tree.right = TreeNode.fromArray([3, 8]);
     assert.deepEqual(tree.rightView(), [1, 3, 8, 7]);
   });
+  it("should tell if a binary tree has a root-to-leaf path with a given sum", function () {
+    assert.isTrue(tree.hasRootToLeafPathWithSum(10));
+    assert.isTrue(tree.hasRootToLeafPathWithSum(7));
+    assert.isFalse(tree.hasRootToLeafPathWithSum(12));
+  });
+  it("should return all root-to-leaf paths in a binary tree with a given sum", function () {
+    tree = TreeNode.fromArray([1, 7, 9, 4, 5, 2, 7]);
+    assert.deepEqual(tree.allRootToLeafPathsWithSum(12), [
+      "1 -> 7 -> 4 -> null",
+      "1 -> 9 -> 2 -> null",
+    ]);
+    tree = new TreeNode(12);
+    tree.left = TreeNode.fromArray([7, 4]);
+    tree.right = TreeNode.fromArray([1, 10, 5]);
+    assert.deepEqual(tree.allRootToLeafPathsWithSum(23), [
+      "12 -> 7 -> 4 -> null",
+      "12 -> 1 -> 10 -> null",
+    ]);
+  });
+  it("should return the sum of path in a binary tree which node value are digit", function () {
+    assert.equal(tree.pathNumbersSum(), 522);
+    tree = new TreeNode(1);
+    tree.left = TreeNode.fromArray([0, 1]);
+    tree.right = TreeNode.fromArray([1, 6, 5]);
+    assert.equal(tree.pathNumbersSum(), 332);
+  });
+  it("should check if a given sequence is a root-to-leaf path in a binary tree", function () {
+    assert.isTrue(tree.hasPathOfSequence([1, 3, 7]));
+    assert.isTrue(tree.hasPathOfSequence([1, 2, 4]));
+    assert.isFalse(tree.hasPathOfSequence([5, 2, 4]));
+    tree = TreeNode.fromArray([1, 2, 3, 4, undefined, 6, 7]);
+    assert.isFalse(tree.hasPathOfSequence([1, 2]));
+    assert.isFalse(tree.hasPathOfSequence({ 0: 1 }));
+  });
+  it("should give all path not necessary root-to-leaf of in binary tree with the given sum", function () {
+    assert.deepEqual(tree.allPathsWithNodeValueSumEqualsTo(10), [
+      "1 -> 3 -> 6",
+      "3 -> 7",
+    ]);
+  });
+  it("should return the number of nodes of the longest path between any leaf node of a binary tree", function () {
+    assert.equal(tree.totalNodesOnDiameter(), 5);
+    tree = new TreeNode(1);
+    tree.left = new TreeNode(2);
+    tree.right = new TreeNode(3);
+    tree.right.left = TreeNode.fromArray([5, 7, 8, 10]);
+    tree.right.right = new TreeNode(6);
+    tree.right.right.right = new TreeNode(9);
+    tree.right.right.right.right = new TreeNode(11);
+    assert.equal(tree.totalNodesOnDiameter(), 7);
+  });
+  describe("binary tree maximum sum path", function () {
+    var firstTree, secondTree;
+    before(function () {
+      firstTree = new TreeNode(1);
+      firstTree.left = TreeNode.fromArray([2, 4]);
+      firstTree.right = TreeNode.fromArray([3, 5, 6]);
+      secondTree = new TreeNode(1);
+      secondTree.left = TreeNode.fromArray([2, 1, 3]);
+      secondTree.right = TreeNode.fromArray([3, 5, 6, 7, 8, 9]);
+    });
+    it("should return the maximum sum path of a binary tree", function () {
+      assert.equal(
+        firstTree.maximumSumPath().reduce((prev, cur) => prev + cur, 0),
+        16
+      );
+      assert.equal(
+        secondTree.maximumSumPath().reduce((prev, cur) => prev + cur, 0),
+        31
+      );
+      assert.deepEqual(firstTree.maximumSumPath(), [4, 2, 1, 3, 6]);
+      assert.deepEqual(secondTree.maximumSumPath(), [8, 5, 3, 6, 9]);
+    });
+  });
 });

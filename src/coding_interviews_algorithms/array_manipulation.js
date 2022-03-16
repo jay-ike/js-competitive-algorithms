@@ -578,6 +578,27 @@ function firstKPositiveMissingNumbers(array, k) {
   }
   return result;
 }
+function nextIntervalIndices(intervals) {
+  var maxStarts = buildHeap([], (a, b) => a[0] > b[0]),
+    maxEnds = buildHeap([], (a, b) => a[0] > b[0]),
+    result = [...intervals].fill(-1);
+  for (let i = 0; i < intervals.length; i++) {
+    maxStarts.push([intervals[i][0], i]);
+    maxEnds.push([intervals[i][1], i]);
+  }
+  for (let i = 0; intervals.length; i++) {
+    let [topEnd, endIndex] = maxEnds.pop();
+    if (maxStarts.peek()[0] >= topEnd) {
+      let [topStart, startIndex] = maxStarts.pop();
+      while (maxStarts.length() && maxStarts.peek()[0] >= topEnd) {
+        [topStart, startIndex] = maxStarts.pop();
+      }
+      result[endIndex] = startIndex;
+    }
+    if (maxEnds.length() <= 0) break;
+  }
+  return result;
+}
 Array.prototype.maxSubArraySum = function (size) {
   return maximumArraySum(this, size);
 };
@@ -664,4 +685,7 @@ Array.prototype.findCorruptPair = function () {
 };
 Array.prototype.firstKPositiveMissingNumbers = function (k) {
   return firstKPositiveMissingNumbers(this, k);
+};
+Array.prototype.nextIntervalIndices = function () {
+  return nextIntervalIndices(this);
 };

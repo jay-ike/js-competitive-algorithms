@@ -342,6 +342,20 @@ describe("intervals problems", function () {
     ]);
     assert.deepEqual(schedules[2].freeIntervals(), [[5, 7]]);
   });
+  it("should return the next interval index for each interval in an array of interval", function () {
+    let intervals1 = [
+        [2, 3],
+        [3, 4],
+        [5, 6],
+      ],
+      intervals2 = [
+        [3, 4],
+        [1, 5],
+        [4, 6],
+      ];
+    assert.deepEqual(intervals1.nextIntervalIndices(), [1, 2, -1]);
+    assert.deepEqual(intervals2.nextIntervalIndices(), [2, -1, -1]);
+  });
 });
 
 describe("cyclic sort problems", function () {

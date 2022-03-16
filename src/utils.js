@@ -148,7 +148,6 @@ function buildHeap(array, comparator) {
     heapify(heap, i);
   }
   return {
-    heap,
     length() {
       return heap.length;
     },
@@ -171,6 +170,13 @@ function buildHeap(array, comparator) {
     },
     peek() {
       return heap[0];
+    },
+    delete(element) {
+      let index = heap.indexOf(element);
+      if (index != -1) {
+        heap = [...array.slice(0, index), ...array.slice(index + 1)];
+        heapify(heap, 0);
+      }
     },
   };
 }

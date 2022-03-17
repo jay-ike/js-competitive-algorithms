@@ -355,6 +355,8 @@ describe("intervals problems", function () {
       ];
     assert.deepEqual(intervals1.nextIntervalIndices(), [1, 2, -1]);
     assert.deepEqual(intervals2.nextIntervalIndices(), [2, -1, -1]);
+    intervals2.push([3, 4]);
+    assert.deepEqual(intervals2.nextIntervalIndices(), [2, -1, -1, 2]);
   });
 });
 
@@ -421,5 +423,48 @@ describe("cyclic sort problems", function () {
       [1, 5, 6]
     );
     assert.deepEqual(duplicatedArrays[2].firstKPositiveMissingNumbers(1), [4]);
+  });
+});
+describe("subsets problems", function () {
+  var set1, set2;
+  beforeEach(function () {
+    set1 = [1, 3];
+    set2 = [1, 5, 3];
+  });
+  it("should return all subset of a given list", function () {
+    assert.deepEqual(set1.allSubsets(), [[], [1], [3], [1, 3]]);
+    assert.deepEqual(set2.allSubsets(), [
+      [],
+      [1],
+      [3],
+      [1, 3],
+      [5],
+      [1, 5],
+      [3, 5],
+      [1, 3, 5],
+    ]);
+    set1 = [1, 3, 3];
+    assert.deepEqual(set1.allSubsets(), [
+      [],
+      [1],
+      [3],
+      [1, 3],
+      [3, 3],
+      [1, 3, 3],
+    ]);
+  });
+  it("should return all permutations of a given set", function () {
+    assert.deepEqual(set1.allPermutations(), [
+      [3, 1],
+      [1, 3],
+    ]);
+    assert.deepEqual(set2.allPermutations(), [
+      [3, 5, 1],
+      [5, 3, 1],
+      [5, 1, 3],
+      [3, 1, 5],
+      [1, 3, 5],
+      [1, 5, 3],
+    ]);
   });
 });

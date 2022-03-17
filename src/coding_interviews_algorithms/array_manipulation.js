@@ -594,8 +594,51 @@ function nextIntervalIndices(intervals) {
         [topStart, startIndex] = maxStarts.pop();
       }
       result[endIndex] = startIndex;
+      maxStarts.push([topStart, startIndex]);
     }
     if (maxEnds.length() <= 0) break;
+  }
+  return result;
+}
+function allSubsets(array) {
+  var subsets = [[]],
+    sortedArray = [...array].sort(),
+    startIndex = 0,
+    endIndex = 0;
+  for (let i = 0; i < sortedArray.length; i++) {
+    startIndex = 0;
+    let currentNumber = sortedArray[i];
+    if (i > 0 && sortedArray[i] === sortedArray[i - 1]) {
+      startIndex = endIndex + 1;
+    }
+    endIndex = subsets.length - 1;
+    for (let j = startIndex; j < endIndex + 1; j++) {
+      let set = subsets[j].slice(0);
+      set.push(currentNumber);
+      subsets.push(set);
+    }
+  }
+  return subsets;
+}
+function allPermutations(array) {
+  var permutations = [[]],
+    result = [];
+  for (let i = 0; i < array.length; i++) {
+    let currentNumber = array[i],
+      permutationLength = permutations.length;
+
+    for (let j = 0; j < permutationLength; j++) {
+      let oldPermutation = permutations.shift();
+      for (let k = 0; k < oldPermutation.length + 1; k++) {
+        let newPermutation = oldPermutation.slice(0);
+        newPermutation.splice(k, 0, currentNumber);
+        if (newPermutation.length === array.length) {
+          result.push(newPermutation);
+        } else {
+          permutations.push(newPermutation);
+        }
+      }
+    }
   }
   return result;
 }
@@ -688,4 +731,10 @@ Array.prototype.firstKPositiveMissingNumbers = function (k) {
 };
 Array.prototype.nextIntervalIndices = function () {
   return nextIntervalIndices(this);
+};
+Array.prototype.allSubsets = function () {
+  return allSubsets(this);
+};
+Array.prototype.allPermutations = function () {
+  return allPermutations(this);
 };

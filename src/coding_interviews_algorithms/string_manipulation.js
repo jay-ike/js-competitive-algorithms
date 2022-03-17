@@ -429,7 +429,140 @@ function computeBackspace(str, backspaceChar) {
   }
   return result;
 }
-
+function allCasePermutations(str) {
+  var permutations = [[...str].join("")];
+  for (let i = 0; i < str.length; i++) {
+    if (str[i].toUpperCase() !== str[i].toLowerCase()) {
+      let permutationLength = permutations.length;
+      for (let j = 0; j < permutationLength; j++) {
+        let newPermutation = [...permutations[j]];
+        if (newPermutation[i] === newPermutation[i].toUpperCase()) {
+          newPermutation[i] = newPermutation[i].toLowerCase();
+        } else {
+          newPermutation[i] = newPermutation[i].toUpperCase();
+        }
+        permutations.push(newPermutation.join(""));
+      }
+    }
+  }
+  return permutations;
+}
+function createParenthesesBuilder(str, openedBrackets, closedBrackets) {
+  return {
+    str,
+    openedBrackets,
+    closedBrackets,
+    addOpenBracket() {
+      return createParenthesesBuilder(
+        `${str}(`,
+        openedBrackets + 1,
+        closedBrackets
+      );
+    },
+    addCloseBracket() {
+      return createParenthesesBuilder(
+        `${str})`,
+        openedBrackets,
+        closedBrackets + 1
+      );
+    },
+  };
+}
+function allCombinationsOfBalancedBracketsPairs(numberOfPairs) {
+  var permutations = [],
+    result = [];
+  permutations.push(createParenthesesBuilder("", 0, 0));
+  while (permutations.length > 0) {
+    let currentBrackets = permutations.shift();
+    if (
+      currentBrackets.openedBrackets === numberOfPairs &&
+      currentBrackets.closedBrackets === numberOfPairs
+    ) {
+      result.push(currentBrackets.str);
+    }
+    if (currentBrackets.openedBrackets < numberOfPairs) {
+      permutations.push(currentBrackets.addOpenBracket());
+    }
+    if (currentBrackets.closedBrackets < currentBrackets.openedBrackets) {
+      permutations.push(currentBrackets.addCloseBracket());
+    }
+  }
+  return result;
+}
+function createAbbreviationBuilder(str, abbreviations) {
+  return {
+    str,
+    abbreviations,
+    abbreviate() {
+      return createAbbreviationBuilder(str, abbreviations + 1);
+    },
+    placeChar(character) {
+      let newString = str;
+      if (abbreviations < 1) {
+        newString = `${newString}${character}`;
+      } else {
+        newString = `${newString}${abbreviations}${character}`;
+      }
+      return createAbbreviationBuilder(newString, 0);
+    },
+    print() {
+      let result = "";
+      if (abbreviations === 0) {
+        result = str;
+      } else {
+        result = `${str}${abbreviations}`;
+      }
+      return result;
+    },
+  };
+}
+function allUniqueAbbreviations(str) {
+  let abbreviations = [],
+    result = [];
+  abbreviations.push(createAbbreviationBuilder("", 0));
+  for (let i = 0; i < str.length; i++) {
+    let abbreviationSize = abbreviations.length;
+    for (let j = 0; j < abbreviationSize; j++) {
+      let currentAbbreviation = abbreviations.shift();
+      abbreviations.push(
+        currentAbbreviation.abbreviate(),
+        currentAbbreviation.placeChar(str[i])
+      );
+    }
+  }
+  while (abbreviations.length > 0) {
+    let currentAbbreviation = abbreviations.shift();
+    result.push(currentAbbreviation.print());
+  }
+  return result;
+}
+function allPossibleEvaluations(str) {
+  var result = [];
+  if (!str.includes("+") && !str.includes("-") && !str.includes("*")) {
+    result.push(Number.parseInt(str, 10));
+  } else {
+    for (let i = 0; i < str.length; i++) {
+      let char = str[i];
+      if (isNaN(Number.parseInt(char))) {
+        let leftPart = allPossibleEvaluations(str.substring(0, i));
+        let rightPart = allPossibleEvaluations(str.substring(i + 1));
+        for (let j = 0; j < leftPart.length; j++) {
+          let leftOperand = leftPart[j];
+          for (let k = 0; k < rightPart.length; k++) {
+            if (char === "+") {
+              result.push(leftOperand + rightPart[k]);
+            } else if (char === "-") {
+              result.push(leftOperand - rightPart[k]);
+            } else if (char === "*") {
+              result.push(leftOperand * rightPart[k]);
+            }
+          }
+        }
+      }
+    }
+  }
+  return result;
+}
 String.prototype.findAnagramIndices = function (word) {
   return findAnagramIndices(word, this);
 };
@@ -466,16 +599,19 @@ String.prototype.concatenatedWordsIndexes = function (wordList) {
 String.prototype.equalAfterBackspaceWith = function (str, backspaceChar) {
   return equalAfterBackspace(this, str, backspaceChar);
 };
+String.prototype.allCasePermutations = function () {
+  return allCasePermutations(this);
+};
+String.prototype.allUniqueAbbreviations = function () {
+  return allUniqueAbbreviations(this);
+};
+String.prototype.allPossibleEvaluations = function () {
+  return allPossibleEvaluations(this);
+};
 module.exports = {
   generateFrequencyMap,
-  findAnagramIndices,
-  isPalindrome,
-  generateIndexesDictionary,
   palindromePairsIndices,
   getRowSpace,
-  zigzagString,
-  throwIfContains,
-  longestPalindromeSubstring,
   groupAnagrams,
-  replaceTokens,
+  allCombinationsOfBalancedBracketsPairs,
 };

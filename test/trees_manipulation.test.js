@@ -1,5 +1,7 @@
 const {
   TreeNode,
+  allPossibleBstStoringNumberFromOneTo,
+  countOfAllUniqueBSTStoringNumbersFromOneTo,
 } = require("../src/coding_interviews_algorithms/trees_manipulation");
 const { assert } = require("chai");
 
@@ -161,5 +163,23 @@ describe("tree manipulations", function () {
       assert.deepEqual(firstTree.maximumSumPath(), [4, 2, 1, 3, 6]);
       assert.deepEqual(secondTree.maximumSumPath(), [8, 5, 3, 6, 9]);
     });
+  });
+  it("should return the possible BST from storing numbers from 1 to a given number", function () {
+    assert.deepEqual(allPossibleBstStoringNumberFromOneTo(2), [
+      TreeNode.fromArray([1, null, 2]),
+      TreeNode.fromArray([2, 1]),
+    ]);
+    assert.deepEqual(allPossibleBstStoringNumberFromOneTo(3), [
+      TreeNode.fromArray([1, null, 2, null, null, null, 3]),
+      TreeNode.fromArray([1, null, 3, null, null, 2]),
+      TreeNode.fromArray([2, 1, 3]),
+      TreeNode.fromArray([3, 1, null, null, 2]),
+      TreeNode.fromArray([3, 2, null, 1]),
+    ]);
+  });
+  it("should return the count of all possible BST storing number", function () {
+    assert.equal(countOfAllUniqueBSTStoringNumbersFromOneTo(2), 2);
+    assert.equal(countOfAllUniqueBSTStoringNumbersFromOneTo(3), 5);
+    assert.equal(countOfAllUniqueBSTStoringNumbersFromOneTo(4), 14);
   });
 });

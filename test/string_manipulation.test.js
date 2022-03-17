@@ -3,6 +3,7 @@ const {
   generateFrequencyMap,
   palindromePairsIndices,
   getRowSpace,
+  allCombinationsOfBalancedBracketsPairs,
 } = require("../src/coding_interviews_algorithms/string_manipulation");
 describe("finding anagrams indices test", function () {
   var dictionary;
@@ -194,5 +195,72 @@ describe("comparing strings containing backspaces", function () {
     assert.isFalse("x#yz".equalAfterBackspaceWith("xzz#"));
     assert.isTrue("xp#".equalAfterBackspaceWith("xyz##"));
     assert.isTrue("xywrrmp".equalAfterBackspaceWith("xywrrmu#p"));
+  });
+});
+describe("string manipulations", function () {
+  it("should return the possible permutations by changing the case", function () {
+    assert.deepEqual("ad5?".allCasePermutations(), [
+      "ad5?",
+      "Ad5?",
+      "aD5?",
+      "AD5?",
+    ]);
+    assert.deepEqual("ab7c".allCasePermutations(), [
+      "ab7c",
+      "Ab7c",
+      "aB7c",
+      "AB7c",
+      "ab7C",
+      "Ab7C",
+      "aB7C",
+      "AB7C",
+    ]);
+  });
+  it("should generate all combination of n pairs of balanced bracket", function () {
+    assert.deepEqual(allCombinationsOfBalancedBracketsPairs(2), [
+      "(())",
+      "()()",
+    ]);
+    assert.deepEqual(allCombinationsOfBalancedBracketsPairs(3), [
+      "((()))",
+      "(()())",
+      "(())()",
+      "()(())",
+      "()()()",
+    ]);
+  });
+  it("should return all unique abbreviations of a given word", function () {
+    assert.deepEqual("bat".allUniqueAbbreviations(), [
+      "3",
+      "2t",
+      "1a1",
+      "1at",
+      "b2",
+      "b1t",
+      "ba1",
+      "bat",
+    ]);
+    assert.deepEqual("code".allUniqueAbbreviations(), [
+      "4",
+      "3e",
+      "2d1",
+      "2de",
+      "1o2",
+      "1o1e",
+      "1od1",
+      "1ode",
+      "c3",
+      "c2e",
+      "c1d1",
+      "c1de",
+      "co2",
+      "co1e",
+      "cod1",
+      "code",
+    ]);
+  });
+  it("should return all the possible evaluation of operations(+,-,*) supported", function () {
+    assert.deepEqual("1+2*3".allPossibleEvaluations(), [7, 9]);
+    assert.deepEqual("2*3-4-5".allPossibleEvaluations(), [8, -12, 7, -7, -3]);
   });
 });

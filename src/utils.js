@@ -70,14 +70,16 @@ class TreeNode {
     function buildNode(node, array, index) {
       var leftNode, rightNode;
       if (2 * index + 1 < array.length) {
-        leftNode = new TreeNode(array[2 * index + 1]);
+        let value = array[2 * index + 1];
+        leftNode = value != null ? new TreeNode(value) : null;
         node.left = leftNode;
-        buildNode(leftNode, array, 2 * index + 1);
+        if (leftNode != null) buildNode(leftNode, array, 2 * index + 1);
       }
       if (2 * (index + 1) < array.length) {
-        rightNode = new TreeNode(array[2 * (index + 1)]);
+        let value = array[2 * (index + 1)];
+        rightNode = value != null ? new TreeNode(value) : null;
         node.right = rightNode;
-        buildNode(rightNode, array, 2 * (index + 1));
+        if (rightNode != null) buildNode(rightNode, array, 2 * (index + 1));
       }
     }
     var index = 0,

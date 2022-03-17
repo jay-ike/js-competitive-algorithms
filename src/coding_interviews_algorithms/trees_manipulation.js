@@ -253,6 +253,46 @@ function maximumSumPath(tree) {
   });
   return path;
 }
+function constructUniqueBST(start, end) {
+  var result = [];
+  if (start > end) {
+    result.push(null);
+    return result;
+  }
+  for (var i = start; i <= end; i++) {
+    let leftSubtree = constructUniqueBST(start, i - 1),
+      rightSubtree = constructUniqueBST(i + 1, end);
+    for (let j = 0; j < leftSubtree.length; j++) {
+      for (let k = 0; k < rightSubtree.length; k++) {
+        const node = new TreeNode(i);
+        node.left = leftSubtree[j];
+        node.right = rightSubtree[k];
+        result.push(node);
+      }
+    }
+  }
+  return result;
+}
+function allPossibleBstStoringNumberFromOneTo(number) {
+  if (number <= 0) {
+    return 0;
+  }
+  return constructUniqueBST(1, number);
+}
+function countOfAllUniqueBSTStoringNumbersFromOneTo(number) {
+  if (number <= 1) {
+    return 1;
+  }
+  let count = 0;
+  for (let i = 1; i <= number; i++) {
+    let leftSubtreeCount = countOfAllUniqueBSTStoringNumbersFromOneTo(i - 1);
+    let rightSubtreeCount = countOfAllUniqueBSTStoringNumbersFromOneTo(
+      number - i
+    );
+    count += leftSubtreeCount * rightSubtreeCount;
+  }
+  return count;
+}
 
 TreeNode.prototype.levelOrderTraversal = function () {
   return levelOrderTraversal(this);
@@ -305,4 +345,8 @@ TreeNode.prototype.totalNodesOnDiameter = function () {
 TreeNode.prototype.maximumSumPath = function () {
   return maximumSumPath(this);
 };
-module.exports = { TreeNode };
+module.exports = {
+  TreeNode,
+  allPossibleBstStoringNumberFromOneTo,
+  countOfAllUniqueBSTStoringNumbersFromOneTo,
+};

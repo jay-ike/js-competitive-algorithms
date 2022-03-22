@@ -269,6 +269,14 @@ function incrementKeyValue(dictionary, key, { step, condition }) {
   }
 }
 function emptyCallback() {}
+function buildArrayReader(arr) {
+  return {
+    getIndex(index) {
+      if (index >= arr.length) return Number.MAX_SAFE_INTEGER;
+      return arr[index];
+    },
+  };
+}
 Object.prototype.incrementKeyValue = function (
   key,
   { step, condition } = { step: 1, condition: true }
@@ -293,4 +301,5 @@ module.exports = {
   job,
   TreeNode,
   emptyCallback,
+  buildArrayReader,
 };

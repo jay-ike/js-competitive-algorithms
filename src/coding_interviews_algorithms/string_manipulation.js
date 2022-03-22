@@ -609,7 +609,6 @@ String.prototype.allPossibleEvaluations = function () {
   return allPossibleEvaluations(this);
 };
 module.exports = {
-  generateFrequencyMap,
   palindromePairsIndices,
   getRowSpace,
   groupAnagrams,

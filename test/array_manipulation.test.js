@@ -468,3 +468,70 @@ describe("subsets problems", function () {
     ]);
   });
 });
+describe("modified binary search problems", function () {
+  it("should return the index of an element in a sorted array without knowing the order", function () {
+    assert.equal([1, 2, 3, 4, 5, 6, 7].binarySearchOf(5), 4);
+    assert.equal([7, 6, 5, 4, 3, 2, 1].binarySearchOf(5), 2);
+    assert.equal([7, 6, 5, 4, 3, 2, 1].binarySearchOf(8), -1);
+    assert.equal([7].binarySearchOf(8), -1);
+  });
+  it("should return return the index of the ceiling of a giving number in a sorted array", function () {
+    assert.equal([4, 6, 10].ceilingIndexOf(6), 1);
+    assert.equal([1, 3, 8, 10, 15].ceilingIndexOf(12), 4);
+    assert.equal([1, 3, 8, 10].ceilingIndexOf(12), -1);
+    assert.equal([4, 6, 10].ceilingIndexOf(-1), 0);
+  });
+  it("should return the smallest letter greater than a given letter in a sorted array", function () {
+    assert.equal(["a", "c", "f", "h"].smallestLetterGreaterThan("f"), "h");
+    assert.equal(["a", "c", "f", "h"].smallestLetterGreaterThan("b"), "c");
+    assert.equal(["a", "c", "f", "h"].smallestLetterGreaterThan("m"), "a");
+    assert.equal(["a", "c", "f", "h"].smallestLetterGreaterThan("h"), "a");
+  });
+  it("should return the of the first and the last index of a given number in a sorted array", function () {
+    assert.deepEqual([4, 6, 6, 6, 9].rangeOf(6), [1, 3]);
+    assert.deepEqual([1, 3, 8, 10, 15].rangeOf(10), [3, 3]);
+    assert.deepEqual([1, 3, 8, 10, 15].rangeOf(12), [-1, -1]);
+  });
+  it("should return the index of an element in array of infinite size", function () {
+    assert.equal(
+      [4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30].searchIndexOf(16),
+      6
+    );
+    assert.equal(
+      [4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30].searchIndexOf(11),
+      -1
+    );
+    assert.equal([1, 3, 8, 10, 15].searchIndexOf(15), 4);
+    assert.equal([1, 3, 8, 10, 15].searchIndexOf(200), -1);
+  });
+  it("should return the element with the minimum difference with a given key", function () {
+    var array = [4, 6, 10];
+    assert.equal(array.minimumDifferenceWith(7), 6);
+    assert.equal(array.minimumDifferenceWith(4), 4);
+    assert.equal(array.minimumDifferenceWith(2), 4);
+    assert.equal(array.minimumDifferenceWith(17), 10);
+    assert.equal([1, 3, 8, 10, 15].minimumDifferenceWith(12), 10);
+  });
+  it("should return the maximum value in a bitonic array", function () {
+    assert.equal([1, 3, 8, 12, 4, 2].bitonicArrayMaximum(), 12);
+    assert.equal([3, 8, 3, 1].bitonicArrayMaximum(), 8);
+    assert.equal([1, 3, 8, 12].bitonicArrayMaximum(), 12);
+    assert.equal([10, 9, 8].bitonicArrayMaximum(), 10);
+  });
+  it("should return the index of an element in a bitonic array", function () {
+    assert.equal([1, 3, 8, 4, 3].bitonicArrayIndexOf(4), 3);
+    assert.equal([3, 8, 3, 1].bitonicArrayIndexOf(8), 1);
+    assert.equal([1, 3, 8, 12].bitonicArrayIndexOf(12), 3);
+    assert.equal([10, 9, 8].bitonicArrayIndexOf(10), 0);
+  });
+  it("should return the index of an element in a rotated array", function () {
+    assert.equal([10, 15, 1, 3, 8].rotatedArrayIndexOf(15), 1);
+    assert.equal([4, 5, 7, 9, 10, -1, 2].rotatedArrayIndexOf(10), 4);
+  });
+  it("should return the rotation count in a rotated array", function () {
+    assert.equal([10, 15, 1, 3, 8].rotatedArrayRotationCount(), 2);
+    assert.equal([4, 5, 7, 9, 10, -1, 2].rotatedArrayRotationCount(), 5);
+    assert.equal([2, 4, 5, 7, 10, -1].rotatedArrayRotationCount(), 5);
+    assert.equal([1, 3, 8, 10, 15].rotatedArrayRotationCount(), 0);
+  });
+});

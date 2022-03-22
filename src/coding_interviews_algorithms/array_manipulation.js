@@ -1,4 +1,4 @@
-const { interval, buildHeap, job } = require("../utils");
+const { interval, buildHeap, job, buildArrayReader } = require("../utils");
 function maximumArraySum(array, size) {
   let endIndex = 0,
     startIndex = 0,
@@ -642,6 +642,152 @@ function allPermutations(array) {
   }
   return result;
 }
+function binarySearchOf(array, value) {
+  if (array.length <= 0) return -1;
+  let start = 0,
+    end = array.length - 1,
+    isAscending = array[start] < array[end];
+  while (start <= end) {
+    let middle = Math.floor((start + end) / 2);
+    if (value === array[middle]) return middle;
+    if (isAscending) {
+      if (value < array[middle]) end = middle - 1;
+      else start = middle + 1;
+    } else {
+      if (value < array[middle]) start = middle + 1;
+      else end = middle - 1;
+    }
+  }
+  return -1;
+}
+function binarySearch(array, value, { onExitLoop, onFoundValue }) {
+  var start = 0,
+    end = array.length - 1;
+  while (start <= end) {
+    let middle = Math.floor((start + end) / 2);
+    if (value === array[middle]) return onFoundValue(middle);
+    if (value < array[middle]) {
+      end = middle - 1;
+    } else start = middle + 1;
+  }
+  return onExitLoop(start);
+}
+var resultHandler = (val) => val;
+function ceilingIndexOf(array, value) {
+  var end = array.length - 1;
+  if (array.length <= 0 || value > array[end]) return -1;
+  return binarySearch(array, value, {
+    onExitLoop: resultHandler,
+    onFoundValue: resultHandler,
+  });
+}
+function smallestLetterGreaterThan(array, value) {
+  var start = 0,
+    end = array.length - 1;
+  if (value >= array[end]) return array[start];
+  return binarySearch(array, value, {
+    onExitLoop: (val) => array[val],
+    onFoundValue: (val) => array[val + 1],
+  });
+}
+function rangeOf(array, value) {
+  var start = 0,
+    end = array.length - 1;
+  let index = binarySearch(array, value, {
+    onExitLoop: (_) => -1,
+    onFoundValue: resultHandler,
+  });
+  if (index === -1) return [-1, -1];
+  start = index;
+  end = index;
+  while (start - 1 >= 0 && array[start] === array[start - 1]) start = start - 1;
+  while (end + 1 < array.length && array[end] === array[end + 1]) end = end + 1;
+  return [start, end];
+}
+function searchIndexOf(array, value) {
+  var start = 0,
+    end = 1,
+    arrayReader = buildArrayReader(array);
+  if (arrayReader.getIndex(0) === Number.MAX_SAFE_INTEGER) return -1;
+  while (arrayReader.getIndex(end) < value) {
+    let newStart = end + 1;
+    end += (end - start + 1) * 2;
+    start = newStart;
+  }
+  while (start <= end) {
+    let middle = Math.floor((start + end) / 2);
+    if (arrayReader.getIndex(middle) === value) return middle;
+    if (arrayReader.getIndex(middle) > value) end = middle - 1;
+    else start = middle + 1;
+  }
+  return -1;
+}
+function minimumDifferenceWith(array, value) {
+  if (array.length <= 0) return null;
+  var start = 0,
+    end = array.length - 1;
+  if (value < array[start]) return array[start];
+  if (value > array[end]) return array[end];
+  while (start <= end) {
+    let middle = Math.floor((start + end) / 2);
+    if (array[middle] === value) return value;
+    if (value < array[middle]) end = middle - 1;
+    else start = middle + 1;
+  }
+  if (array[start] - value < value - array[end]) {
+    return array[start];
+  } else return array[end];
+}
+function bitonicArrayMaximum(array) {
+  var start = 0,
+    end = array.length - 1;
+  while (start < end) {
+    let middle = Math.floor((end + start) / 2);
+    if (array[middle] > array[middle + 1]) end = middle;
+    else start = middle + 1;
+  }
+  return array[start];
+}
+function bitonicArrayIndexOf(array, value) {
+  var start = 0,
+    end = array.length - 1;
+  while (start < end) {
+    let middle = Math.floor((end + start) / 2);
+    if (array[middle] > array[middle + 1]) end = middle;
+    else start = middle + 1;
+  }
+  let positionInLeftSide = binarySearchOf(array.slice(0, start + 1), value),
+    positionInRightSide = binarySearchOf(array.slice(start + 1), value);
+  if (positionInLeftSide !== -1) return positionInLeftSide;
+  else if (positionInRightSide !== -1) return start + 1 + positionInRightSide;
+  return -1;
+}
+function rotatedArrayIndexOf(array, value) {
+  var start = 0,
+    end = array.length - 1;
+  while (start <= end) {
+    let middle = Math.floor((end + start) / 2);
+    if (array[middle] === value) return middle;
+    if (array[start] <= array[middle]) {
+      if (value >= array[start] && value < array[middle]) end = middle - 1;
+      else start = middle + 1;
+    } else {
+      if (array[middle] < value && value <= array[end]) start = middle + 1;
+      else end = middle - 1;
+    }
+  }
+  return -1;
+}
+function rotatedArrayRotationCount(array) {
+  var start = 0,
+    end = array.length - 1;
+  while (array[start] > array[end]) {
+    let middle = Math.floor((end + start) / 2);
+    if (array[start] > array[middle]) end = middle;
+    else start = middle + 1;
+  }
+  return start;
+}
 Array.prototype.maxSubArraySum = function (size) {
   return maximumArraySum(this, size);
 };
@@ -737,4 +883,34 @@ Array.prototype.allSubsets = function () {
 };
 Array.prototype.allPermutations = function () {
   return allPermutations(this);
+};
+Array.prototype.binarySearchOf = function (value) {
+  return binarySearchOf(this, value);
+};
+Array.prototype.ceilingIndexOf = function (value) {
+  return ceilingIndexOf(this, value);
+};
+Array.prototype.smallestLetterGreaterThan = function (letter) {
+  return smallestLetterGreaterThan(this, letter);
+};
+Array.prototype.rangeOf = function (value) {
+  return rangeOf(this, value);
+};
+Array.prototype.searchIndexOf = function (value) {
+  return searchIndexOf(this, value);
+};
+Array.prototype.minimumDifferenceWith = function (value) {
+  return minimumDifferenceWith(this, value);
+};
+Array.prototype.bitonicArrayMaximum = function () {
+  return bitonicArrayMaximum(this);
+};
+Array.prototype.bitonicArrayIndexOf = function (value) {
+  return bitonicArrayIndexOf(this, value);
+};
+Array.prototype.rotatedArrayIndexOf = function (value) {
+  return rotatedArrayIndexOf(this, value);
+};
+Array.prototype.rotatedArrayRotationCount = function () {
+  return rotatedArrayRotationCount(this);
 };

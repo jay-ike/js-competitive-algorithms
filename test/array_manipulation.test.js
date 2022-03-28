@@ -535,3 +535,46 @@ describe("modified binary search problems", function () {
     assert.equal([1, 3, 8, 10, 15].rotatedArrayRotationCount(), 0);
   });
 });
+describe("XOR pattern problems", function () {
+  it("should return the non-duplicated number in an array of duplicated numbers", function () {
+    assert.isNull([].findSingleNumber());
+    assert.equal([1, 4, 2, 1, 3, 2, 3].findSingleNumber(), 4);
+    assert.equal([7, 9, 7].findSingleNumber(), 9);
+  });
+  it("should return the 2 non-duplicated numbers in an array of duplicated numbers", function () {
+    assert.deepEqual([].findTwoSingleNumbers(), []);
+    assert.deepEqual(
+      [1, 4, 2, 1, 3, 5, 6, 2, 3, 5].findTwoSingleNumbers(),
+      [4, 6]
+    );
+    assert.deepEqual([1, 2, 3, 1].findTwoSingleNumbers(), [2, 3]);
+  });
+  it("should flip and invert a matrix of binary numbers", function () {
+    assert.deepEqual(
+      [
+        [1, 0, 1],
+        [1, 1, 1],
+        [0, 1, 1],
+      ].flipInvert(),
+      [
+        [0, 1, 0],
+        [0, 0, 0],
+        [0, 0, 1],
+      ]
+    );
+    assert.deepEqual(
+      [
+        [1, 1, 0, 0],
+        [0, 1, 1, 0],
+        [0, 0, 0, 1],
+        [1, 0, 1, 0],
+      ].flipInvert(),
+      [
+        [1, 1, 0, 0],
+        [1, 0, 0, 1],
+        [0, 1, 1, 1],
+        [1, 0, 1, 0],
+      ]
+    );
+  });
+});

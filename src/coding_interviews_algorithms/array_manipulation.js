@@ -1,4 +1,10 @@
-const { interval, buildHeap, job, buildArrayReader } = require("../utils");
+const {
+  interval,
+  buildHeap,
+  job,
+  buildArrayReader,
+  complementBase10Of,
+} = require("../utils");
 function maximumArraySum(array, size) {
   let endIndex = 0,
     startIndex = 0,
@@ -788,6 +794,41 @@ function rotatedArrayRotationCount(array) {
   }
   return start;
 }
+function findSingleNumber(array) {
+  if (array.length <= 0) return null;
+  var number = array[0];
+  for (let i = 1; i <= array.length; i++) {
+    number ^= array[i];
+  }
+  return number;
+}
+function findTwoSingleNumbers(array) {
+  if (array.length <= 0) return [];
+  let number = findSingleNumber(array),
+    rightMostDifferingBit = 1;
+  while ((rightMostDifferingBit & number) === 0) {
+    rightMostDifferingBit <<= 1;
+  }
+  let number1 = 0,
+    number2 = 0;
+  array.forEach((val) => {
+    if ((val & rightMostDifferingBit) === 0) number1 ^= val;
+    else number2 ^= val;
+  });
+  return [number1, number2];
+}
+function flipInvert(array) {
+  var clonedArray = [...array],
+    size = array.length;
+  for (let row = 0; row < size; row++) {
+    for (let col = 0; col < Math.floor((size + 1) / 2); col++) {
+      let tmp = clonedArray[row][col] ^ 1;
+      clonedArray[row][col] = clonedArray[row][size - 1 - col] ^ 1;
+      clonedArray[row][size - 1 - col] = tmp;
+    }
+  }
+  return clonedArray;
+}
 Array.prototype.maxSubArraySum = function (size) {
   return maximumArraySum(this, size);
 };
@@ -913,4 +954,13 @@ Array.prototype.rotatedArrayIndexOf = function (value) {
 };
 Array.prototype.rotatedArrayRotationCount = function () {
   return rotatedArrayRotationCount(this);
+};
+Array.prototype.findSingleNumber = function () {
+  return findSingleNumber(this);
+};
+Array.prototype.findTwoSingleNumbers = function () {
+  return findTwoSingleNumbers(this);
+};
+Array.prototype.flipInvert = function () {
+  return flipInvert(this);
 };

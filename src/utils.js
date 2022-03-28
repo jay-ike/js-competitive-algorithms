@@ -277,6 +277,16 @@ function buildArrayReader(arr) {
     },
   };
 }
+function complementBase10Of(number) {
+  let largestNumberWithSameDigit = 0,
+    numberOfDigits = 0;
+  if (number === 0) return 1;
+  while (largestNumberWithSameDigit < number) {
+    largestNumberWithSameDigit += Math.pow(2, numberOfDigits);
+    numberOfDigits++;
+  }
+  return largestNumberWithSameDigit ^ number;
+}
 Object.prototype.incrementKeyValue = function (
   key,
   { step, condition } = { step: 1, condition: true }
@@ -302,4 +312,5 @@ module.exports = {
   TreeNode,
   emptyCallback,
   buildArrayReader,
+  complementBase10Of,
 };

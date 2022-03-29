@@ -1,4 +1,4 @@
-require("../utils");
+const { buildHeap } = require("../utils");
 function throwIfLongerThan(pattern, text) {
   if (pattern.length > text.length) {
     throw new ArgumentError(
@@ -563,6 +563,64 @@ function allPossibleEvaluations(str) {
   }
   return result;
 }
+function charactersWithMostFrequenciesFirst(str) {
+  var frequencies = {},
+    maxHeap = buildHeap([], (a, b) => a[1] > b[1]),
+    result = "";
+  for (let i = 0; i < str.length; i++) {
+    frequencies.incrementKeyValue(str[i]);
+  }
+  let keys = Object.keys(frequencies);
+  keys.forEach((key) => maxHeap.push([key, frequencies[key]]));
+  while (maxHeap.length() > 0) {
+    let [char, frequency] = maxHeap.pop();
+    result += `${char}`.repeat(frequency);
+  }
+  return result;
+}
+function rearrangeAvoidingCloseSameCharacters(str) {
+  var frequencies = {},
+    result = "",
+    maxHeap = buildHeap([], (a, b) => a[1] > b[1]);
+  for (let i = 0; i < str.length; i++) frequencies.incrementKeyValue(str[i]);
+  Object.keys(frequencies).forEach((key) =>
+    maxHeap.push([key, frequencies[key]])
+  );
+  let previousChar = null,
+    previousCount = 0;
+  while (maxHeap.length() > 0) {
+    let [char, occurrence] = maxHeap.pop();
+    if (previousChar != null && previousCount > 0) {
+      maxHeap.push([previousChar, previousCount]);
+    }
+    previousChar = char;
+    previousCount = occurrence - 1;
+    result += char;
+  }
+  return result.length === str.length ? result : "";
+}
+function rearrangeBySeparatingSameCharactersAtLeastBy(str, k) {
+  var maxHeap = buildHeap([], (a, b) => a[1] > b[1]),
+    queue = [],
+    result = "",
+    frequencies = {};
+  for (let i = 0; i < str.length; i++) frequencies.incrementKeyValue(str[i]);
+  Object.keys(frequencies).forEach((key) =>
+    maxHeap.push([key, frequencies[key]])
+  );
+
+  while (maxHeap.length() > 0) {
+    let [char, occurrence] = maxHeap.pop();
+    if (char != null && occurrence >= 1) {
+      result += char;
+      queue.push([char, occurrence - 1]);
+    }
+    if (queue.length === k) {
+      maxHeap.push(queue.shift());
+    }
+  }
+  return result.length === str.length ? result : "";
+}
 String.prototype.findAnagramIndices = function (word) {
   return findAnagramIndices(word, this);
 };
@@ -607,6 +665,15 @@ String.prototype.allUniqueAbbreviations = function () {
 };
 String.prototype.allPossibleEvaluations = function () {
   return allPossibleEvaluations(this);
+};
+String.prototype.charactersWithMostFrequenciesFirst = function () {
+  return charactersWithMostFrequenciesFirst(this);
+};
+String.prototype.rearrangeAvoidingCloseSameCharacters = function () {
+  return rearrangeAvoidingCloseSameCharacters(this);
+};
+String.prototype.rearrangeBySeparatingSameCharactersAtLeastBy = function (k) {
+  return rearrangeBySeparatingSameCharactersAtLeastBy(this, k);
 };
 module.exports = {
   palindromePairsIndices,

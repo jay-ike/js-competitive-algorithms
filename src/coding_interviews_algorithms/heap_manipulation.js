@@ -90,8 +90,31 @@ function findMaximumProfit(projects, profits, capital, numberOfProjects) {
   }
   return currentCapital;
 }
+function addValueGreaterThanThePeek(value, heap, k) {
+  let peek = heap.peek();
+  if (value > peek && peek != null && heap.length() === k) {
+    heap.pop();
+    heap.push(value);
+  } else if (peek == null || heap.length() < k) heap.push(value);
+}
+function buildKLargestNumberInStream(array, k) {
+  var minHeap = buildHeap([], (a, b) => a < b);
+  for (let i = 0; i < k; i++) {
+    if (k <= array.length) minHeap.push(array[i]);
+  }
+  for (let i = k; i < array.length; i++)
+    addValueGreaterThanThePeek(array[i], minHeap, k);
+  return {
+    add(value) {
+      addValueGreaterThanThePeek(value, minHeap, k);
+      if (minHeap.length() < k) return null;
+      return minHeap.peek();
+    },
+  };
+}
 module.exports = {
   buildNumberStream,
   allMediansOfSubArrayOfSize,
   findMaximumProfit,
+  buildKLargestNumberInStream,
 };

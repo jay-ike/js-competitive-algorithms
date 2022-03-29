@@ -578,3 +578,85 @@ describe("XOR pattern problems", function () {
     );
   });
 });
+describe("top K elements problems", function () {
+  it("should return the k greatest numbers", function () {
+    assert.deepEqual([3, 1, 5, 12, 2, 11].kGreatestNumbers(3), [12, 11, 5]);
+    assert.deepEqual([12, 1, 5, 12, -1, 11].kGreatestNumbers(3), [12, 12, 11]);
+  });
+  it("should return the k smallest number", function () {
+    assert.equal([1, 5, 12, 2, 11, 5].kSmallestNumber(3), 5);
+    assert.equal([1, 5, 12, 2, 11, 5].kSmallestNumber(4), 5);
+    assert.equal([5, 12, 11, -1, 12].kSmallestNumber(3), 11);
+  });
+  it("should return the k closest point to the origin", function () {
+    assert.deepEqual(
+      [
+        [1, 2],
+        [1, 3],
+      ].kClosestPointsToOrigin(1),
+      [[1, 2]]
+    );
+    assert.deepEqual(
+      [
+        [1, 3],
+        [3, 4],
+        [2, -1],
+      ].kClosestPointsToOrigin(2),
+      [
+        [2, -1],
+        [1, 3],
+      ]
+    );
+  });
+  it("should return the cost for joining all ropes given rope's length assuming the cost is the same as their length", function () {
+    assert.equal([1, 3, 11, 5].minimumRopesJoiningCost(), 33);
+    assert.equal([3, 4, 5, 6].minimumRopesJoiningCost(), 36);
+    assert.equal([1, 3, 11, 5, 2].minimumRopesJoiningCost(), 42);
+  });
+  it("should return the k most frequent element in an array", function () {
+    assert.deepEqual(
+      [1, 3, 5, 11, 12, 11, 12].kMostFrequentNumbers(2),
+      [12, 11]
+    );
+    assert.deepEqual([5, 12, 11, 3, 11].kMostFrequentNumbers(2), [11, 5]);
+  });
+  it("should return the k closest numbers to a given number", function () {
+    assert.deepEqual([5, 6, 7, 8, 9].kClosestNumbersTo(3, 7), [6, 7, 8]);
+    assert.deepEqual([2, 4, 5, 6, 9].kClosestNumbersTo(3, 6), [4, 5, 6]);
+    assert.deepEqual([2, 4, 5, 6, 9].kClosestNumbersTo(3, 10), [5, 6, 9]);
+  });
+  it("should return the maximum distinct numbers after k withdrawal in an array", function () {
+    assert.equal(
+      [7, 3, 5, 8, 5, 3, 3].maxDistinctNumbersAfterKWithdrawals(2),
+      3
+    );
+    assert.equal([3, 5, 12, 11, 12].maxDistinctNumbersAfterKWithdrawals(3), 2);
+    assert.equal(
+      [1, 2, 3, 3, 3, 3, 4, 4, 5, 5, 5].maxDistinctNumbersAfterKWithdrawals(2),
+      3
+    );
+  });
+  it("should return the sum of element between a range of smallest numbers in an array", function () {
+    assert.equal(
+      [1, 3, 12, 5, 15, 11].sumOfElementsBetweenK1AndK2SmallestElements(3, 6),
+      23
+    );
+    assert.equal(
+      [3, 5, 8, 7].sumOfElementsBetweenK1AndK2SmallestElements(1, 4),
+      12
+    );
+  });
+  it(`should schedule the tasks to return the minimum cpu intervals to finish all the given tasks
+  with a cooling time of k intervals`, function () {
+    assert.equal(
+      ["a", "a", "a", "b", "c", "c"].minimumCpuIntervalsWhenCoolingInKIntervals(
+        2
+      ),
+      7
+    );
+    assert.equal(
+      ["a", "b", "a"].minimumCpuIntervalsWhenCoolingInKIntervals(3),
+      5
+    );
+  });
+});

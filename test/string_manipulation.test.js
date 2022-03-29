@@ -247,3 +247,33 @@ describe("string manipulations", function () {
     assert.deepEqual("2*3-4-5".allPossibleEvaluations(), [8, -12, 7, -7, -3]);
   });
 });
+describe("frequency sort problems", function () {
+  it("should construct a string with the most occurring characters in decreasing order", function () {
+    assert.equal(
+      "programming".charactersWithMostFrequenciesFirst(),
+      "rrggmmpaoin"
+    );
+    assert.equal("abcbab".charactersWithMostFrequenciesFirst(), "bbbaac");
+  });
+  it("should rearrange a string so that two same characters are not coming next to each other", function () {
+    assert.equal("aappp".rearrangeAvoidingCloseSameCharacters(), "papap");
+    assert.equal(
+      "programming".rearrangeAvoidingCloseSameCharacters(),
+      "rgmpaoinrgm"
+    );
+    assert.equal("paaa".rearrangeAvoidingCloseSameCharacters(), "");
+    assert.equal("pdaaa".rearrangeAvoidingCloseSameCharacters(), "apada");
+  });
+  it("should rearrange a string so that two same characters are separated at least by k characters", function () {
+    assert.equal(
+      "mmpp".rearrangeBySeparatingSameCharactersAtLeastBy(2),
+      "mpmp"
+    );
+    assert.equal("aab".rearrangeBySeparatingSameCharactersAtLeastBy(2), "aba");
+    assert.equal("aappa".rearrangeBySeparatingSameCharactersAtLeastBy(3), "");
+    assert.equal(
+      "programming".rearrangeBySeparatingSameCharactersAtLeastBy(3),
+      "rgmpaoinrgm"
+    );
+  });
+});

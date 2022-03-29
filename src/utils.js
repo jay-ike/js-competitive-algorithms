@@ -146,12 +146,15 @@ function buildHeap(array, comparator) {
       heapify(arr, peek);
     }
   }
-  for (let i = 0; i < Math.floor(heap.length / 2); i++) {
+  for (let i = Math.floor(heap.length / 2); i >= 0; i--) {
     heapify(heap, i);
   }
   return {
     length() {
       return heap.length;
+    },
+    value() {
+      return heap;
     },
     pop() {
       let peek = heap[0];
@@ -287,6 +290,42 @@ function complementBase10Of(number) {
   }
   return largestNumberWithSameDigit ^ number;
 }
+function positionInSortedArray(array, element, comparatorCallback) {
+  let left = 0;
+  let right = array.length - 1;
+  while (left < right) {
+    let mid = left + Math.floor((right - left) / 2);
+    if (array[mid] === element) {
+      return mid;
+    }
+    if (comparatorCallback(array[mid], element) < 0) {
+      left = mid + 1;
+    } else {
+      right = mid;
+    }
+  }
+  return right;
+}
+function buildFrequencyStack() {
+  var frequencies = {},
+    maxHeap = buildHeap([], (a, b) => {
+      if (a[1] !== b[1]) return a[1] > b[1];
+      return a[2] > b[2];
+    }),
+    sequence = 0;
+  return {
+    push(number) {
+      frequencies.incrementKeyValue(number);
+      maxHeap.push([number, frequencies[number], sequence]);
+      sequence += 1;
+    },
+    pop() {
+      let [number, _, __] = maxHeap.pop();
+      frequencies.decrementKeyValue(number, { step: 1, deleteIfZero: true });
+      return number;
+    },
+  };
+}
 Object.prototype.incrementKeyValue = function (
   key,
   { step, condition } = { step: 1, condition: true }
@@ -313,4 +352,6 @@ module.exports = {
   emptyCallback,
   buildArrayReader,
   complementBase10Of,
+  positionInSortedArray,
+  buildFrequencyStack,
 };

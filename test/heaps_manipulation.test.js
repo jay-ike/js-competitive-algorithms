@@ -3,6 +3,7 @@ const {
   buildNumberStream,
   allMediansOfSubArrayOfSize,
   findMaximumProfit,
+  buildKLargestNumberInStream,
 } = require("../src/coding_interviews_algorithms/heap_manipulation");
 describe("heap manipulations", function () {
   it("should return the median of a number stream", function () {
@@ -37,5 +38,14 @@ describe("heap manipulations", function () {
       findMaximumProfit(projects, profits, initialCapital, numberOfProjects),
       8
     );
+  });
+  it("should return the kth largest number in a stream", function () {
+    var stream = buildKLargestNumberInStream([3, 1, 5, 12, 2, 11], 4);
+    assert.equal(stream.add(6), 5);
+    assert.equal(stream.add(13), 6);
+    assert.equal(stream.add(4), 6);
+    stream = buildKLargestNumberInStream([], 2);
+    assert.equal(stream.add(2), null);
+    assert.equal(stream.add(4), 2);
   });
 });

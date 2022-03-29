@@ -3,7 +3,7 @@ const {
   buildHeap,
   job,
   buildArrayReader,
-  complementBase10Of,
+  positionInSortedArray,
 } = require("../utils");
 function maximumArraySum(array, size) {
   let endIndex = 0,
@@ -829,6 +829,164 @@ function flipInvert(array) {
   }
   return clonedArray;
 }
+function kGreatestNumbers(array, k) {
+  var heap = buildHeap([], (a, b) => a < b);
+  for (let i = 0; i < k; i++) {
+    heap.push(array[i]);
+  }
+  for (let i = k; i < array.length; i++) {
+    if (array[i] > heap.peek()) {
+      heap.pop();
+      heap.push(array[i]);
+    }
+  }
+  return heap.value().sort((a, b) => b - a);
+}
+function kSmallestNumber(array, k) {
+  var heap = buildHeap([], (a, b) => a > b);
+  for (let i = 0; i < k; i++) {
+    heap.push(array[i]);
+  }
+  for (let i = k; i < array.length; i++) {
+    if (array[i] < heap.peek()) {
+      heap.pop();
+      heap.push(array[i]);
+    }
+  }
+  return heap.peek();
+}
+function euclideanDistance(point) {
+  return Math.sqrt(point[0] ** 2 + point[1] ** 2);
+}
+function kClosestPointsToOrigin(array, k) {
+  var heap = buildHeap(
+    [],
+    (a, b) => euclideanDistance(a) > euclideanDistance(b)
+  );
+  for (let i = 0; i < k; i++) {
+    heap.push(array[i]);
+  }
+  for (let i = k; i < array.length; i++) {
+    if (euclideanDistance(array[i]) < euclideanDistance(heap.peek())) {
+      heap.pop();
+      heap.push(array[i]);
+    }
+  }
+  return heap
+    .value()
+    .sort((a, b) => euclideanDistance(a) - euclideanDistance(b));
+}
+function minimumRopesJoiningCost(array) {
+  var heap = buildHeap([...array], (a, b) => a < b),
+    minCost = 0;
+  while (heap.length() > 0) {
+    let value1 = heap.pop() ?? 0,
+      value2 = heap.pop() ?? 0;
+    minCost += value1 + value2;
+    if (heap.length() > 0) {
+      heap.push(value1 + value2);
+    }
+  }
+  return minCost;
+}
+function kMostFrequentNumbers(array, k) {
+  var frequencies = {},
+    frequencyOccurrence = buildHeap([], (a, b) => a[1] < b[1]),
+    result = [];
+  for (let i = 0; i < array.length; i++) {
+    frequencies.incrementKeyValue(array[i]);
+  }
+  Object.keys(frequencies).forEach((key) => {
+    if (frequencyOccurrence.length() < k) {
+      frequencyOccurrence.push([Number.parseInt(key), frequencies[key]]);
+    } else {
+      if (frequencies[key] > frequencyOccurrence.peek()[1]) {
+        frequencyOccurrence.pop();
+        frequencyOccurrence.push([Number.parseInt(key), frequencies[key]]);
+      }
+    }
+  });
+  while (frequencyOccurrence.length() > 0) {
+    result.unshift(frequencyOccurrence.pop()[0]);
+  }
+  return result;
+}
+function kClosestNumbersTo(array, k, value) {
+  var minHeap = buildHeap([], (a, b) => a[1] < b[1]),
+    valueIndex = positionInSortedArray(array, value, (a, b) =>
+      a < b ? -1 : 1
+    ),
+    result = [];
+  let low = Math.max(valueIndex - k, 0),
+    high = Math.min(valueIndex + k, array.length - 1);
+  for (let i = low; i < high + 1; i++)
+    minHeap.push([array[i], Math.abs(array[i] - value)]);
+
+  for (let i = 0; i < k; i++) {
+    result.push(minHeap.pop()[0]);
+  }
+  return result.sort();
+}
+function maxDistinctNumbersAfterKWithdrawals(array, k) {
+  var minHeap = buildHeap([], (a, b) => a[1] < b[1]),
+    result = 0,
+    frequencies = {};
+  array.forEach((element) => frequencies.incrementKeyValue(element));
+  Object.keys(frequencies).forEach((key) => {
+    let number = Number.parseInt(key);
+    if (frequencies[key] === 1) {
+      result++;
+    } else if (frequencies[key] > 1) {
+      if (minHeap.length() < k) minHeap.push([number, frequencies[key]]);
+    }
+  });
+  while (k > 0 && minHeap.length() > 0) {
+    let [number, frequency] = minHeap.pop();
+    if (frequency === 2) result++;
+    else minHeap.push([number, frequency - 1]);
+    k--;
+  }
+  if (k > 0) result -= k;
+  return result;
+}
+function sumOfElementsBetweenK1AndK2SmallestElements(array, k1, k2) {
+  var maxHeap = buildHeap([], (a, b) => a > b),
+    result = 0;
+  array.forEach((value) => {
+    if (maxHeap.length() < k2 - 1) {
+      maxHeap.push(value);
+    } else {
+      if (value < maxHeap.peek()) {
+        maxHeap.pop();
+        maxHeap.push(value);
+      }
+    }
+  });
+  while (maxHeap.length() > k1) result += maxHeap.pop();
+  return result;
+}
+function minimumCpuIntervalsWhenCoolingInKIntervals(array, k) {
+  var maxHeap = buildHeap([], (a, b) => a[1] > b[1]),
+    frequencies = {},
+    result = 0;
+  array.forEach((value) => frequencies.incrementKeyValue(value));
+  Object.keys(frequencies).forEach((key) =>
+    maxHeap.push([key, frequencies[key]])
+  );
+  while (maxHeap.length() > 0) {
+    let n = k + 1,
+      waitingList = [];
+    while (n > 0 && maxHeap.length() > 0) {
+      let [task, duration] = maxHeap.pop();
+      if (duration > 1) waitingList.push([task, duration - 1]);
+      result++;
+      n--;
+    }
+    waitingList.forEach((value) => maxHeap.push(value));
+    if (maxHeap.length() > 0) result += n;
+  }
+  return result;
+}
 Array.prototype.maxSubArraySum = function (size) {
   return maximumArraySum(this, size);
 };
@@ -963,4 +1121,34 @@ Array.prototype.findTwoSingleNumbers = function () {
 };
 Array.prototype.flipInvert = function () {
   return flipInvert(this);
+};
+Array.prototype.kGreatestNumbers = function (k) {
+  return kGreatestNumbers(this, k);
+};
+Array.prototype.kSmallestNumber = function (k) {
+  return kSmallestNumber(this, k);
+};
+Array.prototype.kClosestPointsToOrigin = function (k) {
+  return kClosestPointsToOrigin(this, k);
+};
+Array.prototype.minimumRopesJoiningCost = function () {
+  return minimumRopesJoiningCost(this);
+};
+Array.prototype.kMostFrequentNumbers = function (k) {
+  return kMostFrequentNumbers(this, k);
+};
+Array.prototype.kClosestNumbersTo = function (k, value) {
+  return kClosestNumbersTo(this, k, value);
+};
+Array.prototype.maxDistinctNumbersAfterKWithdrawals = function (k) {
+  return maxDistinctNumbersAfterKWithdrawals(this, k);
+};
+Array.prototype.sumOfElementsBetweenK1AndK2SmallestElements = function (
+  k1,
+  k2
+) {
+  return sumOfElementsBetweenK1AndK2SmallestElements(this, k1, k2);
+};
+Array.prototype.minimumCpuIntervalsWhenCoolingInKIntervals = function (k) {
+  return minimumCpuIntervalsWhenCoolingInKIntervals(this, k);
 };

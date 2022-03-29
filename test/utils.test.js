@@ -1,5 +1,9 @@
 const { assert } = require("chai");
-const { generateArray, complementBase10Of } = require("../src/utils");
+const {
+  generateArray,
+  complementBase10Of,
+  buildFrequencyStack,
+} = require("../src/utils");
 describe("utility functions testing", function () {
   var numberObj;
   before(function () {
@@ -38,5 +42,18 @@ describe("utility functions testing", function () {
     assert.equal(complementBase10Of(10), 5);
     assert.equal(complementBase10Of(1), 0);
     assert.equal(complementBase10Of(0), 1);
+  });
+  it("should return the most frequent number and if there is a tie the number which was pushed later", function () {
+    var stack = buildFrequencyStack();
+    stack.push(1);
+    stack.push(2);
+    stack.push(3);
+    stack.push(2);
+    stack.push(1);
+    stack.push(2);
+    stack.push(5);
+    assert.equal(stack.pop(), 2);
+    assert.equal(stack.pop(), 1);
+    assert.equal(stack.pop(), 2);
   });
 });

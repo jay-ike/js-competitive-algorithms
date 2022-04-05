@@ -1,4 +1,4 @@
-const { Node } = require("../utils");
+const { Node,buildHeap } = require("../utils");
 function hasCycle(linkedList) {
   let slow = linkedList,
     fast = linkedList;
@@ -221,6 +221,26 @@ function rotateBy(linkedList, size) {
   rotatedListLastNode.next = null;
   return head;
 }
+function mergeSortedLinkedLists(lists) {
+  var minHeap = buildHeap([], (a, b) => a.value < b.value)
+  for (let i = 0; i < lists.length; i++){
+    if (lists[i] != null) {
+      minHeap.push(lists[i])
+    }
+  }
+  let resultHead=null, resultTail=null;
+  while (minHeap.length() > 0) {
+    let node = minHeap.pop();
+    if (resultHead == null) {
+      resultHead = resultTail = node
+    } else {
+      resultTail.next = node
+      resultTail = resultTail.next
+    }
+    if (node.next != null) minHeap.push(node.next)
+  }
+  return resultHead;
+}
 Node.prototype.hasCycle = function () {
   return hasCycle(this);
 };
@@ -254,4 +274,4 @@ Node.prototype.alternatelyReverseSublistsOfSize = function (size) {
 Node.prototype.rotateBy = function (size) {
   return rotateBy(this, size);
 };
-module.exports = { Node };
+module.exports = { Node,mergeSortedLinkedLists };

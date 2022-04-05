@@ -16,9 +16,11 @@ class Node {
   }
   static fromArray(arr) {
     if (arr.length < 1) throw new Error(`${arr} cannot be empty`);
-    var node = new Node(arr[0]);
-    for (let index = 1; index < arr.length; index++) {
-      node.appendNode(new Node(arr[index]));
+    var node =null
+    for (let index = arr.length-1; index >=0; index--) {
+      let currentNode = new Node(arr[index])
+      currentNode.next = node
+      node = currentNode
     }
     return node;
   }

@@ -1,5 +1,6 @@
 const {
   Node,
+ mergeSortedLinkedLists
 } = require("../src/coding_interviews_algorithms/linkedlist_manipulation");
 const { assert } = require("chai");
 
@@ -110,3 +111,14 @@ describe("list middle node", function () {
     assert.isTrue(list.rotateBy(8).equals(rotatedBy3));
   });
 });
+describe("k-way merge problems", function () {
+  var lists=[]
+  it("should merge k sorted linkedList", function () {
+    lists.push(Node.fromArray([2, 6, 8]))
+    lists.push(Node.fromArray([3,6,7]))
+    lists.push(Node.fromArray([1, 3, 4]))
+    assert.isTrue(mergeSortedLinkedLists(lists).equals(Node.fromArray( [1, 2, 3, 3, 4, 6, 6, 7, 8])))
+    lists = [Node.fromArray([5, 8, 9]), Node.fromArray([1, 7])]
+    assert.isTrue(mergeSortedLinkedLists(lists).equals(Node.fromArray([1,5,7,8,9])))
+  })
+})

@@ -1,4 +1,4 @@
-require("../src/coding_interviews_algorithms/array_manipulation");
+const {kthSmallestElementInSortedMatrix }=require("../src/coding_interviews_algorithms/array_manipulation");
 const { assert } = require("chai");
 
 describe("find the max sum in an array", function () {
@@ -660,3 +660,35 @@ describe("top K elements problems", function () {
     );
   });
 });
+describe("k-way merge problems", function () {
+  it("should return the kth smallest element given M sorted Arrays", function () {
+    var lists = [[2, 6, 8], [3, 6, 7], [1, 3, 4]]
+    assert.equal(lists.kSmallestValueOfSortedArrays(5), 4)
+    lists = [[5, 8, 9], [1, 7]]
+    assert.equal(lists.kSmallestValueOfSortedArrays(3), 7)
+    assert.equal(lists.kSmallestValueOfSortedArrays(6), null)
+  })
+  it("should return the kth smallest element in a sorted matrix", function () {
+    var sortedMatrix = [[2, 6, 8], [3, 7, 10], [5, 8, 11]]
+    assert.equal(kthSmallestElementInSortedMatrix(sortedMatrix, 5), 7)
+    sortedMatrix = [[1,2],[4,5]]
+    assert.equal(kthSmallestElementInSortedMatrix(sortedMatrix, 2), 2)
+    sortedMatrix = [[-5]]
+    assert.equal(kthSmallestElementInSortedMatrix(sortedMatrix, 1),-5)
+    assert.equal(kthSmallestElementInSortedMatrix(sortedMatrix, 2),null)
+    sortedMatrix = [[1,5,9],[10,11,13],[12,13,15]]
+    assert.equal(kthSmallestElementInSortedMatrix(sortedMatrix, 8),13)
+  })
+  it("should find the smallest range that include at least one number of k sorted arrays", function () {
+    var sortedArrays = [[1, 5, 8], [4, 12], [7, 8, 10]]
+    assert.deepEqual(sortedArrays.findRangeContainingAtLeastOneNumberOfEachArrays(), [4, 7])
+    sortedArrays = [[1,9],[4,12],[7,8,10]]
+    assert.deepEqual(sortedArrays.findRangeContainingAtLeastOneNumberOfEachArrays(), [ 9,12])
+  })
+  it("should return the k pairs with largest sum for two sorted arrays in decreasing order", function () {
+    var decreasinglySortedArray = [9, 8, 2]
+    assert.deepEqual(decreasinglySortedArray.kLargestSumPairsWith([6,3,1],3),[[9,3],[8,6],[9,6]])
+    decreasinglySortedArray = [5,2,1]
+    assert.deepEqual(decreasinglySortedArray.kLargestSumPairsWith([2,-1],3),[[5,-1],[2,2],[5,2]])
+  })
+})

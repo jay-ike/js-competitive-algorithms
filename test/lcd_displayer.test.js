@@ -1,5 +1,4 @@
 const { assert } = require("chai");
-const { it } = require('mocha');
 const  LcdDisplay = require('../src/coding_interviews_algorithms/lcd_display');
 
 describe('testing the lcd display', function () {

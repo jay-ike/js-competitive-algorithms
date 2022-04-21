@@ -16,7 +16,7 @@ describe("graph problems", function () {
       [2, 0],
       [2, 1],
     ];
-    assert.deepEqual(topologicalSort(4, edges), [9, 2, 0, 1]);
+    assert.deepEqual(topologicalSort(edges), [9, 2, 0, 1]);
     edges = [
       [4, 2],
       [4, 3],
@@ -24,7 +24,7 @@ describe("graph problems", function () {
       [2, 1],
       [3, 1],
     ];
-    assert.deepEqual(topologicalSort(5, edges), [4, 2, 3, 0, 1]);
+    assert.deepEqual(topologicalSort(edges), [4, 2, 3, 0, 1]);
     edges = [
       [6, 4],
       [6, 2],
@@ -35,7 +35,7 @@ describe("graph problems", function () {
       [3, 2],
       [4, 1],
     ];
-    assert.deepEqual(topologicalSort(7, edges), [5, 6, 3, 4, 0, 2, 1]);
+    assert.deepEqual(topologicalSort(edges), [5, 6, 3, 4, 0, 2, 1]);
   });
   it("should check a list of tasks with their dependencies can be scheduled", function () {
     var prerequisites = [

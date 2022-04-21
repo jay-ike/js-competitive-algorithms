@@ -37,7 +37,7 @@ function directedGraphDetailsFromEdges(edges) {
   });
   return [inDegree, adjacency];
 }
-function topologicalSort(vertices, edges) {
+function topologicalSort(edges) {
   var source = [],
     [inDegree, adjacency] = directedGraphDetailsFromEdges(edges);
   source = Object.keys(inDegree)

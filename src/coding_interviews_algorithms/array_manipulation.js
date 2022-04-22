@@ -988,93 +988,149 @@ function minimumCpuIntervalsWhenCoolingInKIntervals(array, k) {
   return result;
 }
 function kSmallestValueOfSortedArrays(arrays, k) {
-  var  minHeap = buildHeap([], (a, b) => a[0] < b[0]),allElements=0
-  for (let i = 0; i < arrays.length; i++){
+  var minHeap = buildHeap([], (a, b) => a[0] < b[0]),
+    allElements = 0;
+  for (let i = 0; i < arrays.length; i++) {
     if (arrays[i].length > 0) {
-      minHeap.push([arrays[i][0],i,0])
+      minHeap.push([arrays[i][0], i, 0]);
     }
-    allElements+=arrays[i].length
+    allElements += arrays[i].length;
   }
   let count = 0;
-  if(allElements < k) return null
+  if (allElements < k) return null;
   while (minHeap.length() > 0) {
     let [value, arrayIndex, valueIndex] = minHeap.pop();
     valueIndex++;
     count++;
     if (arrays[arrayIndex].length > valueIndex) {
-      minHeap.push([arrays[arrayIndex][valueIndex],arrayIndex,valueIndex])
+      minHeap.push([arrays[arrayIndex][valueIndex], arrayIndex, valueIndex]);
     }
-    if(count === k) return value
+    if (count === k) return value;
   }
 }
 function kthSmallestElementInSortedMatrix(matrix, k) {
-  var rows = matrix.length, start = matrix[0][0], end = matrix[rows - 1][rows - 1], allElements = 0;
-  matrix.forEach(row => allElements += row.length)
-  if(k<1||k>allElements) return null;
+  var rows = matrix.length,
+    start = matrix[0][0],
+    end = matrix[rows - 1][rows - 1],
+    allElements = 0;
+  matrix.forEach((row) => (allElements += row.length));
+  if (k < 1 || k > allElements) return null;
   while (start < end) {
-    let middle = Math.floor(start+ (end-start) / 2),
-      [count, smaller,larger] = countElementLesserOrEqual(matrix, middle, matrix[0][0], matrix[rows - 1][rows - 1])
+    let middle = Math.floor(start + (end - start) / 2),
+      [count, smaller, larger] = countElementLesserOrEqual(
+        matrix,
+        middle,
+        matrix[0][0],
+        matrix[rows - 1][rows - 1]
+      );
     if (count === k) return smaller;
-    if (count < k) start = larger
-    else end = smaller
+    if (count < k) start = larger;
+    else end = smaller;
   }
-  return start
+  return start;
 }
 function countElementLesserOrEqual(matrix, middle, smaller, larger) {
-  var count = 0, rows = matrix.length;
-  let row = rows - 1, col = 0;
+  var count = 0,
+    rows = matrix.length;
+  let row = rows - 1,
+    col = 0;
   while (row >= 0 && col < rows) {
     if (matrix[row][col] > middle) {
-      larger = Math.min(larger, matrix[row][col])
-      row-=1
+      larger = Math.min(larger, matrix[row][col]);
+      row -= 1;
     } else {
-      smaller = Math.max(smaller, matrix[row][col])
-      count += row + 1
-      col+=1
+      smaller = Math.max(smaller, matrix[row][col]);
+      count += row + 1;
+      col += 1;
     }
   }
-  return [count,smaller,larger]
+  return [count, smaller, larger];
 }
 function findRangeContainingAtLeastOneNumberOfEachArrays(matrix) {
-  var minHeap = buildHeap([], (a, b) => a[0] < b[0]),currentMax=Number.NEGATIVE_INFINITY
-  for (let i = 0; i < matrix.length; i++){
+  var minHeap = buildHeap([], (a, b) => a[0] < b[0]),
+    currentMax = Number.NEGATIVE_INFINITY;
+  for (let i = 0; i < matrix.length; i++) {
     if (matrix[i].length > 0) {
-      currentMax = Math.max(currentMax,matrix[i][0])
-      minHeap.push([matrix[i][0], i, 0])
+      currentMax = Math.max(currentMax, matrix[i][0]);
+      minHeap.push([matrix[i][0], i, 0]);
     }
   }
-  let lowerBound = Number.NEGATIVE_INFINITY,upperBound = Number.POSITIVE_INFINITY
+  let lowerBound = Number.NEGATIVE_INFINITY,
+    upperBound = Number.POSITIVE_INFINITY;
   while (minHeap.length() >= matrix.length) {
     let [value, arrayIndex, valueIndex] = minHeap.pop();
-    valueIndex+=1
-    if ((currentMax-value) < (upperBound-lowerBound)) {
+    valueIndex += 1;
+    if (currentMax - value < upperBound - lowerBound) {
       lowerBound = value;
-      upperBound = currentMax
+      upperBound = currentMax;
     }
     if (valueIndex < matrix[arrayIndex].length) {
-      minHeap.push([matrix[arrayIndex][valueIndex], arrayIndex, valueIndex])
-      currentMax = Math.max(currentMax,matrix[arrayIndex][valueIndex])
+      minHeap.push([matrix[arrayIndex][valueIndex], arrayIndex, valueIndex]);
+      currentMax = Math.max(currentMax, matrix[arrayIndex][valueIndex]);
     }
   }
-  return [lowerBound,upperBound]
+  return [lowerBound, upperBound];
 }
 function kLargestSumPairsWith(array1, array2, k) {
-  var minHeap = buildHeap([], (a, b) => (a[0] + a[1]) < (b[0] + b[1]))
-  for (let i = 0; (i < k && i < array1.length); i++){
-    for (let j = 0; (j < k && j<array2.length); j++){
+  var minHeap = buildHeap([], (a, b) => a[0] + a[1] < b[0] + b[1]);
+  for (let i = 0; i < k && i < array1.length; i++) {
+    for (let j = 0; j < k && j < array2.length; j++) {
       if (minHeap.length() < k) {
-        minHeap.push([array1[i],array2[j]])
+        minHeap.push([array1[i], array2[j]]);
       } else {
-        let [value1, value2] = minHeap.peek()
-        if ((value1 + value2) < (array1[i] + array2[j])) {
+        let [value1, value2] = minHeap.peek();
+        if (value1 + value2 < array1[i] + array2[j]) {
           minHeap.pop();
-          minHeap.push([array1[i],array2[j]])
+          minHeap.push([array1[i], array2[j]]);
         } else {
-          return minHeap.value()
+          return minHeap.value();
         }
       }
     }
   }
+}
+function smallestElement(array, position) {
+  return recursiveSmallestElement(array, position, 0, array.length - 1);
+}
+function recursiveSmallestElement(array, position, low, high) {
+  let pivot = partition(array, low, high);
+  if (pivot === position - 1) return array[pivot];
+  if (pivot > position - 1)
+    return recursiveSmallestElement(array, position, low, pivot - 1);
+  return recursiveSmallestElement(array, position, pivot + 1, high);
+}
+function partition(list, low, high) {
+  if (low === high) return low;
+  let median = medianOfMedians(list, low, high);
+  for (let i = low; i < high; i++) {
+    if (list[i] === median) {
+      [list[i], list[high]] = [list[high], list[i]];
+      break;
+    }
+  }
+  const pivot = list[high];
+  for (let i = low; i < high; i++) {
+    if (list[i] < pivot) {
+      [list[low], list[i]] = [list[i], list[low]];
+      low += 1;
+    }
+  }
+  [list[low], list[high]] = [list[high], list[low]];
+  return low;
+}
+function medianOfMedians(list, low, high) {
+  let elements = high - low + 1;
+  if (elements < 5) return list[low];
+  const partitions = [];
+  for (let i = 0; i < list.length; i += 5) {
+    if (i + 5 <= list.length) partitions.push(list.slice(i, i + 5));
+  }
+  partitions.forEach((partition) => partition.sort((a, b) => a - b));
+  const medians = [];
+  for (let i = 0; i < partitions.length; i++) {
+    medians.push(partitions[i][2]);
+  }
+  return partition(medians, 0, medians.length - 1);
 }
 Array.prototype.maxSubArraySum = function (size) {
   return maximumArraySum(this, size);
@@ -1242,14 +1298,17 @@ Array.prototype.minimumCpuIntervalsWhenCoolingInKIntervals = function (k) {
   return minimumCpuIntervalsWhenCoolingInKIntervals(this, k);
 };
 Array.prototype.kSmallestValueOfSortedArrays = function (k) {
-  return kSmallestValueOfSortedArrays(this, k)
-}
+  return kSmallestValueOfSortedArrays(this, k);
+};
 Array.prototype.findRangeContainingAtLeastOneNumberOfEachArrays = function () {
-  return findRangeContainingAtLeastOneNumberOfEachArrays(this)
-}
+  return findRangeContainingAtLeastOneNumberOfEachArrays(this);
+};
 Array.prototype.kLargestSumPairsWith = function (array, k) {
-  return kLargestSumPairsWith(this,array,k)
-}
+  return kLargestSumPairsWith(this, array, k);
+};
+Array.prototype.smallestElement = function (k) {
+  return smallestElement(this, k);
+};
 module.exports = {
-  kthSmallestElementInSortedMatrix
-}
+  kthSmallestElementInSortedMatrix,
+};

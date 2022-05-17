@@ -80,6 +80,19 @@ function maximumRibbonCuts(ribbonLength, cutLengths) {
   }
   return dp[ribbonLength];
 }
+function fibonacciNumber(number) {
+  if (number < 0) return Number.NEGATIVE_INFINITY;
+  let previous = 0,
+    current = 1,
+    result;
+  if (number === previous) return previous;
+  if (number === current) return current;
+  for (let i = 2; i <= number; i++) {
+    result = current + previous;
+    [previous, current] = [current, result];
+  }
+  return result;
+}
 function hasTwoPartitionsOfEqualSum(array) {
   let sum = array.reduce((prev, current) => current + prev, 0),
     length = array.length;
@@ -173,4 +186,5 @@ module.exports = {
   allPossibleChangesOf,
   minDenominationsToChange,
   maximumRibbonCuts,
+  fibonacciNumber,
 };

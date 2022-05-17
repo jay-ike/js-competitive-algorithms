@@ -5,6 +5,7 @@ const {
   allPossibleChangesOf,
   minDenominationsToChange,
   maximumRibbonCuts,
+  fibonacciNumber,
 } = require("../src/coding_interviews_algorithms/dynamic_programming_problems");
 describe("knapsack problems", function () {
   it("should return the maximum profit for items fitting in a given capacity with distinct items", function () {
@@ -48,6 +49,11 @@ describe("knapsack problems", function () {
     cutLengths = [3, 5, 7];
     assert.equal(maximumRibbonCuts(13, cutLengths), 3);
   });
+});
+it("should return the ith fibonacci number", function () {
+  assert.equal(fibonacciNumber(3), 2);
+  assert.equal(fibonacciNumber(5), 5);
+  assert.equal(fibonacciNumber(8), 21);
 });
 describe("subsets problems", function () {
   it("should check if a set of numbers can have two partitions of equal sum", function () {

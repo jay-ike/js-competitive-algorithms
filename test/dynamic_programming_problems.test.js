@@ -6,6 +6,10 @@ const {
   minDenominationsToChange,
   maximumRibbonCuts,
   fibonacciNumber,
+  totalWaysOfClimbingStairs,
+  totalWaysOfSummarizing,
+  minJumpsToReachTheEnd,
+  minFeeToClimbStairs,
 } = require("../src/coding_interviews_algorithms/dynamic_programming_problems");
 describe("knapsack problems", function () {
   it("should return the maximum profit for items fitting in a given capacity with distinct items", function () {
@@ -95,5 +99,28 @@ describe("subsets problems", function () {
     assert.equal(array.numberOfSymbolsCombinationToHaveTheSum(1), 3); //+1-1-2+3 & -1+1-2+3 & +1+1+2-3
     array = [1, 2, 7, 1];
     assert.equal(array.numberOfSymbolsCombinationToHaveTheSum(9), 2); //+1+2+7-1 & -1+2+7+1
+  });
+});
+
+describe("stair case problems", function () {
+  it("should return the number of ways to climb a stair of n steps with 1,2 or 3 steps allowed", function () {
+    assert.equal(totalWaysOfClimbingStairs(3), 4); // {1,1,1} & {2,1} & {1,2} & {3}
+    assert.equal(totalWaysOfClimbingStairs(4), 7);
+  });
+  it("should return the of ways to express a number as a sum of 1,3 or 4", function () {
+    assert.equal(totalWaysOfSummarizing(4), 4); // {1,1,1,1} & {3,1} & {1,3} & {4}
+    assert.equal(totalWaysOfSummarizing(5), 6);
+  });
+  it("should return the minimum jump to reach the end of an array", function () {
+    let array = [2, 1, 1, 1, 4];
+    assert.equal(minJumpsToReachTheEnd(array, 0), 3); // 0->2->3->4
+    array = [1, 1, 3, 6, 9, 3, 0, 1, 3];
+    assert.equal(minJumpsToReachTheEnd(array, 0), 4); // 0->1->2->3->8
+  });
+  it("compute the minimum fee to pay to reach the top of a stair of n steps with each step having a fee and 1,2 or 3 steps allowed", function () {
+    var fees = [1, 2, 5, 2, 1, 2];
+    assert.equal(minFeeToClimbStairs(6, fees), 3); // 0->3->6 (1+2)
+    fees = [2, 3, 4, 5];
+    assert.equal(minFeeToClimbStairs(4, fees), 5); // 0->1->5 (2+3)
   });
 });

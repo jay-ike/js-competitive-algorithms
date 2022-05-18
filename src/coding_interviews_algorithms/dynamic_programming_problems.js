@@ -165,6 +165,80 @@ function numberOfSymbolsCombinationToHaveTheSum(array, sum) {
   }
   return dp[sum];
 }
+function totalWaysOfClimbingStairs(stairSteps) {
+  if (stairSteps < 0) return 0;
+  var step0 = 1,
+    step1 = 1,
+    step2 = 2,
+    result = 0;
+  if (stairSteps === 1 || stairSteps === 0) return step1;
+  if (stairSteps === 2) return step2;
+  for (let i = 3; i <= stairSteps; i++) {
+    result = step0 + step1 + step2;
+    step0 = step1;
+    step1 = step2;
+    step2 = result;
+  }
+  return result;
+}
+function totalWaysOfSummarizing(number) {
+  if (number < 0) return 0;
+  if (number === 1 || number === 2) return 1;
+  if (number === 3) return 2;
+  var sum0 = 1,
+    sum1 = 1,
+    sum3 = 2;
+  for (let i = 4; i <= number; i++) {
+    if (i % 4 === 0) result = sum0 + sum1 + sum3;
+    else if (i % 4 === 1) result = sum1 + sum3;
+    else if (i % 4 === 2) result = sum3;
+    else result = sum0 + sum1;
+    sum0 = sum1;
+    sum1 = sum3;
+    sum3 = result;
+  }
+  return result;
+}
+function minJumpsToReachTheEnd(jumps, initialIndex) {
+  if (
+    jumps[initialIndex] === 0 ||
+    initialIndex >= jumps.length ||
+    initialIndex < 0
+  )
+    return -1;
+  var index = initialIndex,
+    moves = 1;
+  for (let i = initialIndex + 1; i < jumps.length; i++) {
+    if (index + jumps[index] < i) {
+      index += 1;
+      moves += 1;
+    }
+  }
+  return moves;
+}
+function minFeeToClimbStairs(stairSteps, stepFees) {
+  if (
+    stairSteps === 1 ||
+    stairSteps === 2 ||
+    stairSteps === 3 ||
+    stairSteps === 0 ||
+    stairSteps < stepFees.length
+  )
+    return -1;
+  var step1 = stepFees[0],
+    step2 = stepFees[1],
+    step3 = stepFees[2],
+    fee = stepFees[0];
+  for (let i = 3; i < stairSteps; i++) {
+    step1 = step2;
+    step2 = step3;
+    step3 = stepFees[i];
+    if (i % 3 === 0) {
+      fee += Math.min(step1, step2, step3);
+    }
+  }
+  return fee;
+}
 Array.prototype.hasTwoPartitionsOfEqualSum = function () {
   return hasTwoPartitionsOfEqualSum(this);
 };
@@ -187,4 +261,8 @@ module.exports = {
   minDenominationsToChange,
   maximumRibbonCuts,
   fibonacciNumber,
+  totalWaysOfClimbingStairs,
+  totalWaysOfSummarizing,
+  minJumpsToReachTheEnd,
+  minFeeToClimbStairs,
 };

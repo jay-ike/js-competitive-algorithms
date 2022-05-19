@@ -239,6 +239,23 @@ function minFeeToClimbStairs(stairSteps, stepFees) {
   }
   return fee;
 }
+function maxWealthSumInNonAdjacentHouses(wealths) {
+  if (wealths.length <= 0) return -1;
+  if (wealths.length === 1) return wealths[0];
+  if (wealths.length === 2) return Math.max(wealths[0], wealths[1]);
+  var wealth1 = wealths[0],
+    wealth2 = Math.max(wealth1, wealths[1]);
+  for (let i = 2; i < wealths.length; i++) {
+    if (wealth1 + wealths[i] > wealth2) {
+      let temp = wealth2;
+      wealth2 = wealth1 + wealths[i];
+      wealth1 = temp;
+    } else {
+      wealth1 = wealth2;
+    }
+  }
+  return wealth2;
+}
 Array.prototype.hasTwoPartitionsOfEqualSum = function () {
   return hasTwoPartitionsOfEqualSum(this);
 };
@@ -265,4 +282,5 @@ module.exports = {
   totalWaysOfSummarizing,
   minJumpsToReachTheEnd,
   minFeeToClimbStairs,
+  maxWealthSumInNonAdjacentHouses,
 };

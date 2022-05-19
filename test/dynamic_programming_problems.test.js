@@ -10,6 +10,7 @@ const {
   totalWaysOfSummarizing,
   minJumpsToReachTheEnd,
   minFeeToClimbStairs,
+  maxWealthSumInNonAdjacentHouses,
 } = require("../src/coding_interviews_algorithms/dynamic_programming_problems");
 describe("knapsack problems", function () {
   it("should return the maximum profit for items fitting in a given capacity with distinct items", function () {
@@ -122,5 +123,11 @@ describe("stair case problems", function () {
     assert.equal(minFeeToClimbStairs(6, fees), 3); // 0->3->6 (1+2)
     fees = [2, 3, 4, 5];
     assert.equal(minFeeToClimbStairs(4, fees), 5); // 0->1->5 (2+3)
+  });
+  it("compute the maximum money which can be stolen in non-adjacent houses given the house wealth", function () {
+    var wealths = [2, 5, 1, 3, 6, 2, 4];
+    assert.equal(maxWealthSumInNonAdjacentHouses(wealths), 15); // 5+6+4
+    wealths = [2, 10, 14, 8, 1];
+    assert.equal(maxWealthSumInNonAdjacentHouses(wealths), 18); // 5+6+4
   });
 });

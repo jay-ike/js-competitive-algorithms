@@ -256,6 +256,129 @@ function maxWealthSumInNonAdjacentHouses(wealths) {
   }
   return wealth2;
 }
+function longestPalindromicSubsequence(str) {
+  var length = str.length,
+    dp = Array(length).fill(0),
+    firstPalindromeChar = str[0];
+  dp[0] = 1;
+  for (let i = 1; i < str.length; i++) {
+    if (dp[i - 1] === 1) firstPalindromeChar = str[i - 1];
+    for (let j = 0; j < i; j++) {
+      if (str[j] === str[i]) {
+        if (str[j] === firstPalindromeChar) dp[i] = dp[i - 1] + 1;
+        else {
+          dp[i] = 2 + dp[i - 1];
+          firstPalindromeChar = str[j];
+        }
+        break;
+      } else {
+        dp[i] = Math.max(dp[i], dp[i - 1]);
+      }
+    }
+  }
+  return dp[length - 1];
+}
+function longestPalindromicSubstring(str, separator = "|") {
+  var newString = `${separator}${[...str].join(separator)}${separator}`,
+    palindromeRadii = Array(newString.length).fill(0);
+  var center = 0,
+    radius = 0;
+  while (center < newString.length) {
+    while (
+      center - (radius + 1) >= 0 &&
+      center + (radius + 1) < newString.length &&
+      newString[center - (radius + 1)] === newString[center + (radius + 1)]
+    ) {
+      radius += 1;
+    }
+    palindromeRadii[center] = radius;
+    let oldCenter = center,
+      oldRadius = radius;
+    center += 1;
+    radius = 0;
+    while (center <= oldCenter + oldRadius) {
+      let mirroredCenter = 2 * oldCenter - center,
+        maxMirrorRadius = oldCenter + oldRadius - center;
+      if (palindromeRadii[mirroredCenter] < maxMirrorRadius) {
+        palindromeRadii[center] = palindromeRadii[mirroredCenter];
+        center += 1;
+      } else if (palindromeRadii[mirroredCenter] > maxMirrorRadius) {
+        palindromeRadii[center] = maxMirrorRadius;
+        center += 1;
+      } else {
+        radius = maxMirrorRadius;
+        break;
+      }
+    }
+  }
+  return Math.max(...palindromeRadii);
+}
+function minimumDeletionForPalindrome(string) {
+  return string.length - longestPalindromicSubsequence(string);
+}
+function minPalindromicCuts(string) {
+  if (string === null || string.length <= 1) return 0;
+  let len = string.length,
+    cuts = Array(len + 1);
+  for (let i = 0; i <= len; i++) cuts[i] = i - 1;
+  for (let i = 0; i < len; i++) {
+    let j = 0;
+    while (i - j >= 0 && i + j < len && string[i - j] === string[i + j]) {
+      cuts[i + j + 1] = Math.min(cuts[i + j + 1], 1 + cuts[i - j]);
+      j++;
+    }
+    j = 1;
+    while (
+      i - j + 1 >= 0 &&
+      i + j < len &&
+      string[i - j + 1] === string[i + j]
+    ) {
+      cuts[i + j + 1] = Math.min(cuts[i + j + 1], 1 + cuts[i - j + 1]);
+      j++;
+    }
+  }
+  return cuts[len];
+}
+function palindromicSubstringCount(string, separator = "#") {
+  let transformedText = `${separator}${[...string].join(
+      separator
+    )}${separator}`,
+    allRadii = Array(transformedText.length).fill(0),
+    center = 0,
+    radius = 0,
+    palindromes = 0;
+  while (center < transformedText.length) {
+    while (
+      center - radius - 1 >= 0 &&
+      center + radius + 1 < transformedText.length &&
+      transformedText[center - radius - 1] ===
+        transformedText[center + radius + 1]
+    ) {
+      radius += 1;
+    }
+    if (radius > 1) palindromes += 1;
+    allRadii[center] = radius;
+    let oldCenter = center,
+      oldRadius = radius;
+    center += 1;
+    radius = 0;
+    while (center <= oldCenter + oldRadius) {
+      let mirroredCenter = 2 * oldCenter - center,
+        maxMirrorRadius = oldRadius + oldCenter - center;
+      if (allRadii[mirroredCenter] < maxMirrorRadius) {
+        allRadii[center] = allRadii[mirroredCenter];
+        center += 1;
+      } else if (allRadii[mirroredCenter] > maxMirrorRadius) {
+        allRadii[center] = maxMirrorRadius;
+        center += 1;
+      } else {
+        radius = maxMirrorRadius;
+        break;
+      }
+    }
+  }
+  return string.length + palindromes;
+}
 Array.prototype.hasTwoPartitionsOfEqualSum = function () {
   return hasTwoPartitionsOfEqualSum(this);
 };
@@ -270,6 +393,21 @@ Array.prototype.countOfSubsetWithSum = function (sum) {
 };
 Array.prototype.numberOfSymbolsCombinationToHaveTheSum = function (sum) {
   return numberOfSymbolsCombinationToHaveTheSum(this, sum);
+};
+String.prototype.longestPalindromicSubsequence = function () {
+  return longestPalindromicSubsequence(this);
+};
+String.prototype.longestPalindromicSubstring = function () {
+  return longestPalindromicSubstring(this);
+};
+String.prototype.minimumDeletionForPalindrome = function () {
+  return minimumDeletionForPalindrome(this);
+};
+String.prototype.minPalindromicCuts = function () {
+  return minPalindromicCuts(this);
+};
+String.prototype.palindromicSubstringCount = function () {
+  return palindromicSubstringCount(this);
 };
 module.exports = {
   maxProfitFittingCapacityHavingDistinctItems,

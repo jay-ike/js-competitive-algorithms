@@ -88,13 +88,12 @@ describe("longest palindrome substring test", function () {
   });
   it("should return the longest palindrome substring of a given string", function () {
     assert.equal(text.longestPalindromeSubstring(), "isatieddeitasi");
-  });
-  it("should throw error if text contains forbidden token", function () {
-    assert.throws(
-      () => "$dkjd".longestPalindromeSubstring(),
-      Error,
-      "should not have forbidden token in text"
-    );
+    text = "cddpd";
+    assert.equal(text.longestPalindromeSubstring(), "dpd");
+    text = "dcddpda";
+    assert.equal(text.longestPalindromeSubstring(), "dcd");
+    text = "par";
+    assert.equal(text.longestPalindromeSubstring(), "p");
   });
 });
 

@@ -146,50 +146,60 @@ function getRowSpace(itemPosition, rowIndex, totalRows) {
   }
 }
 
-function longestPalindromeSubstring(text) {
-  let forbiddenTokens = ["#", "^", "$"];
-  let center = 1,
-    maxDiameter = 1;
-  let transformedText = `^#${[...text].join("#")}#$`;
-  let allRadii = Array.from(Array(transformedText.length), (_) => 0);
-  let maxRadiusIndex = 2;
-  throwIfContains(forbiddenTokens, text);
-  if (text === "") {
+function longestPalindromeSubstring(text, separator = "#") {
+  if (text.length <= 1) {
     return text;
   }
-  for (let index = 2; index < transformedText.length - 1; index++) {
-    let mirror = 2 * center - index;
-    allRadii[index] = Math.max(
-      0,
-      Math.min(maxDiameter - index, allRadii[mirror])
-    );
-    while (
-      transformedText[index - (allRadii[index] + 1)] ===
-      transformedText[index + allRadii[index] + 1]
-    ) {
-      allRadii[index] += 1;
-    }
-    if (index + allRadii[index] > maxDiameter) {
-      center = index;
-      maxDiameter = index + allRadii[index];
-    }
-    if (allRadii[index] > allRadii[maxRadiusIndex]) {
-      maxRadiusIndex = index;
-    }
-  }
-  let lowerBound = Math.floor((maxRadiusIndex - allRadii[maxRadiusIndex]) / 2);
-  let upperBound = Math.floor((maxRadiusIndex + allRadii[maxRadiusIndex]) / 2);
+  let transformedText = `${separator}${[...text].join(
+    `${separator}`
+  )}${separator}`;
+  let [lowerBound, upperBound] = longestPalindromeRange(transformedText);
   return text.slice(lowerBound, upperBound);
 }
 
-function throwIfContains(tokens, text) {
-  let textCharacters = new Set([...text]);
-  let hasNoToken = tokens
-    .map((e) => textCharacters.has(e))
-    .every((e) => e === false);
-  if (!hasNoToken) {
-    throw new Error("should not have forbidden token in text");
+function longestPalindromeRange(transformedText) {
+  let allRadii = Array(transformedText.length).fill(0),
+    center = 0,
+    radius = 0;
+  let maxRadius = Number.NEGATIVE_INFINITY,
+    maxRadiusIndex = 0;
+  while (center < transformedText.length) {
+    while (
+      center - (radius + 1) >= 0 &&
+      center + radius + 1 < transformedText.length &&
+      transformedText[center - (radius + 1)] ===
+        transformedText[center + radius + 1]
+    ) {
+      radius += 1;
+    }
+    if (maxRadius < radius) {
+      maxRadius = radius;
+      maxRadiusIndex = center;
+    }
+    allRadii[center] = radius;
+    let oldCenter = center,
+      oldRadius = radius;
+    center += 1;
+    radius = 0;
+    while (center <= oldCenter + oldRadius) {
+      let mirroredCenter = 2 * oldCenter - center,
+        maxMirroredRadius = oldCenter + oldRadius - center;
+      if (allRadii[mirroredCenter] < maxMirroredRadius) {
+        allRadii[center] = allRadii[mirroredCenter];
+        center += 1;
+      } else if (allRadii[mirroredCenter] > maxMirroredRadius) {
+        allRadii[center] = maxMirroredRadius;
+        center += 1;
+      } else {
+        radius = maxMirroredRadius;
+        break;
+      }
+    }
   }
+  return [
+    Math.floor((maxRadiusIndex - maxRadius) / 2),
+    Math.floor((maxRadiusIndex + maxRadius) / 2),
+  ];
 }
 
 function groupAnagrams(list) {

@@ -131,3 +131,50 @@ describe("stair case problems", function () {
     assert.equal(maxWealthSumInNonAdjacentHouses(wealths), 18); // 5+6+4
   });
 });
+
+describe("string longest palindromic subsequence problem", function () {
+  it("should return the length of the longest palindromic subsequence of a given string", function () {
+    let string = "abdbca";
+    assert.equal(string.longestPalindromicSubsequence(), 5);
+    string = "cddpd";
+    assert.equal(string.longestPalindromicSubsequence(), 3);
+    string = "par";
+    assert.equal(string.longestPalindromicSubsequence(), 1);
+  });
+  it("should return the length of the longest palindromic substring of a given string", function () {
+    let string = "abdbca";
+    assert.equal(string.longestPalindromicSubstring(), 3);
+    string = "cddpd";
+    assert.equal(string.longestPalindromicSubstring(), 3);
+    string = "par";
+    assert.equal(string.longestPalindromicSubstring(), 1);
+  });
+  it("should return the minimum deletion to make a string palindrome", function () {
+    let string = "abdbca";
+    assert.equal(string.minimumDeletionForPalindrome(), 1);
+    string = "cddpd";
+    assert.equal(string.minimumDeletionForPalindrome(), 2);
+    string = "par";
+    assert.equal(string.minimumDeletionForPalindrome(), 2);
+  });
+  it("should return the minimum palindromic cuts of a given string", function () {
+    let string = "abdbca";
+    assert.equal(string.minPalindromicCuts(), 3);
+    string = "cddpd";
+    assert.equal(string.minPalindromicCuts(), 2);
+    string = "par";
+    assert.equal(string.minPalindromicCuts(), 2);
+    string = "pp";
+    assert.equal(string.minPalindromicCuts(), 0);
+  });
+  it("should return the count of palindromic substring", function () {
+    let string = "abdbca";
+    assert.equal(string.palindromicSubstringCount(), 7);
+    string = "cddpd";
+    assert.equal(string.palindromicSubstringCount(), 7);
+    string = "par";
+    assert.equal(string.palindromicSubstringCount(), 3);
+    string = "pp";
+    assert.equal(string.palindromicSubstringCount(), 3);
+  });
+});

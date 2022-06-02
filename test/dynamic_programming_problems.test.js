@@ -177,4 +177,37 @@ describe("string longest palindromic subsequence problem", function () {
     string = "pp";
     assert.equal(string.palindromicSubstringCount(), 3);
   });
+  it("should return the longest common substring of two given strings", function () {
+    let string1 = "abdbca",
+      string2 = "cbda";
+    assert.equal(string1.longestCommonSubstringWith(string2), 2);
+    string1 = "passport";
+    string2 = "ppsspt";
+    assert.equal(string1.longestCommonSubstringWith(string2), 3);
+    string1 = "abdbda";
+    string2 = "abdc";
+    assert.equal(string2.longestCommonSubstringWith(string1), 3);
+  });
+  it("should return the longest common subsequence of two given strings", function () {
+    let string1 = "abdbca",
+      string2 = "cbda";
+    assert.equal(string1.longestCommonSubsequenceWith(string2), 3);
+    string1 = "passport";
+    string2 = "ppsspt";
+    assert.equal(string1.longestCommonSubsequenceWith(string2), 5);
+    string1 = "abdbdc";
+    string2 = "abde";
+    assert.equal(string2.longestCommonSubsequenceWith(string1), 3);
+  });
+  it("should return the minimum deletions and insertions to transform a string to another", function () {
+    let string1 = "abdbca",
+      string2 = "cbda";
+    assert.deepEqual(string1.minDeletionAndInsertionToEqual(string2), [3, 1]);
+    string1 = "passport";
+    string2 = "ppsspt";
+    assert.deepEqual(string1.minDeletionAndInsertionToEqual(string2), [3, 1]);
+    string1 = "abc";
+    string2 = "fbc";
+    assert.deepEqual(string1.minDeletionAndInsertionToEqual(string2), [1, 1]);
+  });
 });

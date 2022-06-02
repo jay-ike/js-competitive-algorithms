@@ -379,6 +379,49 @@ function palindromicSubstringCount(string, separator = "#") {
   }
   return string.length + palindromes;
 }
+function longestCommonSubstringWith(string1, string2) {
+  if (string1.length === 0 || string2.length === 0) return 0;
+  var dp = Array(string1.length + 1).fill(0),
+    longestLength = 0;
+
+  for (let i = 1; i <= string1.length; i++) {
+    for (let j = 1; j <= string2.length; j++) {
+      if (string1[i - 1] === string2[j - 1]) {
+        if (j >= 2 && i >= 2 && string1[i - 2] === string2[j - 2]) {
+          dp[i] = 1 + dp[i - 1];
+        } else {
+          dp[i] = Math.max(1, dp[i]);
+        }
+      }
+    }
+    longestLength = Math.max(longestLength, dp[i]);
+  }
+  return longestLength;
+}
+function longestCommonSubsequenceWith(string1, string2) {
+  if (string1.length === 0 || string2.length === 0) return 0;
+  var dp = Array(string1.length + 1).fill(0),
+    matchIndex = 0;
+  for (let i = 1; i <= string1.length; i++) {
+    for (let j = 1; j <= string2.length; j++) {
+      if (string1[i - 1] === string2[j - 1]) {
+        if (j >= matchIndex && dp[i] - dp[i - 1] <= 0) {
+          dp[i] = dp[i] + 1;
+        } else {
+          dp[i] = Math.max(1, dp[i]);
+        }
+        matchIndex = j;
+      } else {
+        dp[i] = Math.max(dp[i], dp[i - 1]);
+      }
+    }
+  }
+  return dp[string1.length];
+}
+function minDeletionAndInsertionToEqual(string1, string2) {
+  let lcs = string1.longestCommonSubsequenceWith(string2);
+  return [string1.length - lcs, string2.length - lcs];
+}
 Array.prototype.hasTwoPartitionsOfEqualSum = function () {
   return hasTwoPartitionsOfEqualSum(this);
 };
@@ -408,6 +451,15 @@ String.prototype.minPalindromicCuts = function () {
 };
 String.prototype.palindromicSubstringCount = function () {
   return palindromicSubstringCount(this);
+};
+String.prototype.longestCommonSubstringWith = function (otherString) {
+  return longestCommonSubstringWith(this, otherString);
+};
+String.prototype.longestCommonSubsequenceWith = function (otherString) {
+  return longestCommonSubsequenceWith(this, otherString);
+};
+String.prototype.minDeletionAndInsertionToEqual = function (otherString) {
+  return minDeletionAndInsertionToEqual(this, otherString);
 };
 module.exports = {
   maxProfitFittingCapacityHavingDistinctItems,

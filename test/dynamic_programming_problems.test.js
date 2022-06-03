@@ -210,4 +210,33 @@ describe("string longest palindromic subsequence problem", function () {
     string2 = "fbc";
     assert.deepEqual(string1.minDeletionAndInsertionToEqual(string2), [1, 1]);
   });
+  it("should return the length of shortest common super sequence of two given strings", function () {
+    let string1 = "abcf",
+      string2 = "bdcf";
+    assert.equal(string1.shortestCommonSuperSequenceWith(string2), 5);
+    string1 = "dynamic";
+    string2 = "programming";
+    assert.equal(string1.shortestCommonSuperSequenceWith(string2), 15);
+  });
+});
+describe("longest increasing subsequence problems", function () {
+  var inputs = [4, 2, 3, 6, 10, 1, 12];
+  it("should return the length of the longest increasing subsequence", function () {
+    assert.equal(inputs.longestIncreasingSubsequence(), 5);
+    inputs = [-4, 10, 3, 7, 15];
+    assert.equal(inputs.longestIncreasingSubsequence(), 4);
+  });
+  it("should return the maximum sum of increasing elements in an array", function () {
+    inputs = [4, 1, 2, 6, 10, 1, 12];
+    assert.equal(inputs.maximumSumOfIncreasingSubsequence(), 32);
+    inputs = [-4, 10, 3, 7, 15];
+    assert.equal(inputs.maximumSumOfIncreasingSubsequence(), 25);
+  });
+  it("should return the minimum deletions to make a sequence sorted", function () {
+    assert.equal(inputs.minDeletionForSortedSequence(), 2);
+    inputs = [-4, 10, 3, 7, 15];
+    assert.equal(inputs.minDeletionForSortedSequence(), 1);
+    inputs = [3, 2, 1, 0];
+    assert.equal(inputs.minDeletionForSortedSequence(), 3);
+  });
 });

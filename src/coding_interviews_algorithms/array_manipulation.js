@@ -1093,11 +1093,11 @@ function smallestElement(array, position) {
   return recursiveSmallestElement(array, position, 0, array.length - 1);
 }
 function recursiveSmallestElement(array, position, low, high) {
-  let pivot = partition(array, low, high);
-  if (pivot === position - 1) return array[pivot];
-  if (pivot > position - 1)
-    return recursiveSmallestElement(array, position, low, pivot - 1);
-  return recursiveSmallestElement(array, position, pivot + 1, high);
+  let pivotIndex = partition(array, low, high);
+  if (pivotIndex === position - 1) return array[pivotIndex];
+  if (pivotIndex > position - 1)
+    return recursiveSmallestElement(array, position, low, pivotIndex - 1);
+  return recursiveSmallestElement(array, position, pivotIndex + 1, high);
 }
 function partition(list, low, high) {
   if (low === high) return low;
@@ -1108,9 +1108,9 @@ function partition(list, low, high) {
       break;
     }
   }
-  const pivot = list[high];
+  const pivotValue = list[high];
   for (let i = low; i < high; i++) {
-    if (list[i] < pivot) {
+    if (list[i] < pivotValue) {
       [list[low], list[i]] = [list[i], list[low]];
       low += 1;
     }

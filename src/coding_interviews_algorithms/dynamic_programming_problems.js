@@ -422,6 +422,57 @@ function minDeletionAndInsertionToEqual(string1, string2) {
   let lcs = string1.longestCommonSubsequenceWith(string2);
   return [string1.length - lcs, string2.length - lcs];
 }
+function longestIncreasingSubsequence(array) {
+  if (array.length <= 1) return array.length;
+  var dp = Array(array.length);
+  dp[0] = 1;
+  for (let i = 1; i < array.length; i++) {
+    dp[i] = 1;
+    for (let j = 0; j < i; j++) {
+      if (array[i] > array[j] && dp[i] <= dp[j]) {
+        dp[i] = 1 + dp[j];
+      }
+    }
+  }
+  return dp[array.length - 1];
+}
+function maximumSumOfIncreasingSubsequence(array) {
+  if (array.length === 0) return 0;
+  var dp = Array(array.length);
+  dp[0] = array[0];
+  for (let i = 1; i < array.length; i++) {
+    dp[i] = 0;
+    for (let j = 0; j < i; j++) {
+      if (array[i] > array[j] && dp[i] < dp[j]) dp[i] = array[j] + dp[i];
+    }
+    dp[i] = Math.max(dp[i - 1], dp[i] + array[i]);
+  }
+  return dp[array.length - 1];
+}
+function shortestCommonSuperSequenceWith(string1, string2) {
+  var result = string2.length,
+    previousMatchedIndex = -1;
+  for (let i = 0; i < string1.length; i++) {
+    let matched = false,
+      currentMatchedIndex = previousMatchedIndex;
+    for (let j = 0; j < string2.length; j++) {
+      if (string2[j] === string1[i]) {
+        matched = true;
+        currentMatchedIndex = j;
+        break;
+      }
+    }
+    if (!matched || (matched && currentMatchedIndex < previousMatchedIndex))
+      result += 1;
+    previousMatchedIndex = currentMatchedIndex;
+  }
+  return result;
+}
+function minDeletionForSortedSequence(array) {
+  if (array.length <= 1) return 0;
+  let lis = longestIncreasingSubsequence(array);
+  return array.length - lis;
+}
 Array.prototype.hasTwoPartitionsOfEqualSum = function () {
   return hasTwoPartitionsOfEqualSum(this);
 };
@@ -436,6 +487,15 @@ Array.prototype.countOfSubsetWithSum = function (sum) {
 };
 Array.prototype.numberOfSymbolsCombinationToHaveTheSum = function (sum) {
   return numberOfSymbolsCombinationToHaveTheSum(this, sum);
+};
+Array.prototype.longestIncreasingSubsequence = function () {
+  return longestIncreasingSubsequence(this);
+};
+Array.prototype.maximumSumOfIncreasingSubsequence = function () {
+  return maximumSumOfIncreasingSubsequence(this);
+};
+Array.prototype.minDeletionForSortedSequence = function () {
+  return minDeletionForSortedSequence(this);
 };
 String.prototype.longestPalindromicSubsequence = function () {
   return longestPalindromicSubsequence(this);
@@ -460,6 +520,9 @@ String.prototype.longestCommonSubsequenceWith = function (otherString) {
 };
 String.prototype.minDeletionAndInsertionToEqual = function (otherString) {
   return minDeletionAndInsertionToEqual(this, otherString);
+};
+String.prototype.shortestCommonSuperSequenceWith = function (otherString) {
+  return shortestCommonSuperSequenceWith(this, otherString);
 };
 module.exports = {
   maxProfitFittingCapacityHavingDistinctItems,

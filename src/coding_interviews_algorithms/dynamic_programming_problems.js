@@ -473,6 +473,140 @@ function minDeletionForSortedSequence(array) {
   let lis = longestIncreasingSubsequence(array);
   return array.length - lis;
 }
+function longestRepeatingSubsequence(array) {
+  var dp = Array(array.length).fill(0),
+    matchIndex = -1;
+  for (let i = 0; i < array.length; i++) {
+    for (let j = i + 1; j < array.length; j++) {
+      if (array[i] === array[j]) {
+        if (j >= matchIndex && i > 0) {
+          dp[i] = 1 + dp[i - 1];
+        } else {
+          dp[i] = 1;
+        }
+        matchIndex = j;
+        break;
+      }
+    }
+    if (i > 0) dp[i] = Math.max(dp[i], dp[i - 1]);
+  }
+  return dp[array.length - 1];
+}
+function totalOfSubsequencesMatching(string, pattern) {
+  if (pattern.length === 0) return 1;
+  if (string.length === 0 || string.length < pattern.length) return 0;
+  var dp = Array(string.length + 1)
+    .fill(0)
+    .map((_) => Array(pattern.length + 1).fill(0));
+  for (let i = 0; i <= string.length; i++) dp[i][0] = 1;
+  for (let i = 1; i <= string.length; i++) {
+    for (let j = 1; j <= pattern.length; j++) {
+      if (string[i - 1] === pattern[j - 1]) dp[i][j] = dp[i - 1][j - 1];
+      dp[i][j] += dp[i - 1][j];
+    }
+  }
+  return dp[string.length][pattern.length];
+}
+function longestBitonicSubsequence(array) {
+  var decreasingLengthsRev = Array(array.length),
+    decreasingLengths = Array(array.length);
+  for (let i = 0; i < array.length; i++) {
+    decreasingLengths[i] = 1;
+    for (let j = i - 1; j >= 0; j--) {
+      if (array[j] < array[i])
+        decreasingLengths[i] = Math.max(
+          decreasingLengths[i],
+          decreasingLengths[j] + 1
+        );
+    }
+  }
+
+  for (let i = array.length - 1; i >= 0; i--) {
+    decreasingLengthsRev[i] = 1;
+    for (let j = i + 1; j < array.length; j++) {
+      if (array[j] < array[i])
+        decreasingLengthsRev[i] = Math.max(
+          decreasingLengthsRev[i],
+          decreasingLengthsRev[j] + 1
+        );
+    }
+  }
+  let maxLength = 0;
+  for (let i = 0; i < array.length; i++) {
+    maxLength = Math.max(
+      maxLength,
+      decreasingLengths[i] + decreasingLengthsRev[i] - 1
+    );
+  }
+  return maxLength;
+}
+function longestAlternatingSubsequence(array) {
+  var decreasingOrder = Array(array.length),
+    increasingOrder = Array(array.length),
+    maxLength = 0;
+  for (let i = 0; i < array.length; i++) {
+    decreasingOrder[i] = 1;
+    increasingOrder[i] = 1;
+    for (let j = 0; j < i; j++) {
+      if (array[i] > array[j]) {
+        increasingOrder[i] = Math.max(
+          increasingOrder[i],
+          decreasingOrder[j] + 1
+        );
+        maxLength = Math.max(maxLength, increasingOrder[i]);
+      } else if (array[i] < array[j]) {
+        decreasingOrder[i] = Math.max(
+          decreasingOrder[i],
+          increasingOrder[j] + 1
+        );
+        maxLength = Math.max(maxLength, decreasingOrder[i]);
+      }
+    }
+  }
+  return maxLength;
+}
+function minimumEditDistanceWith(string1, string2) {
+  var dp = Array(string1.length + 1)
+    .fill(0)
+    .map((_) => Array(string2.length + 1).fill(0));
+  for (let i = 1; i <= string2.length; i++) dp[0][i] = i;
+  for (let i = 1; i <= string1.length; i++) {
+    dp[i][0] = i;
+    for (let j = 1; j <= string2.length; j++) {
+      let count = 0;
+      if (string1[i - 1] !== string2[j - 1]) count = 1;
+      dp[i][j] = Math.min(
+        dp[i - 1][j] + 1,
+        dp[i][j - 1] + 1,
+        dp[i - 1][j - 1] + count
+      );
+    }
+  }
+  return dp[string1.length][string2.length];
+}
+function isAShuffleOf(string1, string2, string3) {
+  var len1 = string1.length,
+    len2 = string2.length,
+    len3 = string3.length;
+  if (len2 === 0) return string1 === string3;
+  if (len3 === 0) return string1 === string2;
+  if (len2 + len3 !== len1) return false;
+  var dp = Array(string2.length + 1)
+    .fill(false)
+    .map((_) => Array(string3.length + 1).fill(false));
+  for (let i = 0; i <= len2; i++) {
+    for (let j = 0; j <= len3; j++) {
+      if (i === 0) dp[i][j] = string1.slice(0, j) === string3.slice(0, j);
+      else if (j === 0) dp[i][j] = string1.slice(0, i) === string2.slice(0, i);
+      else {
+        dp[i][j] =
+          (string1[i + j - 1] === string2[i - 1] && dp[i - 1][j]) ||
+          (string1[i + j - 1] === string3[j - 1] && dp[i][j - 1]);
+      }
+    }
+  }
+  return dp[len2][len3];
+}
 Array.prototype.hasTwoPartitionsOfEqualSum = function () {
   return hasTwoPartitionsOfEqualSum(this);
 };
@@ -496,6 +630,15 @@ Array.prototype.maximumSumOfIncreasingSubsequence = function () {
 };
 Array.prototype.minDeletionForSortedSequence = function () {
   return minDeletionForSortedSequence(this);
+};
+Array.prototype.longestRepeatingSubsequence = function () {
+  return longestRepeatingSubsequence(this);
+};
+Array.prototype.longestBitonicSubsequence = function () {
+  return longestBitonicSubsequence(this);
+};
+Array.prototype.longestAlternatingSubsequence = function () {
+  return longestAlternatingSubsequence(this);
 };
 String.prototype.longestPalindromicSubsequence = function () {
   return longestPalindromicSubsequence(this);
@@ -523,6 +666,15 @@ String.prototype.minDeletionAndInsertionToEqual = function (otherString) {
 };
 String.prototype.shortestCommonSuperSequenceWith = function (otherString) {
   return shortestCommonSuperSequenceWith(this, otherString);
+};
+String.prototype.totalOfSubsequencesMatching = function (pattern) {
+  return totalOfSubsequencesMatching(this, pattern);
+};
+String.prototype.minimumEditDistanceWith = function (otherString) {
+  return minimumEditDistanceWith(this, otherString);
+};
+String.prototype.isAShuffleOf = function (string1, string2) {
+  return isAShuffleOf(this, string1, string2);
 };
 module.exports = {
   maxProfitFittingCapacityHavingDistinctItems,

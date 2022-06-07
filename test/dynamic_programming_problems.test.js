@@ -239,4 +239,57 @@ describe("longest increasing subsequence problems", function () {
     inputs = [3, 2, 1, 0];
     assert.equal(inputs.minDeletionForSortedSequence(), 3);
   });
+  it("should return the longest repeating subsequence of a given sequence", function () {
+    inputs = [..."tomorrow"];
+    assert.equal(inputs.longestRepeatingSubsequence(), 2);
+    inputs = [..."aabdbcec"];
+    assert.equal(inputs.longestRepeatingSubsequence(), 3);
+    inputs = [..."fmff"];
+    assert.equal(inputs.longestRepeatingSubsequence(), 2);
+  });
+  it("should return the total of subsequences matching a given pattern", function () {
+    var text = "baxmx",
+      pattern = "ax";
+    assert.equal(text.totalOfSubsequencesMatching(pattern), 2);
+    text = "tomorrow";
+    pattern = "tor";
+    assert.equal(text.totalOfSubsequencesMatching(pattern), 4);
+  });
+  it("should return the longest bitonic subsequence of a given array of numbers", function () {
+    assert.equal(inputs.longestBitonicSubsequence(), 5);
+    inputs = [4, 2, 5, 9, 7, 6, 10, 3, 1];
+    assert.equal(inputs.longestBitonicSubsequence(), 7);
+  });
+  it("should return the longest alternating subsequence of a given array", function () {
+    assert.equal(inputs.longestAlternatingSubsequence(), 5);
+    inputs = [3, 2, 1, 4];
+    assert.equal(inputs.longestAlternatingSubsequence(), 3);
+    inputs = [1, 3, 2, 4];
+    assert.equal(inputs.longestAlternatingSubsequence(), 4);
+  });
+  it("should return the minimum modifications we can do to a string to be another string", function () {
+    var string1 = "bat",
+      string2 = "but";
+    assert.equal(string1.minimumEditDistanceWith(string2), 1);
+    string1 = "abdca";
+    string2 = "cbda";
+    assert.equal(string1.minimumEditDistanceWith(string2), 2);
+    string1 = "passpot";
+    string2 = "ppsspqrt";
+    assert.equal(string1.minimumEditDistanceWith(string2), 3);
+  });
+  it("should check if a string is a shuffle of two other strings", function () {
+    var string1 = "abcdef",
+      string2 = "abd",
+      string3 = "cef";
+    assert.isTrue(string1.isAShuffleOf(string2, string3));
+    string1 = "adcbef";
+    assert.isFalse(string1.isAShuffleOf(string2, string3));
+    string1 = "abdccf";
+    assert.isFalse(string1.isAShuffleOf(string2, string3));
+    string1 = "mnaobcdepf";
+    string2 = "abcdef";
+    string3 = "mnop";
+    assert.isTrue(string1.isAShuffleOf(string2, string3));
+  });
 });

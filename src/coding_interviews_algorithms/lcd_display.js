@@ -1,114 +1,177 @@
-const { generateArray,throwIfNaN} = require('../utils')
+/*jslint
+ this, node
+*/
 
+"use strict";
+const {throwIfNaN} = require("../utils");
+var LcdDisplay;
 
-class VerticalPrintConfig{
-    #withLeftBarSet
-    #withRightBarSet
-    #withBothBarSet
-    
-    constructor(withLeftBarSet, withRightBarSet, withBothBarSet) {
-        this.#withLeftBarSet = withLeftBarSet
-        this.#withRightBarSet = withRightBarSet
-        this.#withBothBarSet = withBothBarSet
+var LineSetBuilder = function () {
+    var self = Object.create(this);
+    var linesMap;
+    var firstLineSet = new Set(Array.generate(10)).exclude(new Set([1, 4]));
+    var secondLineSet;
+    var thirdLineSet = new Set(Array.generate(10)).exclude(new Set([0, 1, 7]));
+    var fourthLineSet;
+    var fifthLineSet = new Set(Array.generate(10)).exclude(new Set([1, 7]));
+    secondLineSet = {
+        "withBothBarSet": new Set([0, 4, 8, 9]),
+        "withLeftBarSet": new Set([5, 6]),
+        "withRightBarSet": new Set([1, 2, 3, 7])
+    };
+    fourthLineSet = {
+        "withBothBarSet": new Set([0, 6, 8]),
+        "withLeftBarSet": new Set([2]),
+        "withRightBarSet": new Set([1, 3, 4, 5, 7, 9])
+    };
+    linesMap = {
+        "1": firstLineSet,
+        "2": secondLineSet,
+        "3": thirdLineSet,
+        "4": fourthLineSet,
+        "5": fifthLineSet
+    };
 
+    function linesIndexMap() {
+        return linesMap;
     }
-    
-    get withBothBarSet() {
-        return this.#withBothBarSet
-    }
-    get withLeftBarSet() {
-        return this.#withLeftBarSet
-    }
-    get withRightBarSet() {
-        return this.#withRightBarSet
-    }
-}
+    self.method("linesIndexMap", linesIndexMap);
+    return self;
+};
 
-class LineSetBuilder{
-    #linesIndexMap
-    #firstLineSet
-    #secondLineSet
-    #thirdLineSet
-    #fourthLineSet
-    #fifthLineSet
-    constructor() {
-        this.#firstLineSet = new Set(generateArray(10)).exclude(new Set([1, 4]))
-        let secondLineLeftSet = new Set([5, 6]), secondLineRightSet = new Set([1, 2, 3, 7])
-        let secondLineBothSet = new Set([0,4,8,9])
-        this.#secondLineSet = new VerticalPrintConfig(secondLineLeftSet, secondLineRightSet, secondLineBothSet)
-        this.#thirdLineSet = new Set(generateArray(10)).exclude(new Set([0, 1, 7]))
-        let fourthLineLeftSet = new Set([2]), fourthLineBothSet = new Set([0, 6, 8])
-        let fourthLineRightSet = new Set(generateArray(10)).exclude(fourthLineBothSet.union(fourthLineLeftSet))
-        this.#fourthLineSet = new VerticalPrintConfig(fourthLineLeftSet, fourthLineRightSet, fourthLineBothSet)
-        this.#fifthLineSet = new Set(generateArray(10)).exclude(new Set([1, 7]))
-        this.#linesIndexMap = { 1: this.#firstLineSet, 2: this.#secondLineSet, 3: this.#thirdLineSet, 4: this.#fourthLineSet, 5: this.#fifthLineSet, };
-    }
-    
-    get linesIndexMap() {
-        return this.#linesIndexMap;
-    }
-}
+LcdDisplay = function () {
+    var self = Object.create(this);
+    var linesIndexMap = new LineSetBuilder().linesIndexMap();
 
-module.exports = class LcdDisplay{
-    #lineSet  
-    constructor() {
-        this.#lineSet = new LineSetBuilder()
-    }
-    display(number, characterSize) {
-        let result = ''
+    function display(number, characterSize) {
+        var result = "";
         throwIfNaN(number);
-        for (let index = 1; index <=5; index++) {
-            result = `${result}${this.#computeLinePrinting(number, characterSize, index)}`;
+        Object.keys(linesIndexMap).forEach(function (key) {
+            result += `${computeLinePrinting(
+                number,
+                characterSize,
+                Number.parseInt(key),
+                10
+            )}`;
+        });
+        return result;
+    }
+
+    function computeLinePrinting(number, characterSize, lineIndex) {
+        var intPartResult = "";
+        var decimalPartResult = "";
+        var index;
+        var result = "";
+        var parts = `${Number.parseFloat(number)}`;
+        var digit;
+        parts = parts.split(".");
+        index = 0;
+        while (index < parts[0].length) {
+            digit = Number.parseInt(parts[0][index], 10);
+            intPartResult += (
+                lineIndex % 2 === 0
+                ? computeVerticalPrinting(
+                    digit,
+                    characterSize,
+                    linesIndexMap[lineIndex]
+                )
+                : computeHorizontalPrinting(
+                    digit,
+                    characterSize,
+                    linesIndexMap[lineIndex]
+                )
+            );
+            index += 1;
+        }
+        index = 0;
+        parts[1] = parts[1] ?? "";
+        while (index < parts[1].length) {
+            digit = Number.parseInt(parts[1][index], 10);
+            decimalPartResult += (
+                lineIndex % 2 === 0
+                ? computeVerticalPrinting(
+                    digit,
+                    characterSize,
+                    linesIndexMap[lineIndex]
+                )
+                : computeHorizontalPrinting(
+                    digit,
+                    characterSize,
+                    linesIndexMap[lineIndex]
+                )
+            );
+            index += 1;
+        }
+        if (lineIndex % 2 === 0) {
+            decimalPartResult = fallback(
+                decimalPartResult,
+                "",
+                "",
+                ` ${decimalPartResult}`
+            );
+            result = `${intPartResult}${decimalPartResult}\n`;
+            result = result.repeat(characterSize);
+        } else if (lineIndex === 5) {
+            decimalPartResult = fallback(
+                decimalPartResult,
+                "",
+                "",
+                `.${decimalPartResult}`
+            );
+            result = ` ${intPartResult}${decimalPartResult}`;
+        } else {
+            decimalPartResult = fallback(
+                decimalPartResult,
+                "",
+                "",
+                ` ${decimalPartResult}`
+            );
+            result = ` ${intPartResult}${decimalPartResult}\n`;
         }
         return result;
     }
-    #computeLinePrinting(number, characterSize, lineIndex) {
-        let intPartResult = '', decimalPartResult = ''
-        let result = ''
-        let [intPart, decimalPart] = `${Number.parseFloat(number)}`.split('.')
-        decimalPart = Number.parseInt(decimalPart ?? 0) === 0 ? '' : decimalPart;
-        for (let index = 0; index < intPart.length; index++) {
-            const digit = Number.parseInt(intPart[index]);
-            intPartResult = `${intPartResult} ${lineIndex % 2 === 0 ? this.#computeVerticalPrinting(digit, characterSize, this.#lineSet.linesIndexMap[lineIndex]) : this.#computeHorizontalPrinting(digit, characterSize, this.#lineSet.linesIndexMap[lineIndex])}`;
-        }
-        for (let index = 0; index < decimalPart.length; index++) {
-            const digit = Number.parseInt(decimalPart[index]);
-            decimalPartResult = `${decimalPartResult} ${lineIndex % 2 === 0 ? this.#computeVerticalPrinting(digit, characterSize, this.#lineSet.linesIndexMap[lineIndex]) : this.#computeHorizontalPrinting(digit, characterSize, this.#lineSet.linesIndexMap[lineIndex])}`;
-        }
-        if (lineIndex % 2 === 0) {
-            result = `${intPartResult}${decimalPartResult === '' ?'': ` ${decimalPartResult}`}\n`.repeat(characterSize)
-        } else if (lineIndex === 5) {
-            result = ` ${intPartResult}${decimalPartResult === '' ?'': `.${decimalPartResult}`}`
-        } else {
-            result =  ` ${intPartResult}${decimalPartResult === '' ?'': ` ${decimalPartResult}`}\n`
-        }
-        return result
+    function fallback(value, invalid, valueOnInvalid, replacement) {
+        return (
+            value === invalid
+            ? valueOnInvalid
+            : replacement
+        );
     }
-    #computeHorizontalPrinting(digit, characterSize, printableSet) {
-        return printableSet.has(digit) ? `${'-'.repeat(characterSize)}  ` : ' '.repeat(characterSize + 2)
+    function computeHorizontalPrinting(digit, characterSize, printableSet) {
+        return (
+            printableSet.has(digit)
+            ? `${"-".repeat(characterSize)}`
+            : " ".repeat(characterSize + 2)
+        );
     }
 
-    #computeVerticalPrinting(digit, characterSize, printConfiguration) {
-        let result = ''
+    function computeVerticalPrinting(digit, characterSize, printConfiguration) {
+        var result = "";
         if (printConfiguration.withLeftBarSet.has(digit)) {
-            result = this.#printVerticalSegment(characterSize,true,false)
-        } else if (printConfiguration.withRightBarSet.has(digit)) {
-            result = this.#printVerticalSegment(characterSize,false,true)
-        } else if (printConfiguration.withBothBarSet.has(digit)) {
-            result = this.#printVerticalSegment(characterSize,true,true)
+            result = printVerticalSegment(characterSize, true, false);
         }
-        return result
+        if (printConfiguration.withRightBarSet.has(digit)) {
+            result = printVerticalSegment(characterSize, false, true);
+        }
+        if (printConfiguration.withBothBarSet.has(digit)) {
+            result = printVerticalSegment(characterSize, true, true);
+        }
+        return result;
     }
-    
-    #printVerticalSegment(characterSize, hasLeftBar, hasRightBar) {
-        let result = ''
+
+    function printVerticalSegment(characterSize, hasLeftBar, hasRightBar) {
+        var result = "";
         if (hasLeftBar && hasRightBar) {
-            result = `|${' '.repeat(characterSize)}|` 
+            result = `|${" ".repeat(characterSize)}|`;
         } else if (hasLeftBar) {
-            result = `|${' '.repeat(characterSize+1)}`
+            result = `|${" ".repeat(characterSize + 1)}`;
         } else if (hasRightBar) {
-            result = `${' '.repeat(characterSize+1)}|`
+            result = `${" ".repeat(characterSize + 1)}|`;
         }
-        return result
+        return result;
     }
+    self.method("display", display);
+    return self;
 };
+
+module.exports = LcdDisplay;

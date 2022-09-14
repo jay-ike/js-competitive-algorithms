@@ -1,511 +1,681 @@
+/*jslint
+ node,  this, bitwise
+ */
+"use strict";
 const {
-  interval,
-  buildHeap,
-  job,
-  buildArrayReader,
-  positionInSortedArray,
+    buildArrayReader,
+    buildHeap,
+    interval,
+    job,
+    positionInSortedArray
 } = require("../utils");
+var resultHandler = (val) => val;
+var defaultComparator = function (array) {
+    return function (index, iterator) {
+        return array[index] !== array[iterator];
+    };
+};
 function maximumArraySum(array, size) {
-  let endIndex = 0,
-    startIndex = 0,
-    sum = 0;
-  let currentMaxSum = Number.NEGATIVE_INFINITY;
-  while (endIndex < array.length) {
-    sum += array[endIndex];
-    endIndex++;
-    if (endIndex - startIndex >= size - 1) {
-      currentMaxSum = Math.max(sum, currentMaxSum);
-      sum -= array[startIndex];
+    var endIndex = 0;
+    var startIndex = 0;
+    var sum = 0;
+    var currentMaxSum = Number.NEGATIVE_INFINITY;
+    while (endIndex < array.length) {
+        sum += array[endIndex];
+        endIndex += 1;
+        if (endIndex - startIndex >= size - 1) {
+            currentMaxSum = Math.max(sum, currentMaxSum);
+            sum -= array[startIndex];
+        }
     }
-  }
-  if (currentMaxSum === Number.NEGATIVE_INFINITY || size < 1) {
-    throw RangeError(`cannot have a subarray of size ${size}`);
-  }
-  return currentMaxSum;
+    if (currentMaxSum === Number.NEGATIVE_INFINITY || size < 1) {
+        throw new RangeError(`cannot have a subarray of size ${size}`);
+    }
+    return currentMaxSum;
 }
 function totalElementsInBucket(bucket) {
-  return Object.keys(bucket).reduce((previousValue, currentValue) => {
-    return previousValue + bucket[currentValue];
-  }, 0);
+    return Object.keys(bucket).reduce(
+        (
+            previousValue,
+            currentValue
+        ) => previousValue + bucket[currentValue],
+        0
+    );
 }
 function maxElementsInBaskets(array, baskets) {
-  var bucket = {},
-    maxElements = 0,
-    startIndex = 0,
-    endIndex = 0;
-  while (endIndex <= array.length) {
-    if (
-      Object.keys(bucket).length < baskets ||
-      bucket[array[endIndex]] != null
-    ) {
-      bucket.incrementKeyValue(array[endIndex]);
-      endIndex++;
-    } else {
-      maxElements = Math.max(totalElementsInBucket(bucket), maxElements);
-      while (Object.keys(bucket).length >= baskets) {
-        bucket.decrementKeyValue(array[startIndex]);
-        startIndex++;
-      }
+    var bucket = {};
+    var maxElements = 0;
+    var startIndex = 0;
+    var endIndex = 0;
+    while (endIndex <= array.length) {
+        if (
+            Object.keys(bucket).length < baskets ||
+            !Object.isNull(bucket[array[endIndex]])
+        ) {
+            bucket.incrementKeyValue(array[endIndex]);
+            endIndex += 1;
+        } else {
+            maxElements = Math.max(totalElementsInBucket(bucket), maxElements);
+            while (Object.keys(bucket).length >= baskets) {
+                bucket.decrementKeyValue(array[startIndex]);
+                startIndex += 1;
+            }
+        }
     }
-  }
-  return maxElements;
+    return maxElements;
 }
 
 function longestSubArrayAfterReplacement(array, replacements) {
-  var startIndex = 0,
-    endIndex = 0,
-    result = Number.NEGATIVE_INFINITY,
-    toBeReplaced = 0;
-  while (endIndex < array.length) {
-    if (toBeReplaced < replacements || array[endIndex] === 1) {
-      toBeReplaced += array[endIndex] === 0 ? 1 : 0;
-      endIndex++;
-    } else {
-      while (toBeReplaced >= replacements) {
-        toBeReplaced -= array[startIndex] === 0 ? 1 : 0;
-        startIndex++;
-      }
+    var startIndex = 0;
+    var endIndex = 0;
+    var result = Number.NEGATIVE_INFINITY;
+    var toBeReplaced = 0;
+    while (endIndex < array.length) {
+        if (toBeReplaced < replacements || array[endIndex] === 1) {
+            toBeReplaced += (
+                array[endIndex] === 0
+                ? 1
+                : 0
+            );
+            endIndex += 1;
+        } else {
+            while (toBeReplaced >= replacements) {
+                toBeReplaced -= (
+                    array[startIndex] === 0
+                    ? 1
+                    : 0
+                );
+                startIndex += 1;
+            }
+        }
+        result = Math.max(result, endIndex - startIndex);
     }
-    result = Math.max(result, endIndex - startIndex);
-  }
-  return result;
+    return result;
 }
 function noDuplicateLength(array) {
-  var startIndex = 0,
-    endIndex = 1,
-    result = 0;
-  if ((array?.length ?? 0) === 0) return result;
-  result = 1;
-  while (endIndex < array.length) {
-    if (array[endIndex] !== array[startIndex]) {
-      result++;
-      startIndex = endIndex;
+    var startIndex = 0;
+    var endIndex = 1;
+    var result = 0;
+    if ((array?.length ?? 0) === 0) {
+        return result;
     }
-    endIndex++;
-  }
-  return result;
+    result = 1;
+    while (endIndex < array.length) {
+        if (array[endIndex] !== array[startIndex]) {
+            result += 1;
+            startIndex = endIndex;
+        }
+        endIndex += 1;
+    }
+    return result;
 }
 
 function indicesWithSum(array, sum) {
-  if ((array?.length ?? 0) === 0) return [];
-  var numbersDictionary = {},
-    endIndex = 0,
-    currentNumber,
-    result = [];
-  while (endIndex < array.length) {
-    currentNumber = array[endIndex];
-    if (numbersDictionary[sum - currentNumber] != null) {
-      result.push(numbersDictionary[sum - currentNumber], endIndex);
+    var numbersDictionary = {};
+    var endIndex = 0;
+    var currentNumber;
+    var result = [];
+    if (
+        (array?.length ?? 0) === 0
+    ) {
+        return [];
     }
-    numbersDictionary[array[endIndex]] = endIndex;
-    endIndex++;
-  }
-  return result;
+    while (endIndex < array.length) {
+        currentNumber = array[endIndex];
+        if (!Object.isNull(numbersDictionary[sum - currentNumber])) {
+            result.push(numbersDictionary[sum - currentNumber], endIndex);
+        }
+        numbersDictionary[array[endIndex]] = endIndex;
+        endIndex += 1;
+    }
+    return result;
 }
 function rotateArray(arr, pivot) {
-  var modulusPivot = 0;
-  if (pivot > 0) {
-    modulusPivot = pivot % arr.length;
-  } else if (pivot < 0) {
-    modulusPivot = arr.length + (pivot % arr.length);
-  }
-  return [...arr.slice(modulusPivot), ...arr.slice(0, modulusPivot)];
+    var modulusPivot = 0;
+    if (pivot > 0) {
+        modulusPivot = pivot % arr.length;
+    }
+    if (pivot < 0) {
+        modulusPivot = arr.length + (pivot % arr.length);
+    }
+    return [...arr.slice(modulusPivot), ...arr.slice(0, modulusPivot)];
 }
 function sortedSquares(array) {
-  var endIndex = array.length - 1,
-    startIndex = 0,
-    result = [];
-  while (endIndex >= startIndex) {
-    if (Math.pow(array[endIndex], 2) >= Math.pow(array[startIndex], 2)) {
-      result.push(Math.pow(array[endIndex], 2));
-      endIndex--;
-    } else {
-      result.push(Math.pow(array[startIndex], 2));
-      startIndex++;
+    var endIndex = array.length - 1;
+    var startIndex = 0;
+    var result = [];
+    while (endIndex >= startIndex) {
+        if (Math.pow(array[endIndex], 2) >= Math.pow(array[startIndex], 2)) {
+            result.push(Math.pow(array[endIndex], 2));
+            endIndex -= 1;
+        } else {
+            result.push(Math.pow(array[startIndex], 2));
+            startIndex += 1;
+        }
     }
-  }
-  return result.reverse();
+    return result.reverse();
 }
 function tripletsWhichSumIsZero(array) {
-  var sortedArray = [...array].sort((a, b) => a - b);
-  var triplets = [];
-  for (let index = 0; index < sortedArray.length; index++) {
-    if (index > 0 && sortedArray[index] === sortedArray[index + 1]) continue;
-    searchPairSum(sortedArray, index + 1, -sortedArray[index], triplets);
-  }
-  return triplets;
+    var sortedArray = [...array];
+    var triplets = [];
+    var index = 0;
+    sortedArray = sortedArray.sort((a, b) => a - b);
+    while (index < sortedArray.length) {
+        if (
+            index <= 0 || sortedArray[index] !== sortedArray[index + 1]
+        ) {
+            searchPairSum(
+                sortedArray,
+                index + 1,
+                -sortedArray[index],
+                triplets
+            );
+        }
+        index += 1;
+    }
+    return triplets;
 }
 
 function searchPairSum(array, startIndex, targetSum, currentTriplets) {
-  let endIndex = array.length - 1;
-  while (endIndex > startIndex) {
-    let currentSum = array[startIndex] + array[endIndex];
-    if (currentSum === targetSum) {
-      currentTriplets.push([-targetSum, array[startIndex], array[endIndex]]);
-      endIndex--;
-      startIndex++;
-      while (array[startIndex] === array[startIndex - 1]) startIndex++;
-      while (array[endIndex] === array[endIndex + 1]) endIndex--;
-    } else if (currentSum > targetSum) {
-      endIndex--;
-    } else {
-      startIndex++;
+    var endIndex = array.length - 1;
+    var currentSum;
+    while (endIndex > startIndex) {
+        currentSum = array[startIndex] + array[endIndex];
+        if (currentSum === targetSum) {
+            currentTriplets.push([
+                -targetSum,
+                array[startIndex],
+                array[endIndex]
+            ]);
+            endIndex -= 1;
+            startIndex += 1;
+            while (array[startIndex] === array[startIndex - 1]) {
+                startIndex += 1;
+            }
+            while (array[endIndex] === array[endIndex + 1]) {
+                endIndex -= 1;
+            }
+        } else if (currentSum > targetSum) {
+            endIndex -= 1;
+        } else {
+            startIndex += 1;
+        }
     }
-  }
 }
 function smallestTripletSumCloseTo(array, target) {
-  var sortedArray = [...array].sort((a, b) => a - b);
-  var sum = Number.NEGATIVE_INFINITY;
-  for (let index = 0; index < sortedArray.length; index++) {
-    let endIndex = sortedArray.length - 1;
-    let startIndex = index + 1;
-    while (endIndex > startIndex) {
-      let currentSum =
-        sortedArray[index] + sortedArray[startIndex] + sortedArray[endIndex];
-      if (currentSum > target) {
-        endIndex--;
-      } else {
-        sum = Math.max(sum, currentSum);
-        startIndex++;
-      }
+    var sortedArray = [...array];
+    var sum = Number.NEGATIVE_INFINITY;
+    var endIndex;
+    var startIndex;
+    var currentSum;
+    var index = 0;
+    sortedArray = sortedArray.sort((a, b) => a - b);
+    while (index < sortedArray.length) {
+        endIndex = sortedArray.length - 1;
+        startIndex = index + 1;
+        while (endIndex > startIndex) {
+            currentSum =
+            sortedArray[index] +
+            sortedArray[startIndex] +
+            sortedArray[endIndex];
+            if (currentSum > target) {
+                endIndex -= 1;
+            } else {
+                sum = Math.max(sum, currentSum);
+                startIndex += 1;
+            }
+        }
+        index += 1;
     }
-  }
-  return sum;
+    return sum;
 }
 function tripletsSumSmallerThan(array, targetSum) {
-  var sortedArray = [...array].sort((a, b) => a - b);
-  var triplets = [];
-  for (let index = 0; index < sortedArray.length; index++) {
-    let endIndex = sortedArray.length - 1;
-    let startIndex = index + 1;
-    while (endIndex > startIndex) {
-      let currentSum =
-        sortedArray[index] + sortedArray[startIndex] + sortedArray[endIndex];
-      if (currentSum >= targetSum) {
-        endIndex--;
-      } else {
-        for (let endMarker = endIndex; endMarker > startIndex; endMarker--) {
-          triplets.push([
-            sortedArray[index],
-            sortedArray[startIndex],
-            sortedArray[endMarker],
-          ]);
+    var sortedArray = [...array];
+    var triplets = [];
+    var startIndex;
+    var endIndex;
+    var currentSum;
+    var endMarker;
+    var index = 0;
+    sortedArray = sortedArray.sort((a, b) => a - b);
+    while (index < sortedArray.length) {
+        endIndex = sortedArray.length - 1;
+        startIndex = index + 1;
+        while (endIndex > startIndex) {
+            currentSum =
+            sortedArray[index] +
+            sortedArray[startIndex] +
+            sortedArray[endIndex];
+            if (currentSum >= targetSum) {
+                endIndex -= 1;
+            } else {
+                endMarker = endIndex;
+                while (endMarker > startIndex) {
+                    triplets.push([
+                        sortedArray[index],
+                        sortedArray[startIndex],
+                        sortedArray[endMarker]
+                    ]);
+                    endMarker -= 1;
+                }
+                startIndex += 1;
+            }
         }
-        startIndex++;
-      }
+        index += 1;
     }
-  }
-  return triplets;
+    return triplets;
 }
 function subArraysProductLessThan(array, target) {
-  var result = [];
-  for (let index = 0; index < array.length; index++) {
-    let subArray = [],
-      currentProduct = array[index],
-      endIndex = index;
-    while (currentProduct < target) {
-      subArray.push(array[endIndex]);
-      result.push([...subArray]);
-      endIndex++;
-      currentProduct *= array[endIndex];
+    var result = [];
+    var subArray;
+    var currentProduct;
+    var endIndex;
+    var index = 0;
+    while (index < array.length) {
+        subArray = [];
+        currentProduct = array[index];
+        endIndex = index;
+        while (currentProduct < target) {
+            subArray.push(array[endIndex]);
+            result.push([...subArray]);
+            endIndex += 1;
+            currentProduct *= array[endIndex];
+        }
+        index += 1;
     }
-  }
-  return result;
+    return result;
 }
 function sortInPlace(array) {
-  var low = 0,
-    index = 0,
-    high = array.length - 1;
-  while (index <= high) {
-    if (array[index] === 0) {
-      [array[low], array[index]] = [array[index], array[low]];
-      index++;
-      low++;
-    } else if (array[index] === 1) {
-      index++;
-    } else {
-      [array[high], array[index]] = [array[index], array[high]];
-      high--;
+    var low = 0;
+    var index = 0;
+    var high = array.length - 1;
+    while (index <= high) {
+        if (array[index] === 0) {
+            [array[low], array[index]] = [array[index], array[low]];
+            index += 1;
+            low += 1;
+        } else if (array[index] === 1) {
+            index += 1;
+        } else {
+            [array[high], array[index]] = [array[index], array[high]];
+            high -= 1;
+        }
     }
-  }
-  return array;
+    return array;
 }
 function quadrupletsWithSum(array, target) {
-  var sortedArray = [...array].sort((a, b) => a - b);
-  var result = [];
-  for (let first = 0; first <= sortedArray.length - 4; first++) {
-    for (let second = first + 1; second <= sortedArray.length - 3; second++) {
-      let startIndex = second + 1,
-        endIndex = sortedArray.length - 1;
-      while (startIndex < endIndex) {
-        let currentSum =
-          sortedArray[first] +
-          sortedArray[second] +
-          sortedArray[startIndex] +
-          sortedArray[endIndex];
-        if (target === currentSum) {
-          result.push([
-            sortedArray[first],
-            sortedArray[second],
-            sortedArray[startIndex],
-            sortedArray[endIndex],
-          ]);
-          startIndex++;
-          endIndex--;
-          while (sortedArray[startIndex] === sortedArray[startIndex - 1])
-            startIndex++;
-          while (sortedArray[endIndex] === sortedArray[endIndex + 1])
-            endIndex--;
-        } else if (currentSum < target) {
-          startIndex++;
-        } else {
-          endIndex--;
+    var sortedArray = [...array];
+    var result = [];
+    var startIndex;
+    var endIndex;
+    var currentSum;
+    var first = 0;
+    var second;
+    sortedArray = sortedArray.sort((a, b) => a - b);
+    while (first <= sortedArray.length - 4) {
+        second = first + 1;
+        while (second <= sortedArray.length - 3) {
+            startIndex = second + 1;
+            endIndex = sortedArray.length - 1;
+            while (startIndex < endIndex) {
+                currentSum =
+                sortedArray[first] +
+                sortedArray[second] +
+                sortedArray[startIndex] +
+                sortedArray[endIndex];
+                if (target === currentSum) {
+                    result.push([
+                        sortedArray[first],
+                        sortedArray[second],
+                        sortedArray[startIndex],
+                        sortedArray[endIndex]
+                    ]);
+                    startIndex += 1;
+                    endIndex -= 1;
+                    while (
+                        sortedArray[startIndex] ===
+                        sortedArray[startIndex - 1]
+                    ) {
+                        startIndex += 1;
+                    }
+                    while (
+                        sortedArray[endIndex] ===
+                        sortedArray[endIndex + 1]
+                    ) {
+                        endIndex -= 1;
+                    }
+                } else if (currentSum < target) {
+                    startIndex += 1;
+                } else {
+                    endIndex -= 1;
+                }
+            }
+            second += 1;
         }
-      }
+        first += 1;
     }
-  }
-  return result;
+    return result;
 }
 function minimumArrayToBeSorted(array) {
-  var startIndex = 0,
-    endIndex = array.length - 1;
-  while (
-    array[startIndex] <= array[startIndex + 1] ||
-    array[endIndex] >= array[endIndex - 1]
-  ) {
-    if (array[startIndex] <= array[startIndex + 1]) startIndex++;
-    if (array[endIndex] >= array[endIndex - 1]) endIndex--;
-    if (endIndex <= startIndex) return [];
-  }
+    var startIndex = 0;
+    var endIndex = array.length - 1;
+    var clonedArray = [...array];
+    while (
+        clonedArray[startIndex] <= clonedArray[startIndex + 1] ||
+        clonedArray[endIndex] >= clonedArray[endIndex - 1]
+    ) {
+        if (clonedArray[startIndex] <= clonedArray[startIndex + 1]) {
+            startIndex += 1;
+        }
+        if (clonedArray[endIndex] >= clonedArray[endIndex - 1]) {
+            endIndex -= 1;
+        }
+        if (endIndex <= startIndex) {
+            return [];
+        }
+    }
 
-  startIndex =
-    indexBiggerThan(
-      array.slice(0, startIndex + 1),
-      Math.min(array[startIndex], array[endIndex])
+    startIndex = indexBiggerThan(
+        clonedArray,
+        startIndex,
+        Math.min(clonedArray[startIndex], clonedArray[endIndex])
     ) ?? startIndex;
-  endIndex =
-    indexSmallerThan(array, Math.max(array[(startIndex, array[endIndex])])) ??
-    endIndex;
-  return array.slice(startIndex, endIndex + 1);
+    endIndex = indexSmallerThan(
+        clonedArray,
+        endIndex,
+        Math.max(
+            clonedArray[startIndex],
+            clonedArray[endIndex]
+        )
+    ) ?? endIndex;
+    return clonedArray.slice(startIndex, endIndex + 1);
 }
-function indexSmallerThan(array, value) {
-  for (let index = array.length - 1; index >= 0; index--) {
-    if (array[index] < value) {
-      return index;
+function indexSmallerThan(array, begin, value) {
+    var index = array.length - 1;
+    while (index >= begin) {
+        if (array[index] < value) {
+            return index;
+        }
+        index -= 1;
     }
-  }
 }
-function indexBiggerThan(array, value) {
-  for (let index = 0; index < array.length; index++) {
-    if (array[index] > value) {
-      return index;
+function indexBiggerThan(array, end, value) {
+    var index = 0;
+    while (index < end) {
+        if (array[index] > value) {
+            return index;
+        }
+        index += 1;
     }
-  }
 }
 function hasCycle(array) {
-  for (let index = 0; index < array.length; index++) {
-    let isForward = array[index] >= 0;
-    let fast = index,
-      slow = index;
-    while (true) {
-      slow = nextIndex(array, isForward, slow);
-      fast = nextIndex(array, isForward, fast);
-      if (fast !== -1) {
-        fast = nextIndex(array, isForward, fast);
-      }
-      if (slow === -1 || fast === -1 || fast === slow) break;
+    var isForward;
+    var fast;
+    var slow;
+    var index = 0;
+    while (index < array.length) {
+        isForward = array[index] >= 0;
+        fast = index;
+        slow = index;
+        while (true) {
+            slow = nextIndex(array, isForward, slow);
+            fast = nextIndex(array, isForward, fast);
+            if (fast !== -1) {
+                fast = nextIndex(array, isForward, fast);
+            }
+            if (
+                slow === -1 ||
+                fast === -1 ||
+                fast === slow
+            ) {
+                break;
+            }
+        }
+        if (slow !== -1 && fast === slow) {
+            return true;
+        }
+        index += 1;
     }
-    if (slow !== -1 && fast === slow) return true;
-  }
-  return false;
+    return false;
 }
 function nextIndex(array, isForward, currentIndex) {
-  var direction = array[currentIndex] >= 0,
-    nextPosition;
-  if (isForward !== direction) return -1;
-  nextPosition = (currentIndex + array[currentIndex]) % array.length;
-  if (nextPosition < 0) {
-    nextPosition += array.length;
-  }
-  if (nextPosition === currentIndex) return -1;
-  return nextPosition;
+    var direction = array[currentIndex] >= 0;
+    var nextPosition;
+    if (isForward !== direction) {
+        return -1;
+    }
+    nextPosition = (
+        currentIndex + array[currentIndex]
+    ) % array.length;
+    if (nextPosition < 0) {
+        nextPosition += array.length;
+    }
+    if (nextPosition === currentIndex) {
+        return -1;
+    }
+    return nextPosition;
 }
 function mergeOverlappingIntervals(intervals) {
-  var result = [];
-  let sortedIntervals = intervals
-      .map(interval)
-      .sort((a, b) => a.begin - b.begin),
-    start = sortedIntervals[0].begin,
-    end = sortedIntervals[0].end;
-  for (let index = 1; index < sortedIntervals.length; index++) {
-    let currentInterval = sortedIntervals[index];
-    if (currentInterval.begin <= end) {
-      end = Math.max(currentInterval.end, end);
-    } else {
-      result.push([start, end]);
-      start = currentInterval.begin;
-      end = currentInterval.end;
+    var result = [];
+    var sortedIntervals = intervals.map(
+        interval
+    ).sort((a, b) => a.begin - b.begin);
+    var start = sortedIntervals[0].begin;
+    var end = sortedIntervals[0].end;
+    var currentInterval;
+    var index = 1;
+    while (index < sortedIntervals.length) {
+        currentInterval = sortedIntervals[index];
+        if (currentInterval.begin <= end) {
+            end = Math.max(currentInterval.end, end);
+        } else {
+            result.push([start, end]);
+            start = currentInterval.begin;
+            end = currentInterval.end;
+        }
+        index += 1;
     }
-  }
-  result.push([start, end]);
-  return result;
+    result.push([start, end]);
+    return result;
 }
 function hasOverlappingIntervals(intervals) {
-  var sortedIntervals = [...intervals]
-    .map(interval)
-    .sort((a, b) => a.begin - b.begin);
-  for (let index = 1; index < sortedIntervals.length; index++) {
-    if (sortedIntervals[index].begin < sortedIntervals[index - 1].end)
-      return true;
-  }
-  return false;
+    var sortedIntervals = [...intervals].map(
+        interval
+    ).sort((a, b) => a.begin - b.begin);
+    var index = 1;
+    while (index < sortedIntervals.length) {
+        if (
+            sortedIntervals[index].begin < sortedIntervals[index - 1].end
+        ) {
+            return true;
+        }
+        index += 1;
+    }
+    return false;
 }
 function minimumRoomHoldingIntervals(intervals) {
-  var minimumRoom = 0;
-  var sortedIntervals = [...intervals]
-    .map(interval)
-    .sort((a, b) => a.begin - b.begin);
-  const heap = buildHeap([], (a, b) => a.end < b.end);
-  for (let index = 0; index < sortedIntervals.length; index++) {
-    let begin = sortedIntervals[index].begin;
-    while (heap.length() > 0 && begin >= heap.peek().end) {
-      heap.pop();
+    var minimumRoom = 0;
+    var sortedIntervals = [...intervals].map(
+        interval
+    ).sort((a, b) => a.begin - b.begin);
+    var heap = buildHeap([], (a, b) => a.end < b.end);
+    var begin;
+    var index = 0;
+    while (index < sortedIntervals.length) {
+        begin = sortedIntervals[index].begin;
+        while (heap.length() > 0 && begin >= heap.peek().end) {
+            heap.pop();
+        }
+        heap.push(sortedIntervals[index]);
+        minimumRoom = Math.max(heap.length(), minimumRoom);
+        index += 1;
     }
-    heap.push(sortedIntervals[index]);
-    minimumRoom = Math.max(heap.length(), minimumRoom);
-  }
-  return minimumRoom;
+    return minimumRoom;
 }
 
 function maximumCpuLoad(jobs) {
-  var maxLoad = 0,
-    currentLoad = 0,
-    sortedJobs = [...jobs].map(job).sort((a, b) => a.begin - b.begin),
-    heap = buildHeap([], (a, b) => a.end < b.end);
-  for (let i = 0; i < sortedJobs.length; i++) {
-    let currentJob = sortedJobs[i];
-    while (heap.length() > 0 && currentJob.begin >= heap.peek().end) {
-      currentLoad -= heap.pop().load;
+    var maxLoad = 0;
+    var currentLoad = 0;
+    var sortedJobs = [...jobs].map(job).sort((a, b) => a.begin - b.begin);
+    var heap = buildHeap([], (a, b) => a.end < b.end);
+    var currentJob;
+    var i = 0;
+    while (i < sortedJobs.length) {
+        currentJob = sortedJobs[i];
+        while (
+            heap.length() > 0 &&
+            currentJob.begin >= heap.peek().end
+        ) {
+            currentLoad -= heap.pop().load;
+        }
+        heap.push(currentJob);
+        currentLoad += currentJob.load;
+        maxLoad = Math.max(maxLoad, currentLoad);
+        i += 1;
     }
-    heap.push(currentJob);
-    currentLoad += currentJob.load;
-    maxLoad = Math.max(maxLoad, currentLoad);
-  }
-  return maxLoad;
+    return maxLoad;
 }
 function freeIntervals(schedules) {
-  function employeeInterval(employeeInterval, employeeIndex, intervalIndex) {
-    return {
-      employeeIndex,
-      interval: interval(employeeInterval),
-      intervalIndex,
+    var employeeInterval = function (
+        employeeInterval,
+        employeeIndex,
+        intervalIndex
+    ) {
+        return {
+            employeeIndex,
+            interval: interval(employeeInterval),
+            intervalIndex
+        };
     };
-  }
-  var heap = buildHeap([], (a, b) => a.interval.begin < b.interval.begin),
-    result = [];
-  for (let i = 0; i < schedules.length; i++) {
-    heap.push(employeeInterval(schedules[i][0], i, 0));
-  }
-  let previousInterval = heap.peek().interval;
-  while (heap.length() > 0) {
-    let heapTop = heap.pop();
-    if (previousInterval.end < heapTop.interval.begin) {
-      result.push([previousInterval.end, heapTop.interval.begin]);
-      previousInterval = heapTop.interval;
-    } else {
-      if (previousInterval.end < heapTop.interval.end) {
-        previousInterval = heapTop.interval;
-      }
+    var heap = buildHeap([], (a, b) => a.interval.begin < b.interval.begin);
+    var result = [];
+    var heapTop;
+    var employeeSchedule;
+    var previousInterval;
+    Object.keys(schedules).forEach(function (key) {
+        heap.push(employeeInterval(schedules[key][0], key, 0));
+    });
+    previousInterval = heap.peek().interval;
+    while (heap.length() > 0) {
+        heapTop = heap.pop();
+        if (previousInterval.end < heapTop.interval.begin) {
+            result.push([previousInterval.end, heapTop.interval.begin]);
+            previousInterval = heapTop.interval;
+        } else {
+            if (previousInterval.end < heapTop.interval.end) {
+                previousInterval = heapTop.interval;
+            }
+        }
+        employeeSchedule = schedules[heapTop.employeeIndex];
+        if (employeeSchedule.length > heapTop.intervalIndex + 1) {
+            heap.push(
+                employeeInterval(
+                    schedules[heapTop.employeeIndex][heapTop.intervalIndex + 1],
+                    heapTop.employeeIndex,
+                    heapTop.intervalIndex + 1
+                )
+            );
+        }
     }
-    let employeeSchedule = schedules[heapTop.employeeIndex];
-    if (employeeSchedule.length > heapTop.intervalIndex + 1) {
-      heap.push(
-        employeeInterval(
-          schedules[heapTop.employeeIndex][heapTop.intervalIndex + 1],
-          heapTop.employeeIndex,
-          heapTop.intervalIndex + 1
-        )
-      );
-    }
-  }
-  return result;
+    return result;
 }
 function mergeOverlappingIntervalsAfterInsert(intervals, newInterval) {
-  var nextPosition = 0,
-    result = [],
-    start,
-    end;
-
-  while (
-    nextPosition < intervals.length &&
-    intervals[nextPosition][1] < newInterval[0]
-  ) {
-    start = intervals[nextPosition][0];
-    end = intervals[nextPosition][1];
-    result.push([start, end]);
-    nextPosition++;
-  }
-  start = Math.min(newInterval[0], intervals[nextPosition][0]);
-  end = Math.max(newInterval[1], intervals[nextPosition][1]);
-  nextPosition++;
-
-  for (let index = nextPosition; index < intervals.length; index++) {
-    let newStart = intervals[nextPosition][0],
-      newEnd = intervals[nextPosition][1];
-    if (newStart <= end) {
-      end = Math.max(end, newEnd);
-    } else {
-      result.push([start, end]);
-      start = newStart;
-      end = newEnd;
+    var nextPosition = 0;
+    var result = [];
+    var start;
+    var end;
+    var newStart;
+    var newEnd;
+    var index;
+    while (
+        nextPosition < intervals.length &&
+        intervals[nextPosition][1] < newInterval[0]
+    ) {
+        start = intervals[nextPosition][0];
+        end = intervals[nextPosition][1];
+        result.push([start, end]);
+        nextPosition += 1;
     }
-  }
-  result.push([start, end]);
+    start = Math.min(newInterval[0], intervals[nextPosition][0]);
+    end = Math.max(newInterval[1], intervals[nextPosition][1]);
+    nextPosition += 1;
+    index = nextPosition;
+    while (index < intervals.length) {
+        newStart = intervals[nextPosition][0];
+        newEnd = intervals[nextPosition][1];
+        if (newStart <= end) {
+            end = Math.max(end, newEnd);
+        } else {
+            result.push([start, end]);
+            start = newStart;
+            end = newEnd;
+        }
+        index += 1;
+    }
+    result.push([start, end]);
 
-  return result;
+    return result;
 }
 function intersectionWithInterval(intervals, otherIntervals) {
-  var result = [],
-    firstIndex = 0,
-    secondIndex = 0;
-  while (firstIndex < intervals.length && secondIndex < otherIntervals.length) {
-    let start = intervals[firstIndex][0],
-      end = intervals[firstIndex][1],
-      otherStart = otherIntervals[secondIndex][0],
-      otherEnd = otherIntervals[secondIndex][1];
-    let firstOverlapSecond = start >= otherStart && start <= otherEnd,
-      secondOverlapFirst = otherStart >= start && otherStart <= end;
-    if (firstOverlapSecond || secondOverlapFirst) {
-      result.push([Math.max(start, otherStart), Math.min(end, otherEnd)]);
+    var result = [];
+    var firstIndex = 0;
+    var secondIndex = 0;
+    var firstOverlapSecond;
+    var secondOverlapFirst;
+    while (
+        (firstIndex < intervals.length) &&
+        (secondIndex < otherIntervals.length)
+    ) {
+        firstOverlapSecond = (
+            (intervals[firstIndex][0] >= otherIntervals[secondIndex][0]) &&
+            (intervals[firstIndex][0] <= otherIntervals[secondIndex][1])
+        );
+        secondOverlapFirst = (
+            (otherIntervals[secondIndex][0] >= intervals[firstIndex][0]) &&
+            (otherIntervals[secondIndex][0] <= intervals[firstIndex][1])
+        );
+        if (firstOverlapSecond || secondOverlapFirst) {
+            result.push([
+                Math.max(
+                    intervals[firstIndex][0],
+                    otherIntervals[secondIndex][0]
+                ),
+                Math.min(
+                    intervals[firstIndex][1],
+                    otherIntervals[secondIndex][1]
+                )
+            ]);
+        }
+        if (intervals[firstIndex][1] < otherIntervals[secondIndex][1]) {
+            firstIndex += 1;
+        } else {
+            secondIndex += 1;
+        }
     }
-    if (end < otherEnd) {
-      firstIndex++;
-    } else {
-      secondIndex++;
-    }
-  }
-  return result;
+    return result;
 }
 function cyclicSort(array) {
-  var index = 0,
-    comparator = defaultComparator(array);
-  cyclicSwap(index, array, (index) => array[index] - 1, comparator);
+    var index = 0;
+    var comparator = defaultComparator(array);
+    cyclicSwap(index, array, (index) => array[index] - 1, comparator);
 }
 function missingNumber(array) {
-  var index = 0,
-    n = array.length,
-    comparator = (index, iterator) =>
-      array[index] < n && array[index] !== array[iterator];
-  cyclicSwap(index, array, (index) => array[index], comparator);
-  for (let index = 0; index < array.length; index++) {
-    if (array[index] !== index) return index;
-  }
-  return n;
+    var index = 0;
+    var n = array.length;
+    var comparator = (index, iterator) => (
+        (array[index] < n)
+        && (array[index] !== array[iterator])
+    );
+    index = 0;
+    cyclicSwap(index, array, (index) => array[index], comparator);
+    while (index < array.length) {
+        if (array[index] !== index) {
+            return index;
+        }
+        index += 1;
+    }
+    return n;
 }
-var defaultComparator = (array) => {
-  let result = (index, iterator) => array[index] !== array[iterator];
-  return result;
-};
 /**
  *
  * @param {Array} array
@@ -514,801 +684,1068 @@ var defaultComparator = (array) => {
  *
  */
 function allMissingNumbers(array) {
-  var result = [],
-    index = 0,
-    comparator = defaultComparator(array);
-  cyclicSwap(index, array, (index) => array[index] - 1, comparator);
-  for (let index = 0; index < array.length; index++) {
-    if (array[index] !== index + 1) result.push(index + 1);
-  }
-  return result;
+    var result = [];
+    var index = 0;
+    var comparator = defaultComparator(array);
+    cyclicSwap(index, array, (index) => array[index] - 1, comparator);
+    while (index < array.length) {
+        if (array[index] !== index + 1) {
+            result.push(index + 1);
+        }
+        index += 1;
+    }
+    return result;
 }
 function cyclicSwap(index, array, iterator, comparator) {
-  while (index < array.length) {
-    let j = iterator(index);
-    if (comparator(index, j)) {
-      [array[index], array[j]] = [array[j], array[index]];
-    } else index++;
-  }
-  return index;
+    var j;
+    while (index < array.length) {
+        j = iterator(index);
+        if (comparator(index, j)) {
+            [array[index], array[j]] = [array[j], array[index]];
+        } else {
+            index += 1;
+        }
+    }
+    return index;
 }
 
 function duplicatedNumber(array) {
-  var index = 0;
-  while (index < array.length) {
-    if (array[index] !== index + 1) {
-      let j = array[index] - 1;
-      if (array[index] !== array[j]) {
-        [array[index], array[j]] = [array[j], array[index]];
-      } else return array[index];
-    } else index++;
-  }
-  return -1;
+    var index = 0;
+    var j;
+    while (index < array.length) {
+        if (array[index] !== index + 1) {
+            j = array[index] - 1;
+            if (array[index] !== array[j]) {
+                [array[index], array[j]] = [array[j], array[index]];
+            } else {
+                return array[index];
+            }
+        } else {
+            index += 1;
+        }
+    }
+    return -1;
 }
 function findCorruptPair(array) {
-  let index = 0,
-    result = [],
-    comparator = defaultComparator(array);
-  cyclicSwap(index, array, (index) => array[index] - 1, comparator);
-  for (let i = 0; i < array.length; i++) {
-    if (array[i] !== i + 1) result = [array[i], i + 1];
-  }
-  return result;
+    var index = 0;
+    var result = [];
+    var comparator = defaultComparator(array);
+    cyclicSwap(index, array, (index) => array[index] - 1, comparator);
+    while (index < array.length) {
+        if (array[index] !== index + 1) {
+            result = [array[index], index + 1];
+        }
+        index += 1;
+    }
+    return result;
 }
 function firstKPositiveMissingNumbers(array, k) {
-  let index = 0,
-    totalSeen = 0,
-    extraNumbers = {},
-    result = [],
-    n = array.length,
-    comparator = (index, iterator) =>
-      array[index] > 0 &&
-      array[index] - 1 < n &&
-      array[index] !== array[iterator];
-  cyclicSwap(index, array, (index) => array[index] - 1, comparator);
-  for (let j = 0; j < array.length; j++) {
-    if (array[j] !== j + 1 && totalSeen < k) {
-      result.push(j + 1);
-      totalSeen++;
+    var index = 0;
+    var totalSeen = 0;
+    var extraNumbers = {};
+    var result = [];
+    var comparator = (index, iterator) => (
+        (array[index] > 0)
+        && (array[index] - 1 < array.length)
+        && (array[index] !== array[iterator])
+    );
+    cyclicSwap(index, array, (index) => array[index] - 1, comparator);
+    while (index < array.length) {
+        if (array[index] !== index + 1 && totalSeen < k) {
+            result.push(index + 1);
+            totalSeen += 1;
+        }
+        if (array[index] >= array.length + 1) {
+            extraNumbers[array[index]] = index;
+        }
+        index += 1;
     }
-    if (array[j] >= n + 1) {
-      extraNumbers[array[j]] = j;
+    while (totalSeen < k) {
+        if (Object.isNull(extraNumbers[array.length + 1])) {
+            result.push(array.length + 1);
+            totalSeen += 1;
+        }
+        array.length += 1;
     }
-  }
-  while (totalSeen < k) {
-    if (extraNumbers[n + 1] == null) {
-      result.push(n + 1);
-      totalSeen++;
-    }
-    n++;
-  }
-  return result;
+    return result;
 }
 function nextIntervalIndices(intervals) {
-  var maxStarts = buildHeap([], (a, b) => a[0] > b[0]),
-    maxEnds = buildHeap([], (a, b) => a[0] > b[0]),
-    result = [...intervals].fill(-1);
-  for (let i = 0; i < intervals.length; i++) {
-    maxStarts.push([intervals[i][0], i]);
-    maxEnds.push([intervals[i][1], i]);
-  }
-  for (let i = 0; intervals.length; i++) {
-    let [topEnd, endIndex] = maxEnds.pop();
-    if (maxStarts.peek()[0] >= topEnd) {
-      let [topStart, startIndex] = maxStarts.pop();
-      while (maxStarts.length() && maxStarts.peek()[0] >= topEnd) {
-        [topStart, startIndex] = maxStarts.pop();
-      }
-      result[endIndex] = startIndex;
-      maxStarts.push([topStart, startIndex]);
+    var maxStarts = buildHeap([], (a, b) => a[0] > b[0]);
+    var maxEnds = buildHeap([], (a, b) => a[0] > b[0]);
+    var result = [...intervals];
+    var endDetails;
+    var startDetails;
+    result = result.fill(-1);
+    intervals.forEach(function (elt, i) {
+        maxStarts.push([elt[0], i]);
+        maxEnds.push([elt[1], i]);
+    });
+    while (intervals.length) {
+        endDetails = maxEnds.pop();
+        if (maxStarts.peek()[0] >= endDetails[0]) {
+            startDetails = maxStarts.pop();
+            while (
+                maxStarts.length() &&
+                (maxStarts.peek()[0] >= endDetails[0])
+            ) {
+                startDetails = maxStarts.pop();
+            }
+            result[endDetails[1]] = startDetails[1];
+            maxStarts.push(startDetails);
+        }
+        if (maxEnds.length() <= 0) {
+            break;
+        }
     }
-    if (maxEnds.length() <= 0) break;
-  }
-  return result;
+    return result;
 }
 function allSubsets(array) {
-  var subsets = [[]],
-    sortedArray = [...array].sort(),
-    startIndex = 0,
-    endIndex = 0;
-  for (let i = 0; i < sortedArray.length; i++) {
-    startIndex = 0;
-    let currentNumber = sortedArray[i];
-    if (i > 0 && sortedArray[i] === sortedArray[i - 1]) {
-      startIndex = endIndex + 1;
-    }
-    endIndex = subsets.length - 1;
-    for (let j = startIndex; j < endIndex + 1; j++) {
-      let set = subsets[j].slice(0);
-      set.push(currentNumber);
-      subsets.push(set);
-    }
-  }
-  return subsets;
+    var subsets = [[]];
+    var sortedArray = [...array];
+    var startIndex = 0;
+    var endIndex = 0;
+    sortedArray = sortedArray.sort();
+    sortedArray.forEach(function (value, i, arr) {
+        var j;
+        var set;
+        startIndex = 0;
+        if (i > 0 && value === arr[i - 1]) {
+            startIndex = endIndex + 1;
+        }
+        endIndex = subsets.length - 1;
+        j = startIndex;
+        while (j < endIndex + 1) {
+            set = subsets[j].slice(0);
+            set.push(value);
+            subsets.push(set);
+            j += 1;
+        }
+    });
+    return subsets;
 }
 function allPermutations(array) {
-  var permutations = [[]],
-    result = [];
-  for (let i = 0; i < array.length; i++) {
-    let currentNumber = array[i],
-      permutationLength = permutations.length;
-
-    for (let j = 0; j < permutationLength; j++) {
-      let oldPermutation = permutations.shift();
-      for (let k = 0; k < oldPermutation.length + 1; k++) {
-        let newPermutation = oldPermutation.slice(0);
-        newPermutation.splice(k, 0, currentNumber);
-        if (newPermutation.length === array.length) {
-          result.push(newPermutation);
-        } else {
-          permutations.push(newPermutation);
+    var permutations = [[]];
+    var result = [];
+    array.forEach(function (value) {
+        var oldPermutation;
+        var newPermutation;
+        var permutationLength = permutations.length;
+        var j = 0;
+        var k;
+        while (j < permutationLength) {
+            oldPermutation = permutations.shift();
+            k = 0;
+            while (k < oldPermutation.length + 1) {
+                newPermutation = oldPermutation.slice(0);
+                newPermutation.splice(k, 0, value);
+                if (newPermutation.length === array.length) {
+                    result.push(newPermutation);
+                } else {
+                    permutations.push(newPermutation);
+                }
+                k += 1;
+            }
+            j += 1;
         }
-      }
+    });
+    return result;
+}
+function binarySearch(start, end, value, indexReader, {
+    onExitLoop,
+    onFoundValue
+}) {
+    var middle;
+    var isAscending = indexReader(start) < indexReader(end);
+    while (start <= end) {
+        middle = Math.floor((start + end) / 2);
+        if (value === indexReader(middle)) {
+            return onFoundValue(middle);
+        }
+        if (isAscending) {
+            if (value < indexReader(middle)) {
+                end = middle - 1;
+            } else {
+                start = middle + 1;
+            }
+        } else {
+            if (value < indexReader(middle)) {
+                start = middle + 1;
+            } else {
+                end = middle - 1;
+            }
+        }
     }
-  }
-  return result;
+    return onExitLoop(start, end);
 }
-function binarySearchOf(array, value) {
-  if (array.length <= 0) return -1;
-  let start = 0,
-    end = array.length - 1,
-    isAscending = array[start] < array[end];
-  while (start <= end) {
-    let middle = Math.floor((start + end) / 2);
-    if (value === array[middle]) return middle;
-    if (isAscending) {
-      if (value < array[middle]) end = middle - 1;
-      else start = middle + 1;
-    } else {
-      if (value < array[middle]) start = middle + 1;
-      else end = middle - 1;
+function dichotomicSearch(
+    start,
+    end,
+    indexReader,
+    onLoopExit
+) {
+    var middle;
+    while (start < end) {
+        middle = Math.floor((end + start) / 2);
+        if (indexReader(middle) > indexReader(middle + 1)) {
+            end = middle;
+        } else {
+            start = middle + 1;
+        }
     }
-  }
-  return -1;
+    return onLoopExit(start, end);
 }
-function binarySearch(array, value, { onExitLoop, onFoundValue }) {
-  var start = 0,
-    end = array.length - 1;
-  while (start <= end) {
-    let middle = Math.floor((start + end) / 2);
-    if (value === array[middle]) return onFoundValue(middle);
-    if (value < array[middle]) {
-      end = middle - 1;
-    } else start = middle + 1;
-  }
-  return onExitLoop(start);
-}
-var resultHandler = (val) => val;
 function ceilingIndexOf(array, value) {
-  var end = array.length - 1;
-  if (array.length <= 0 || value > array[end]) return -1;
-  return binarySearch(array, value, {
-    onExitLoop: resultHandler,
-    onFoundValue: resultHandler,
-  });
+    if (
+        (array.length <= 0) ||
+        (value > array[array.length - 1])
+    ) {
+        return -1;
+    }
+    return binarySearch(
+        0,
+        array.length - 1,
+        value,
+        (index) => array[index],
+        {
+            onExitLoop: resultHandler,
+            onFoundValue: resultHandler
+        }
+    );
 }
 function smallestLetterGreaterThan(array, value) {
-  var start = 0,
-    end = array.length - 1;
-  if (value >= array[end]) return array[start];
-  return binarySearch(array, value, {
-    onExitLoop: (val) => array[val],
-    onFoundValue: (val) => array[val + 1],
-  });
+    if (value >= array[array.length - 1]) {
+        return array[0];
+    }
+    return binarySearch(
+        0,
+        array.length - 1,
+        value,
+        (index) => array[index],
+        {
+            onExitLoop: (val) => array[val],
+            onFoundValue: (val) => array[val + 1]
+        }
+    );
 }
 function rangeOf(array, value) {
-  var start = 0,
-    end = array.length - 1;
-  let index = binarySearch(array, value, {
-    onExitLoop: (_) => -1,
-    onFoundValue: resultHandler,
-  });
-  if (index === -1) return [-1, -1];
-  start = index;
-  end = index;
-  while (start - 1 >= 0 && array[start] === array[start - 1]) start = start - 1;
-  while (end + 1 < array.length && array[end] === array[end + 1]) end = end + 1;
-  return [start, end];
+    var start = 0;
+    var end = array.length - 1;
+    var index = binarySearch(
+        start,
+        end,
+        value,
+        (index) => array[index],
+        {
+            onExitLoop: () => -1,
+            onFoundValue: resultHandler
+        }
+    );
+    if (index === -1) {
+        return [-1, -1];
+    }
+    start = index;
+    end = index;
+    while (start - 1 >= 0 && array[start] === array[start - 1]) {
+        start = start - 1;
+    }
+    while (end + 1 < array.length && array[end] === array[end + 1]) {
+        end = end + 1;
+    }
+    return [start, end];
 }
 function searchIndexOf(array, value) {
-  var start = 0,
-    end = 1,
-    arrayReader = buildArrayReader(array);
-  if (arrayReader.getIndex(0) === Number.MAX_SAFE_INTEGER) return -1;
-  while (arrayReader.getIndex(end) < value) {
-    let newStart = end + 1;
-    end += (end - start + 1) * 2;
-    start = newStart;
-  }
-  while (start <= end) {
-    let middle = Math.floor((start + end) / 2);
-    if (arrayReader.getIndex(middle) === value) return middle;
-    if (arrayReader.getIndex(middle) > value) end = middle - 1;
-    else start = middle + 1;
-  }
-  return -1;
+    var start = 0;
+    var end = 1;
+    var arrayReader = buildArrayReader(array);
+    var newStart;
+    var middle;
+    if (arrayReader.getIndex(0) === Number.MAX_SAFE_INTEGER) {
+        return -1;
+    }
+    while (arrayReader.getIndex(end) < value) {
+        newStart = end + 1;
+        end += (end - start + 1) * 2;
+        start = newStart;
+    }
+    while (start <= end) {
+        middle = Math.floor((start + end) / 2);
+        if (arrayReader.getIndex(middle) === value) {
+            return middle;
+        }
+        if (arrayReader.getIndex(middle) > value) {
+            end = middle - 1;
+        } else {
+            start = middle + 1;
+        }
+    }
+    return binarySearch(
+        start,
+        end,
+        value,
+        arrayReader.getIndex,
+        {
+            onExitLoop: () => -1,
+            onFoundValue: resultHandler
+        }
+    );
 }
 function minimumDifferenceWith(array, value) {
-  if (array.length <= 0) return null;
-  var start = 0,
+    var start;
+    var end;
+    if (array.length <= 0) {
+        return null;
+    }
+    start = 0;
     end = array.length - 1;
-  if (value < array[start]) return array[start];
-  if (value > array[end]) return array[end];
-  while (start <= end) {
-    let middle = Math.floor((start + end) / 2);
-    if (array[middle] === value) return value;
-    if (value < array[middle]) end = middle - 1;
-    else start = middle + 1;
-  }
-  if (array[start] - value < value - array[end]) {
-    return array[start];
-  } else return array[end];
+    if (value < array[start]) {
+        return array[start];
+    }
+    if (value > array[end]) {
+        return array[end];
+    }
+    return binarySearch(
+        start,
+        end,
+        value,
+        (index) => array[index],
+        {
+            onExitLoop: function (start, end) {
+                if (array[start] - value < value - array[end]) {
+                    return array[start];
+                } else {
+                    return array[end];
+                }
+            },
+            onFoundValue: (index) => array[index]
+        }
+    );
 }
 function bitonicArrayMaximum(array) {
-  var start = 0,
-    end = array.length - 1;
-  while (start < end) {
-    let middle = Math.floor((end + start) / 2);
-    if (array[middle] > array[middle + 1]) end = middle;
-    else start = middle + 1;
-  }
-  return array[start];
+    var start = 0;
+    var end = array.length - 1;
+    return dichotomicSearch(
+        start,
+        end,
+        (index) => array[index],
+        (start) => array[start]
+    );
 }
 function bitonicArrayIndexOf(array, value) {
-  var start = 0,
-    end = array.length - 1;
-  while (start < end) {
-    let middle = Math.floor((end + start) / 2);
-    if (array[middle] > array[middle + 1]) end = middle;
-    else start = middle + 1;
-  }
-  let positionInLeftSide = binarySearchOf(array.slice(0, start + 1), value),
-    positionInRightSide = binarySearchOf(array.slice(start + 1), value);
-  if (positionInLeftSide !== -1) return positionInLeftSide;
-  else if (positionInRightSide !== -1) return start + 1 + positionInRightSide;
-  return -1;
+    var start = 0;
+    var end = array.length - 1;
+    return dichotomicSearch(
+        start,
+        end,
+        (index) => array[index],
+        function (start) {
+            var leftPosition = binarySearch(
+                0,
+                start,
+                value,
+                (index) => array[index],
+                {
+                    onExitLoop: () => -1,
+                    onFoundValue: resultHandler
+                }
+            );
+            var rightPosition = binarySearch(
+                start + 1,
+                array.length - 1,
+                value,
+                (index) => array[index],
+                {
+                    onExitLoop: () => -1,
+                    onFoundValue: resultHandler
+                }
+            );
+            if (leftPosition !== -1) {
+                return leftPosition;
+            }
+            if (rightPosition !== -1) {
+                return rightPosition;
+            }
+            return -1;
+        }
+    );
 }
 function rotatedArrayIndexOf(array, value) {
-  var start = 0,
-    end = array.length - 1;
-  while (start <= end) {
-    let middle = Math.floor((end + start) / 2);
-    if (array[middle] === value) return middle;
-    if (array[start] <= array[middle]) {
-      if (value >= array[start] && value < array[middle]) end = middle - 1;
-      else start = middle + 1;
-    } else {
-      if (array[middle] < value && value <= array[end]) start = middle + 1;
-      else end = middle - 1;
+    var middle;
+    var start = 0;
+    var end = array.length - 1;
+    while (start <= end) {
+        middle = Math.floor((end + start) / 2);
+        if (array[middle] === value) {
+            return middle;
+        }
+        if (array[start] <= array[middle]) {
+            if (value >= array[start] && value < array[middle]) {
+                end = middle - 1;
+            } else {
+                start = middle + 1;
+            }
+        } else {
+            if (array[middle] < value && value <= array[end]) {
+                start = middle + 1;
+            } else {
+                end = middle - 1;
+            }
+        }
     }
-  }
-  return -1;
+    return -1;
 }
 function rotatedArrayRotationCount(array) {
-  var start = 0,
-    end = array.length - 1;
-  while (array[start] > array[end]) {
-    let middle = Math.floor((end + start) / 2);
-    if (array[start] > array[middle]) end = middle;
-    else start = middle + 1;
-  }
-  return start;
+    var start = 0;
+    var end = array.length - 1;
+    var middle;
+    while (array[start] > array[end]) {
+        middle = Math.floor((start + end) / 2);
+        if (array[start] > array[middle]) {
+            end = middle;
+        } else {
+            start = middle + 1;
+        }
+    }
+    return start;
 }
 function findSingleNumber(array) {
-  if (array.length <= 0) return null;
-  var number = array[0];
-  for (let i = 1; i <= array.length; i++) {
-    number ^= array[i];
-  }
-  return number;
+    var number;
+    var i = 1;
+    if (array.length <= 0) {
+        return null;
+    }
+    number = array[0];
+    while (i <= array.length) {
+        number = number ^ array[i];
+        i += 1;
+    }
+    return number;
 }
 function findTwoSingleNumbers(array) {
-  if (array.length <= 0) return [];
-  let number = findSingleNumber(array),
+    var number;
+    var number2;
+    var rightMostDifferingBit;
+    if (array.length <= 0) {
+        return [];
+    }
+    number = findSingleNumber(array);
     rightMostDifferingBit = 1;
-  while ((rightMostDifferingBit & number) === 0) {
-    rightMostDifferingBit <<= 1;
-  }
-  let number1 = 0,
+    while ((rightMostDifferingBit & number) === 0) {
+        rightMostDifferingBit = rightMostDifferingBit << 1;
+    }
+    number = 0;
     number2 = 0;
-  array.forEach((val) => {
-    if ((val & rightMostDifferingBit) === 0) number1 ^= val;
-    else number2 ^= val;
-  });
-  return [number1, number2];
+    array.forEach(function (val) {
+        if ((val & rightMostDifferingBit) === 0) {
+            number = number ^ val;
+        } else {
+            number2 = number2 ^ val;
+        }
+    });
+    return [number, number2];
 }
 function flipInvert(array) {
-  var clonedArray = [...array],
-    size = array.length;
-  for (let row = 0; row < size; row++) {
-    for (let col = 0; col < Math.floor((size + 1) / 2); col++) {
-      let tmp = clonedArray[row][col] ^ 1;
-      clonedArray[row][col] = clonedArray[row][size - 1 - col] ^ 1;
-      clonedArray[row][size - 1 - col] = tmp;
-    }
-  }
-  return clonedArray;
+    var clonedArray = [...array];
+    var tmp;
+    var i;
+    array.forEach(function (val, row, arr) {
+        i = 0;
+        while (i < Math.floor((arr.length + 1) / 2)) {
+            tmp = val[i] ^ 1;
+            clonedArray[row][i] = (
+                clonedArray[row][arr.length - 1 - i] ^ 1
+            );
+            clonedArray[row][arr.length - 1 - i] = tmp;
+            i += 1;
+        }
+    });
+    return clonedArray;
 }
 function kGreatestNumbers(array, k) {
-  var heap = buildHeap([], (a, b) => a < b);
-  for (let i = 0; i < k; i++) {
-    heap.push(array[i]);
-  }
-  for (let i = k; i < array.length; i++) {
-    if (array[i] > heap.peek()) {
-      heap.pop();
-      heap.push(array[i]);
+    var heap = buildHeap([], (a, b) => a < b);
+    var i = 0;
+    while (i < k) {
+        heap.push(array[i]);
+        i += 1;
     }
-  }
-  return heap.value().sort((a, b) => b - a);
+    while (i < array.length) {
+        if (array[i] > heap.peek()) {
+            heap.pop();
+            heap.push(array[i]);
+        }
+        i += 1;
+    }
+    return heap.value().sort((a, b) => b - a);
 }
 function kSmallestNumber(array, k) {
-  var heap = buildHeap([], (a, b) => a > b);
-  for (let i = 0; i < k; i++) {
-    heap.push(array[i]);
-  }
-  for (let i = k; i < array.length; i++) {
-    if (array[i] < heap.peek()) {
-      heap.pop();
-      heap.push(array[i]);
+    var heap = buildHeap([], (a, b) => a > b);
+    var i = 0;
+    while (i < k) {
+        heap.push(array[i]);
+        i += 1;
     }
-  }
-  return heap.peek();
+    while (i < array.length) {
+        if (array[i] < heap.peek()) {
+            heap.pop();
+            heap.push(array[i]);
+        }
+        i += 1;
+    }
+    return heap.peek();
 }
 function euclideanDistance(point) {
-  return Math.sqrt(point[0] ** 2 + point[1] ** 2);
+    return Math.sqrt(point[0] ** 2 + point[1] ** 2);
 }
 function kClosestPointsToOrigin(array, k) {
-  var heap = buildHeap(
-    [],
-    (a, b) => euclideanDistance(a) > euclideanDistance(b)
-  );
-  for (let i = 0; i < k; i++) {
-    heap.push(array[i]);
-  }
-  for (let i = k; i < array.length; i++) {
-    if (euclideanDistance(array[i]) < euclideanDistance(heap.peek())) {
-      heap.pop();
-      heap.push(array[i]);
+    var heap = buildHeap(
+        [],
+        (a, b) => euclideanDistance(a) > euclideanDistance(b)
+    );
+    var i = 0;
+    while (i < k) {
+        heap.push(array[i]);
+        i += 1;
     }
-  }
-  return heap
-    .value()
-    .sort((a, b) => euclideanDistance(a) - euclideanDistance(b));
+    while (i < array.length) {
+        if (euclideanDistance(array[i]) < euclideanDistance(heap.peek())) {
+            heap.pop();
+            heap.push(array[i]);
+        }
+        i += 1;
+    }
+    return heap.value().sort(
+        (a, b) => euclideanDistance(a) - euclideanDistance(b)
+    );
 }
 function minimumRopesJoiningCost(array) {
-  var heap = buildHeap([...array], (a, b) => a < b),
-    minCost = 0;
-  while (heap.length() > 0) {
-    let value1 = heap.pop() ?? 0,
-      value2 = heap.pop() ?? 0;
-    minCost += value1 + value2;
-    if (heap.length() > 0) {
-      heap.push(value1 + value2);
+    var heap = buildHeap([...array], (a, b) => a < b);
+    var minCost = 0;
+    var value1;
+    var value2;
+    while (heap.length() > 0) {
+        value1 = heap.pop() ?? 0;
+        value2 = heap.pop() ?? 0;
+        minCost += value1 + value2;
+        if (heap.length() > 0) {
+            heap.push(value1 + value2);
+        }
     }
-  }
-  return minCost;
+    return minCost;
 }
 function kMostFrequentNumbers(array, k) {
-  var frequencies = {},
-    frequencyOccurrence = buildHeap([], (a, b) => a[1] < b[1]),
-    result = [];
-  for (let i = 0; i < array.length; i++) {
-    frequencies.incrementKeyValue(array[i]);
-  }
-  Object.keys(frequencies).forEach((key) => {
-    if (frequencyOccurrence.length() < k) {
-      frequencyOccurrence.push([Number.parseInt(key), frequencies[key]]);
-    } else {
-      if (frequencies[key] > frequencyOccurrence.peek()[1]) {
-        frequencyOccurrence.pop();
-        frequencyOccurrence.push([Number.parseInt(key), frequencies[key]]);
-      }
+    var frequencies = {};
+    var frequencyOccurrence = buildHeap([], (a, b) => a[1] < b[1]);
+    var result = [];
+    array.forEach(function (key) {
+        frequencies.incrementKeyValue(key);
+    });
+    Object.keys(frequencies).forEach(function (key) {
+        if (frequencyOccurrence.length() < k) {
+            frequencyOccurrence.push([Number.parseInt(key), frequencies[key]]);
+        } else {
+            if (frequencies[key] > frequencyOccurrence.peek()[1]) {
+                frequencyOccurrence.pop();
+                frequencyOccurrence.push([
+                    Number.parseInt(key),
+                    frequencies[key]
+                ]);
+            }
+        }
+    });
+    while (frequencyOccurrence.length() > 0) {
+        result.unshift(frequencyOccurrence.pop()[0]);
     }
-  });
-  while (frequencyOccurrence.length() > 0) {
-    result.unshift(frequencyOccurrence.pop()[0]);
-  }
-  return result;
+    return result;
 }
 function kClosestNumbersTo(array, k, value) {
-  var minHeap = buildHeap([], (a, b) => a[1] < b[1]),
-    valueIndex = positionInSortedArray(array, value, (a, b) =>
-      a < b ? -1 : 1
-    ),
-    result = [];
-  let low = Math.max(valueIndex - k, 0),
-    high = Math.min(valueIndex + k, array.length - 1);
-  for (let i = low; i < high + 1; i++)
-    minHeap.push([array[i], Math.abs(array[i] - value)]);
-
-  for (let i = 0; i < k; i++) {
-    result.push(minHeap.pop()[0]);
-  }
-  return result.sort();
+    var minHeap = buildHeap([], (a, b) => a[1] < b[1]);
+    var valueIndex = positionInSortedArray(
+        array,
+        value,
+        (a, b) => (
+            a < b
+            ? -1
+            : 1
+        )
+    );
+    var result = [];
+    var low = Math.max(valueIndex - k, 0);
+    var high = Math.min(valueIndex + k, array.length - 1);
+    var i = low;
+    while (i < high + 1) {
+        minHeap.push([array[i], Math.abs(array[i] - value)]);
+        i += 1;
+    }
+    i = 0;
+    while (i < k) {
+        result.push(minHeap.pop()[0]);
+        i += 1;
+    }
+    return result.sort();
 }
 function maxDistinctNumbersAfterKWithdrawals(array, k) {
-  var minHeap = buildHeap([], (a, b) => a[1] < b[1]),
-    result = 0,
-    frequencies = {};
-  array.forEach((element) => frequencies.incrementKeyValue(element));
-  Object.keys(frequencies).forEach((key) => {
-    let number = Number.parseInt(key);
-    if (frequencies[key] === 1) {
-      result++;
-    } else if (frequencies[key] > 1) {
-      if (minHeap.length() < k) minHeap.push([number, frequencies[key]]);
+    var minHeap = buildHeap([], (a, b) => a[1] < b[1]);
+    var result = 0;
+    var frequencies = {};
+    var numberDetails;
+    array.forEach(function (key) {
+        frequencies.incrementKeyValue(key);
+    });
+    Object.keys(frequencies).forEach(function (key) {
+        var number = Number.parseInt(key);
+        if (frequencies[key] === 1) {
+            result += 1;
+        } else if (frequencies[key] > 1) {
+            if (minHeap.length() < k) {
+                minHeap.push([number, frequencies[key]]);
+            }
+        }
+    });
+    while (k > 0 && minHeap.length() > 0) {
+        numberDetails = minHeap.pop();
+        if (numberDetails[1] === 2) {
+            result += 1;
+        } else {
+            minHeap.push([numberDetails[0], numberDetails[1] - 1]);
+        }
+        k -= 1;
     }
-  });
-  while (k > 0 && minHeap.length() > 0) {
-    let [number, frequency] = minHeap.pop();
-    if (frequency === 2) result++;
-    else minHeap.push([number, frequency - 1]);
-    k--;
-  }
-  if (k > 0) result -= k;
-  return result;
+    if (k > 0) {
+        result -= k;
+    }
+    return result;
 }
-function sumOfElementsBetweenK1AndK2SmallestElements(array, k1, k2) {
-  var maxHeap = buildHeap([], (a, b) => a > b),
-    result = 0;
-  array.forEach((value) => {
-    if (maxHeap.length() < k2 - 1) {
-      maxHeap.push(value);
-    } else {
-      if (value < maxHeap.peek()) {
-        maxHeap.pop();
-        maxHeap.push(value);
-      }
+function sumOfElementsBetweenK1AndK2SmallestElements(
+    array,
+    k1,
+    k2
+) {
+    var maxHeap = buildHeap([], (a, b) => a > b);
+    var result = 0;
+    array.forEach(function (value) {
+        if (maxHeap.length() < k2 - 1) {
+            maxHeap.push(value);
+        } else {
+            if (value < maxHeap.peek()) {
+                maxHeap.pop();
+                maxHeap.push(value);
+            }
+        }
+    });
+    while (maxHeap.length() > k1) {
+        result += maxHeap.pop();
     }
-  });
-  while (maxHeap.length() > k1) result += maxHeap.pop();
-  return result;
+    return result;
 }
 function minimumCpuIntervalsWhenCoolingInKIntervals(array, k) {
-  var maxHeap = buildHeap([], (a, b) => a[1] > b[1]),
-    frequencies = {},
-    result = 0;
-  array.forEach((value) => frequencies.incrementKeyValue(value));
-  Object.keys(frequencies).forEach((key) =>
-    maxHeap.push([key, frequencies[key]])
-  );
-  while (maxHeap.length() > 0) {
-    let n = k + 1,
-      waitingList = [];
-    while (n > 0 && maxHeap.length() > 0) {
-      let [task, duration] = maxHeap.pop();
-      if (duration > 1) waitingList.push([task, duration - 1]);
-      result++;
-      n--;
+    var maxHeap = buildHeap([], (a, b) => a[1] > b[1]);
+    var frequencies = {};
+    var result = 0;
+    var waitingList;
+    var taskDetails;
+    var n;
+    array.forEach(function (key) {
+        frequencies.incrementKeyValue(key);
+    });
+    Object.keys(frequencies).forEach(
+        (key) => maxHeap.push([key, frequencies[key]])
+    );
+    while (maxHeap.length() > 0) {
+        n = k + 1;
+        waitingList = [];
+        while (n > 0 && maxHeap.length() > 0) {
+            taskDetails = maxHeap.pop();
+            if (taskDetails[1] > 1) {
+                waitingList.push([
+                    taskDetails[0],
+                    taskDetails[1] - 1
+                ]);
+            }
+            result += 1;
+            n -= 1;
+        }
+        waitingList.forEach(maxHeap.push);
+        if (maxHeap.length() > 0) {
+            result += n;
+        }
     }
-    waitingList.forEach((value) => maxHeap.push(value));
-    if (maxHeap.length() > 0) result += n;
-  }
-  return result;
+    return result;
 }
 function kSmallestValueOfSortedArrays(arrays, k) {
-  var minHeap = buildHeap([], (a, b) => a[0] < b[0]),
-    allElements = 0;
-  for (let i = 0; i < arrays.length; i++) {
-    if (arrays[i].length > 0) {
-      minHeap.push([arrays[i][0], i, 0]);
+    var minHeap = buildHeap([], (a, b) => a[0] < b[0]);
+    var allElements = 0;
+    var element;
+    var count = 0;
+    arrays.forEach(function (value, i) {
+        if (value.length > 0) {
+            minHeap.push([value[0], i, 0]);
+        }
+        allElements += value.length;
+    });
+    if (allElements < k) {
+        return null;
     }
-    allElements += arrays[i].length;
-  }
-  let count = 0;
-  if (allElements < k) return null;
-  while (minHeap.length() > 0) {
-    let [value, arrayIndex, valueIndex] = minHeap.pop();
-    valueIndex++;
-    count++;
-    if (arrays[arrayIndex].length > valueIndex) {
-      minHeap.push([arrays[arrayIndex][valueIndex], arrayIndex, valueIndex]);
+    while (minHeap.length() > 0) {
+        element = minHeap.pop();
+        element[2] += 1;
+        count += 1;
+        if (arrays[element[1]].length > element[2]) {
+            minHeap.push([
+                arrays[element[1]][element[2]],
+                element[1],
+                element[2]
+            ]);
+        }
+        if (count === k) {
+            return element[0];
+        }
     }
-    if (count === k) return value;
-  }
 }
 function kthSmallestElementInSortedMatrix(matrix, k) {
-  var rows = matrix.length,
-    start = matrix[0][0],
-    end = matrix[rows - 1][rows - 1],
-    allElements = 0;
-  matrix.forEach((row) => (allElements += row.length));
-  if (k < 1 || k > allElements) return null;
-  while (start < end) {
-    let middle = Math.floor(start + (end - start) / 2),
-      [count, smaller, larger] = countElementLesserOrEqual(
-        matrix,
-        middle,
-        matrix[0][0],
-        matrix[rows - 1][rows - 1]
-      );
-    if (count === k) return smaller;
-    if (count < k) start = larger;
-    else end = smaller;
-  }
-  return start;
+    var rows = matrix.length;
+    var start = matrix[0][0];
+    var end = matrix[rows - 1][rows - 1];
+    var allElements = 0;
+    var element;
+    matrix.forEach(function (row) {
+        allElements += row.length;
+    });
+    if (k < 1 || k > allElements) {
+        return null;
+    }
+    while (start < end) {
+        element = countElementLesserOrEqual(
+            matrix,
+            Math.floor(start + (end - start) / 2),
+            matrix[0][0],
+            matrix[rows - 1][rows - 1]
+        );
+        if (element[0] === k) {
+            return element[1];
+        }
+        if (element[0] < k) {
+            start = element[2];
+        } else {
+            end = element[1];
+        }
+    }
+    return start;
 }
 function countElementLesserOrEqual(matrix, middle, smaller, larger) {
-  var count = 0,
-    rows = matrix.length;
-  let row = rows - 1,
-    col = 0;
-  while (row >= 0 && col < rows) {
-    if (matrix[row][col] > middle) {
-      larger = Math.min(larger, matrix[row][col]);
-      row -= 1;
-    } else {
-      smaller = Math.max(smaller, matrix[row][col]);
-      count += row + 1;
-      col += 1;
+    var count = 0;
+    var rows = matrix.length;
+    var row = rows - 1;
+    var col = 0;
+    while (row >= 0 && col < rows) {
+        if (matrix[row][col] > middle) {
+            larger = Math.min(larger, matrix[row][col]);
+            row -= 1;
+        } else {
+            smaller = Math.max(smaller, matrix[row][col]);
+            count += row + 1;
+            col += 1;
+        }
     }
-  }
-  return [count, smaller, larger];
+    return [count, smaller, larger];
 }
 function findRangeContainingAtLeastOneNumberOfEachArrays(matrix) {
-  var minHeap = buildHeap([], (a, b) => a[0] < b[0]),
-    currentMax = Number.NEGATIVE_INFINITY;
-  for (let i = 0; i < matrix.length; i++) {
-    if (matrix[i].length > 0) {
-      currentMax = Math.max(currentMax, matrix[i][0]);
-      minHeap.push([matrix[i][0], i, 0]);
-    }
-  }
-  let lowerBound = Number.NEGATIVE_INFINITY,
+    var minHeap = buildHeap([], (a, b) => a[0] < b[0]);
+    var currentMax = Number.NEGATIVE_INFINITY;
+    var element;
+    var lowerBound;
+    var upperBound;
+    matrix.forEach(function (row, i) {
+        if (row.length > 0) {
+            currentMax = Math.max(currentMax, row[0]);
+            minHeap.push([row[0], i, 0]);
+        }
+    });
+    lowerBound = Number.NEGATIVE_INFINITY;
     upperBound = Number.POSITIVE_INFINITY;
-  while (minHeap.length() >= matrix.length) {
-    let [value, arrayIndex, valueIndex] = minHeap.pop();
-    valueIndex += 1;
-    if (currentMax - value < upperBound - lowerBound) {
-      lowerBound = value;
-      upperBound = currentMax;
+    while (minHeap.length() >= matrix.length) {
+        element = minHeap.pop();
+        element[2] += 1;
+        if (currentMax - element[0] < upperBound - lowerBound) {
+            lowerBound = element[0];
+            upperBound = currentMax;
+        }
+        if (element[2] < matrix[element[1]].length) {
+            minHeap.push([
+                matrix[element[1]][element[2]],
+                element[1],
+                element[2]
+            ]);
+            currentMax = Math.max(
+                currentMax,
+                matrix[element[1]][element[2]]
+            );
+        }
     }
-    if (valueIndex < matrix[arrayIndex].length) {
-      minHeap.push([matrix[arrayIndex][valueIndex], arrayIndex, valueIndex]);
-      currentMax = Math.max(currentMax, matrix[arrayIndex][valueIndex]);
-    }
-  }
-  return [lowerBound, upperBound];
+    return [lowerBound, upperBound];
 }
 function kLargestSumPairsWith(array1, array2, k) {
-  var minHeap = buildHeap([], (a, b) => a[0] + a[1] < b[0] + b[1]);
-  for (let i = 0; i < k && i < array1.length; i++) {
-    for (let j = 0; j < k && j < array2.length; j++) {
-      if (minHeap.length() < k) {
-        minHeap.push([array1[i], array2[j]]);
-      } else {
-        let [value1, value2] = minHeap.peek();
-        if (value1 + value2 < array1[i] + array2[j]) {
-          minHeap.pop();
-          minHeap.push([array1[i], array2[j]]);
-        } else {
-          return minHeap.value();
+    var minHeap = buildHeap(
+        [],
+        (a, b) => a[0] + a[1] < b[0] + b[1]
+    );
+    var element;
+    var i = 0;
+    var j;
+    while (i < k && i < array1.length) {
+        j = 0;
+        while (j < k && j < array2.length) {
+            if (minHeap.length() < k) {
+                minHeap.push([array1[i], array2[j]]);
+            } else {
+                element = minHeap.peek();
+                if (element[0] + element[1] < array1[i] + array2[j]) {
+                    minHeap.pop();
+                    minHeap.push([array1[i], array2[j]]);
+                } else {
+                    return minHeap.value();
+                }
+            }
+            j += 1;
         }
-      }
+        i += 1;
     }
-  }
 }
 function smallestElement(array, position) {
-  return recursiveSmallestElement(array, position, 0, array.length - 1);
+    return recursiveSmallestElement(array, position, 0, array.length - 1);
 }
 function recursiveSmallestElement(array, position, low, high) {
-  let pivotIndex = partition(array, low, high);
-  if (pivotIndex === position - 1) return array[pivotIndex];
-  if (pivotIndex > position - 1)
-    return recursiveSmallestElement(array, position, low, pivotIndex - 1);
-  return recursiveSmallestElement(array, position, pivotIndex + 1, high);
+    var pivotIndex = partition(array, low, high);
+    if (pivotIndex === position - 1) {
+        return array[pivotIndex];
+    }
+    if (pivotIndex > position - 1) {
+        return recursiveSmallestElement(array, position, low, pivotIndex - 1);
+    }
+    return recursiveSmallestElement(array, position, pivotIndex + 1, high);
 }
 function partition(list, low, high) {
-  if (low === high) return low;
-  let median = medianOfMedians(list, low, high);
-  for (let i = low; i < high; i++) {
-    if (list[i] === median) {
-      [list[i], list[high]] = [list[high], list[i]];
-      break;
+    var median;
+    var pivotValue;
+    var i;
+    if (low === high) {
+        return low;
     }
-  }
-  const pivotValue = list[high];
-  for (let i = low; i < high; i++) {
-    if (list[i] < pivotValue) {
-      [list[low], list[i]] = [list[i], list[low]];
-      low += 1;
+    median = medianOfMedians(list, low, high);
+    i = low;
+    while (i < high) {
+        if (list[i] === median) {
+            [list[i], list[high]] = [list[high], list[i]];
+            break;
+        }
+        i += 1;
     }
-  }
-  [list[low], list[high]] = [list[high], list[low]];
-  return low;
+    pivotValue = list[high];
+    i = low;
+    while (i < high) {
+        if (list[i] < pivotValue) {
+            [list[low], list[i]] = [list[i], list[low]];
+            low += 1;
+        }
+        i += 1;
+    }
+    [list[low], list[high]] = [list[high], list[low]];
+    return low;
 }
 function medianOfMedians(list, low, high) {
-  let elements = high - low + 1;
-  if (elements < 5) return list[low];
-  const partitions = [];
-  for (let i = 0; i < list.length; i += 5) {
-    if (i + 5 <= list.length) partitions.push(list.slice(i, i + 5));
-  }
-  partitions.forEach((partition) => partition.sort((a, b) => a - b));
-  const medians = [];
-  for (let i = 0; i < partitions.length; i++) {
-    medians.push(partitions[i][2]);
-  }
-  return partition(medians, 0, medians.length - 1);
+    var elements = high - low + 1;
+    var medians = [];
+    var partitions = [];
+    var i = 0;
+    if (elements < 5) {
+        return list[low];
+    }
+    while (i < list.length) {
+        if (i + 5 <= list.length) {
+            partitions.push(list.slice(i, i + 5));
+        }
+        i += 5;
+    }
+    partitions.forEach((partition) => partition.sort((a, b) => a - b));
+    i = 0;
+    while (i < partitions.length) {
+        medians.push(partitions[i][2]);
+        i += 1;
+    }
+    return partition(medians, 0, medians.length - 1);
 }
 Array.prototype.maxSubArraySum = function (size) {
-  return maximumArraySum(this, size);
+    return maximumArraySum(this, size);
 };
 
 Array.prototype.maxElementsInBaskets = function (baskets = 2) {
-  return maxElementsInBaskets(this, baskets);
+    return maxElementsInBaskets(this, baskets);
 };
 Array.prototype.longestSubArrayAfterReplacement = function (replacements) {
-  return longestSubArrayAfterReplacement(this, replacements);
+    return longestSubArrayAfterReplacement(this, replacements);
 };
 Array.prototype.noDuplicateLength = function () {
-  return noDuplicateLength(this);
+    return noDuplicateLength(this);
 };
 Array.prototype.indicesWithSum = function (targetSum) {
-  return indicesWithSum(this, targetSum);
+    return indicesWithSum(this, targetSum);
 };
 Array.prototype.rotate = function (pivot) {
-  return rotateArray(this, pivot);
+    return rotateArray(this, pivot);
 };
 Array.prototype.sortedSquares = function () {
-  return sortedSquares(this);
+    return sortedSquares(this);
 };
 
 Array.prototype.tripletsWhichSumIsZero = function () {
-  return tripletsWhichSumIsZero(this);
+    return tripletsWhichSumIsZero(this);
 };
 Array.prototype.smallestTripletSumCloseTo = function (targetSum) {
-  return smallestTripletSumCloseTo(this, targetSum);
+    return smallestTripletSumCloseTo(this, targetSum);
 };
 
 Array.prototype.tripletsSumSmallerThan = function (targetSum) {
-  return tripletsSumSmallerThan(this, targetSum);
+    return tripletsSumSmallerThan(this, targetSum);
 };
 Array.prototype.subArraysProductLessThan = function (targetSum) {
-  return subArraysProductLessThan(this, targetSum);
+    return subArraysProductLessThan(this, targetSum);
 };
 Array.prototype.sortInPlace = function () {
-  return sortInPlace(this);
+    return sortInPlace(this);
 };
 Array.prototype.quadrupletsWithSum = function (targetSum) {
-  return quadrupletsWithSum(this, targetSum);
+    return quadrupletsWithSum(this, targetSum);
 };
 Array.prototype.minimumArrayToBeSorted = function () {
-  return minimumArrayToBeSorted(this);
+    return minimumArrayToBeSorted(this);
 };
 Array.prototype.hasCycle = function () {
-  return hasCycle(this);
+    return hasCycle(this);
 };
 Array.prototype.mergeOverlappingIntervals = function () {
-  return mergeOverlappingIntervals(this);
+    return mergeOverlappingIntervals(this);
 };
 Array.prototype.mergeOverlappingIntervalsAfterInsert = function (newInterval) {
-  return mergeOverlappingIntervalsAfterInsert(this, newInterval);
+    return mergeOverlappingIntervalsAfterInsert(this, newInterval);
 };
 Array.prototype.intersectionWithInterval = function (newInterval) {
-  return intersectionWithInterval(this, newInterval);
+    return intersectionWithInterval(this, newInterval);
 };
 Array.prototype.hasOverlappingIntervals = function () {
-  return hasOverlappingIntervals(this);
+    return hasOverlappingIntervals(this);
 };
 Array.prototype.minimumRoomHoldingIntervals = function () {
-  return minimumRoomHoldingIntervals(this);
+    return minimumRoomHoldingIntervals(this);
 };
 Array.prototype.maximumCpuLoad = function () {
-  return maximumCpuLoad(this);
+    return maximumCpuLoad(this);
 };
 Array.prototype.freeIntervals = function () {
-  return freeIntervals(this);
+    return freeIntervals(this);
 };
 Array.prototype.cyclicSort = function () {
-  return cyclicSort(this);
+    return cyclicSort(this);
 };
 Array.prototype.missingNumber = function () {
-  return missingNumber(this);
+    return missingNumber(this);
 };
 Array.prototype.allMissingNumbers = function () {
-  return allMissingNumbers(this);
+    return allMissingNumbers(this);
 };
 Array.prototype.duplicatedNumber = function () {
-  return duplicatedNumber(this);
+    return duplicatedNumber(this);
 };
 Array.prototype.findCorruptPair = function () {
-  return findCorruptPair(this);
+    return findCorruptPair(this);
 };
 Array.prototype.firstKPositiveMissingNumbers = function (k) {
-  return firstKPositiveMissingNumbers(this, k);
+    return firstKPositiveMissingNumbers(this, k);
 };
 Array.prototype.nextIntervalIndices = function () {
-  return nextIntervalIndices(this);
+    return nextIntervalIndices(this);
 };
 Array.prototype.allSubsets = function () {
-  return allSubsets(this);
+    return allSubsets(this);
 };
 Array.prototype.allPermutations = function () {
-  return allPermutations(this);
-};
-Array.prototype.binarySearchOf = function (value) {
-  return binarySearchOf(this, value);
+    return allPermutations(this);
 };
 Array.prototype.ceilingIndexOf = function (value) {
-  return ceilingIndexOf(this, value);
+    return ceilingIndexOf(this, value);
 };
 Array.prototype.smallestLetterGreaterThan = function (letter) {
-  return smallestLetterGreaterThan(this, letter);
+    return smallestLetterGreaterThan(this, letter);
 };
 Array.prototype.rangeOf = function (value) {
-  return rangeOf(this, value);
+    return rangeOf(this, value);
 };
 Array.prototype.searchIndexOf = function (value) {
-  return searchIndexOf(this, value);
+    return searchIndexOf(this, value);
 };
 Array.prototype.minimumDifferenceWith = function (value) {
-  return minimumDifferenceWith(this, value);
+    return minimumDifferenceWith(this, value);
 };
 Array.prototype.bitonicArrayMaximum = function () {
-  return bitonicArrayMaximum(this);
+    return bitonicArrayMaximum(this);
 };
 Array.prototype.bitonicArrayIndexOf = function (value) {
-  return bitonicArrayIndexOf(this, value);
+    return bitonicArrayIndexOf(this, value);
 };
 Array.prototype.rotatedArrayIndexOf = function (value) {
-  return rotatedArrayIndexOf(this, value);
+    return rotatedArrayIndexOf(this, value);
 };
 Array.prototype.rotatedArrayRotationCount = function () {
-  return rotatedArrayRotationCount(this);
+    return rotatedArrayRotationCount(this);
 };
 Array.prototype.findSingleNumber = function () {
-  return findSingleNumber(this);
+    return findSingleNumber(this);
 };
 Array.prototype.findTwoSingleNumbers = function () {
-  return findTwoSingleNumbers(this);
+    return findTwoSingleNumbers(this);
 };
 Array.prototype.flipInvert = function () {
-  return flipInvert(this);
+    return flipInvert(this);
 };
 Array.prototype.kGreatestNumbers = function (k) {
-  return kGreatestNumbers(this, k);
+    return kGreatestNumbers(this, k);
 };
 Array.prototype.kSmallestNumber = function (k) {
-  return kSmallestNumber(this, k);
+    return kSmallestNumber(this, k);
 };
 Array.prototype.kClosestPointsToOrigin = function (k) {
-  return kClosestPointsToOrigin(this, k);
+    return kClosestPointsToOrigin(this, k);
 };
 Array.prototype.minimumRopesJoiningCost = function () {
-  return minimumRopesJoiningCost(this);
+    return minimumRopesJoiningCost(this);
 };
 Array.prototype.kMostFrequentNumbers = function (k) {
-  return kMostFrequentNumbers(this, k);
+    return kMostFrequentNumbers(this, k);
 };
 Array.prototype.kClosestNumbersTo = function (k, value) {
-  return kClosestNumbersTo(this, k, value);
+    return kClosestNumbersTo(this, k, value);
 };
 Array.prototype.maxDistinctNumbersAfterKWithdrawals = function (k) {
-  return maxDistinctNumbersAfterKWithdrawals(this, k);
+    return maxDistinctNumbersAfterKWithdrawals(this, k);
 };
 Array.prototype.sumOfElementsBetweenK1AndK2SmallestElements = function (
-  k1,
-  k2
+    k1,
+    k2
 ) {
-  return sumOfElementsBetweenK1AndK2SmallestElements(this, k1, k2);
+    return sumOfElementsBetweenK1AndK2SmallestElements(this, k1, k2);
 };
 Array.prototype.minimumCpuIntervalsWhenCoolingInKIntervals = function (k) {
-  return minimumCpuIntervalsWhenCoolingInKIntervals(this, k);
+    return minimumCpuIntervalsWhenCoolingInKIntervals(this, k);
 };
 Array.prototype.kSmallestValueOfSortedArrays = function (k) {
-  return kSmallestValueOfSortedArrays(this, k);
+    return kSmallestValueOfSortedArrays(this, k);
 };
 Array.prototype.findRangeContainingAtLeastOneNumberOfEachArrays = function () {
-  return findRangeContainingAtLeastOneNumberOfEachArrays(this);
+    return findRangeContainingAtLeastOneNumberOfEachArrays(this);
 };
 Array.prototype.kLargestSumPairsWith = function (array, k) {
-  return kLargestSumPairsWith(this, array, k);
+    return kLargestSumPairsWith(this, array, k);
 };
 Array.prototype.smallestElement = function (k) {
-  return smallestElement(this, k);
+    return smallestElement(this, k);
 };
 module.exports = {
-  kthSmallestElementInSortedMatrix,
+    kthSmallestElementInSortedMatrix
 };

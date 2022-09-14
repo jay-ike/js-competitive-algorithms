@@ -1,28 +1,47 @@
-const { assert } = require("chai");
-const  LcdDisplay = require('../src/coding_interviews_algorithms/lcd_display');
+/*jslint
+ node
+ */
+/*global describe, before, it */
 
-describe('testing the lcd display', function () {
+"use strict";
+const {assert} = require("chai");
+const LcdDisplay = require("../src/coding_interviews_algorithms/lcd_display");
+
+describe("testing the lcd display", function () {
     var lcdDisplay;
+    var firstResult;
     before(function () {
         lcdDisplay = new LcdDisplay();
-        firstResult = 
-`    
-    |
-     
-   |
-     `;
     });
 
-    describe('lcd display for on bar strings', function () {
-        it('should display the value of 123 in lcd style', function () {
-            let display = lcdDisplay.display(1, 1);
+    describe("lcd display for on bar strings", function () {
+        var vertical = " ".repeat(2) + "|\n";
+        var horizontal = " ".repeat(4);
+        var display;
+        firstResult = (
+            horizontal +
+            "\n" +
+            vertical +
+            horizontal +
+            "\n" +
+            vertical +
+            horizontal
+        );
+        it("should display the value of 123 in lcd style", function () {
+            display = lcdDisplay.display(1, 1);
             console.log(display);
-            assert.equal(display.trim(), firstResult.trim())
+            assert.equal(display, firstResult);
         });
-        it('should throw exception if not given a number as input', function () {
-            assert.throws(() => lcdDisplay.display('new test',2),'new test is not a Number')
-        });
-        
+        it(
+            "should throw exception if not given a number as input",
+            function () {
+                assert.throws(
+                    () => lcdDisplay.display("new test", 2),
+                    "new test is not a Number"
+                );
+            }
+        );
+
     });
-    
- });
+
+});

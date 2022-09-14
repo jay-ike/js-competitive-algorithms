@@ -1,200 +1,296 @@
+/*jslint
+ node
+ */
+
+"use strict";
 require("../utils");
 
 function directedGraphTopologicalOrder(
-  adjacencyList,
-  source,
-  inDegree,
-  maxSourcePerIteration = Number.MAX_SAFE_INTEGER,
-  equalityCheck = null
-) {
-  var sortedOrder = [];
-  while (source.length > 0) {
-    if (source.length > maxSourcePerIteration) break;
-    let root = source.shift();
-    sortedOrder.push(root);
-    if (
-      typeof equalityCheck === "function" &&
-      equalityCheck(sortedOrder) === false
-    )
-      break;
-    adjacencyList[root].forEach((child) => {
-      inDegree.decrementKeyValue(child, { step: 1, deleteIfZero: false });
-      if (inDegree[child] === 0) source.push(child);
-    });
-  }
-  return sortedOrder;
-}
-function directedGraphDetailsFromEdges(edges) {
-  var inDegree = {},
-    adjacency = {};
-  edges.forEach((edge) => {
-    let [parent, child] = edge;
-    if (adjacency[parent] == null) adjacency[parent] = [child];
-    else adjacency[parent].push(child);
-    if (adjacency[child] == null) adjacency[child] = [];
-    if (inDegree[parent] == null) inDegree[parent] = 0;
-    inDegree.incrementKeyValue(child);
-  });
-  return [inDegree, adjacency];
-}
-function topologicalSort(edges) {
-  var source = [],
-    [inDegree, adjacency] = directedGraphDetailsFromEdges(edges);
-  source = Object.keys(inDegree)
-    .filter((key) => inDegree[key] === 0)
-    .map((key) => Number.parseInt(key));
-  return directedGraphTopologicalOrder(adjacency, source, inDegree);
-}
-function scheduleTaskWithPrerequisites(prerequisites) {
-  var source = [],
-    [inDegree, adjacencyList] = directedGraphDetailsFromEdges(prerequisites);
-  source = Object.keys(inDegree)
-    .filter((key) => inDegree[key] === 0)
-    .map((key) => Number.parseInt(key));
-  let sortedOrder = directedGraphTopologicalOrder(
     adjacencyList,
     source,
-    inDegree
-  );
-  return [sortedOrder, Object.keys(inDegree).length];
+    inDegree,
+    maxSourcePerIteration = Number.MAX_SAFE_INTEGER,
+    equalityCheck = null
+) {
+    var sortedOrder = [];
+    var root;
+    while (source.length > 0) {
+        if (source.length > maxSourcePerIteration) {
+            break;
+        }
+        root = source.shift();
+        sortedOrder.push(root);
+        if (
+            typeof equalityCheck === "function" &&
+            equalityCheck(sortedOrder) === false
+        ) {
+            break;
+        }
+        adjacencyList[root].forEach(function (child) {
+            inDegree.decrementKeyValue(child, {deleteIfZero: false, step: 1});
+            if (inDegree[child] === 0) {
+                source.push(child);
+            }
+        });
+    }
+    return sortedOrder;
+}
+function directedGraphDetailsFromEdges(edges) {
+    var inDegree = {};
+    var adjacency = {};
+    var parent;
+    var child;
+    edges.forEach(function (edge) {
+        parent = edge[0];
+        child = edge[1];
+        if (Object.isNull(adjacency[parent])) {
+            adjacency[parent] = [child];
+        } else {
+            adjacency[parent].push(child);
+        }
+        if (Object.isNull(adjacency[child])) {
+            adjacency[child] = [];
+        }
+        if (Object.isNull(inDegree[parent])) {
+            inDegree[parent] = 0;
+        }
+        inDegree.incrementKeyValue(child);
+    });
+    return [inDegree, adjacency];
+}
+function topologicalSort(edges) {
+    var details = directedGraphDetailsFromEdges(edges);
+    var inDegree = details[0];
+    var adjacency = details[1];
+    var source = Object.keys(
+        inDegree
+    ).filter(
+        (key) => inDegree[key] === 0
+    ).map(
+        (key) => Number.parseInt(key)
+    );
+    return directedGraphTopologicalOrder(adjacency, source, inDegree);
+}
+function scheduleTaskWithPrerequisites(prerequisites) {
+    var sortedOrder;
+    var source = [];
+    var details = directedGraphDetailsFromEdges(prerequisites);
+    source = Object.keys(
+        details[0]
+    ).filter(
+        (key) => details[0][key] === 0
+    ).map((key) => Number.parseInt(key));
+    sortedOrder = directedGraphTopologicalOrder(
+        details[1],
+        source,
+        details[0]
+    );
+    return [sortedOrder, Object.keys(details[0]).length];
 }
 function canBeScheduled(prerequisites) {
-  let [sortedOrder, allVertices] = scheduleTaskWithPrerequisites(prerequisites);
-  return sortedOrder.length === allVertices;
+    var schedule = scheduleTaskWithPrerequisites(prerequisites);
+    return schedule[0].length === schedule[1];
 }
 function schedulingOrderToFinishTasks(prerequisites) {
-  let [sortedOrder, allVertices] = scheduleTaskWithPrerequisites(prerequisites);
-  return sortedOrder.length === allVertices ? sortedOrder : [];
+    var schedule = scheduleTaskWithPrerequisites(prerequisites);
+    return (
+        schedule[0].length === schedule[1]
+        ? schedule[0]
+        : []
+    );
 }
 function allPossibleScheduling(prerequisites) {
-  var [inDegree, adjacencyList] = directedGraphDetailsFromEdges(prerequisites),
-    result = [];
-  let source = Object.keys(inDegree)
-    .filter((key) => inDegree[key] === 0)
-    .map((key) => Number.parseInt(key));
-  recursiveTopologicalSort(source, inDegree, adjacencyList, [], (order) =>
-    result.push(order)
-  );
-  return result;
+    var details = directedGraphDetailsFromEdges(prerequisites);
+    var result = [];
+    var source = Object.keys(
+        details[0]
+    ).filter(
+        (key) => details[0][key] === 0
+    ).map((key) => Number.parseInt(key));
+    recursiveTopologicalSort(
+        source,
+        details[0],
+        details[1],
+        [],
+        (order) => result.push(order)
+    );
+    return result;
 }
 function recursiveTopologicalSort(
-  source,
-  inDegree,
-  adjacencyList,
-  sortedOrder,
-  onOrderFound
+    source,
+    inDegree,
+    adjacencyList,
+    sortedOrder,
+    onOrderFound
 ) {
-  if (source.length > 0) {
-    for (let i = 0; i < source.length; i++) {
-      let node = source[i];
-      sortedOrder.push(node);
-      const nextSource = [...source];
-      nextSource.splice(i, 1);
-      adjacencyList[node].forEach((child) => {
-        inDegree.decrementKeyValue(child, { deleteIfZero: false, step: 1 });
-        if (inDegree[child] === 0) nextSource.push(child);
-      });
-      recursiveTopologicalSort(
-        nextSource,
-        inDegree,
-        adjacencyList,
-        sortedOrder,
-        onOrderFound
-      );
-      sortedOrder.pop();
-      for (let i = 0; i < adjacencyList[node].length; i++)
-        inDegree.incrementKeyValue(adjacencyList[node][i]);
+    var i;
+    var node;
+    var nextSource;
+    var j;
+    if (source.length > 0) {
+        i = 0;
+        while (i < source.length) {
+            node = source[i];
+            sortedOrder.push(node);
+            nextSource = [...source];
+            nextSource.splice(i, 1);
+            adjacencyList[node].forEach(function (child) {
+                inDegree.decrementKeyValue(child, {
+                    deleteIfZero: false,
+                    step: 1
+                });
+                if (inDegree[child] === 0) {
+                    nextSource.push(child);
+                }
+            });
+            recursiveTopologicalSort(
+                nextSource,
+                inDegree,
+                adjacencyList,
+                sortedOrder,
+                onOrderFound
+            );
+            sortedOrder.pop();
+            j = 0;
+            while (j < adjacencyList[node].length) {
+                inDegree.incrementKeyValue(adjacencyList[node][j]);
+                j += 1;
+            }
+            i += 1;
+        }
     }
-  }
-  if (sortedOrder.length === Object.keys(inDegree).length)
-    onOrderFound([...sortedOrder]);
+    if (sortedOrder.length === Object.keys(inDegree).length) {
+        onOrderFound([...sortedOrder]);
+    }
 }
 function characterOrderGivenSortedWords(words) {
-  if (words.length <= 1) return [];
-  var orders = {};
-  for (let i = 1; i < words.length; i++) {
-    let minLength = Math.min(words[i].length, words[i - 1].length);
-    for (let j = 0; j < minLength; j++) {
-      let prevWordChar = words[i - 1][j],
-        currentWordChar = words[i][j],
-        key = `${prevWordChar}${currentWordChar}`;
-      if (prevWordChar !== currentWordChar) {
-        if (orders[key] == null) orders[key] = [prevWordChar, currentWordChar];
-        break;
-      }
+    var orders;
+    var i = 1;
+    var j;
+    var minLength;
+    var prevWordChar;
+    var currentWordChar;
+    var key;
+    var source;
+    if (words.length <= 1) {
+        return [];
     }
-  }
-  let [inDegree, adjacencyList] = directedGraphDetailsFromEdges(
-      Object.values(orders)
-    ),
-    source = Object.keys(inDegree).filter((key) => inDegree[key] === 0),
-    order = directedGraphTopologicalOrder(adjacencyList, source, inDegree);
-  return order.length === Object.keys(inDegree).length ? order : [];
+    orders = {};
+    while (i < words.length) {
+        minLength = Math.min(words[i].length, words[i - 1].length);
+        j = 0;
+        while (j < minLength) {
+            prevWordChar = words[i - 1][j];
+            currentWordChar = words[i][j];
+            key = `${prevWordChar}${currentWordChar}`;
+            if (prevWordChar !== currentWordChar) {
+                if (Object.isNull(orders[key])) {
+                    orders[key] = [prevWordChar, currentWordChar];
+                }
+                break;
+            }
+            j += 1;
+        }
+        i += 1;
+    }
+    i = directedGraphDetailsFromEdges(
+        Object.values(orders)
+    );
+    source = Object.keys(i[0]).filter((key) => i[0][key] === 0);
+    orders = directedGraphTopologicalOrder(i[1], source, i[0]);
+    return (
+        orders.length === Object.keys(i[0]).length
+        ? orders
+        : []
+    );
 }
 function canReconstructOriginalSequenceFromSequences(
-  originalSequence,
-  sequences
+    originalSequence,
+    sequences
 ) {
-  var dependencies = [];
-  for (let i = 0; i < sequences.length; i++) {
-    if (sequences[i].length === 2) dependencies.push(sequences[i]);
-    else if (sequences[i].length > 2) {
-      for (let j = 1; j < sequences[i].length; j++) {
-        dependencies.push([sequences[i][j - 1], sequences[i][j]]);
-      }
+    var dependencies = [];
+    var i = 0;
+    var j;
+    var order;
+    while (i < sequences.length) {
+        if (sequences[i].length === 2) {
+            dependencies.push(sequences[i]);
+        } else if (sequences[i].length > 2) {
+            j = 1;
+            while (j < sequences[i].length) {
+                dependencies.push([sequences[i][j - 1], sequences[i][j]]);
+                j += 1;
+            }
+        }
+        i += 1;
     }
-  }
-  let [inDegree, adjacencyList] = directedGraphDetailsFromEdges(dependencies),
-    source = Object.keys(inDegree)
-      .filter((key) => inDegree[key] === 0)
-      .map(Number.parseInt),
+    i = directedGraphDetailsFromEdges(dependencies);
+    j = Object.keys(
+        i[0]
+    ).filter(
+        (key) => i[0][key] === 0
+    ).map(Number.parseInt);
     order = directedGraphTopologicalOrder(
-      adjacencyList,
-      source,
-      inDegree,
-      1,
-      (sortedOrder) => {
-        let lastIndex = sortedOrder.length - 1;
-        return originalSequence[lastIndex] === sortedOrder[lastIndex];
-      }
+        i[1],
+        j,
+        i[0],
+        1,
+        function (sortedOrder) {
+            var lastIndex = sortedOrder.length - 1;
+            return originalSequence[lastIndex] === sortedOrder[lastIndex];
+        }
     );
-  return order.length === originalSequence.length;
+    return order.length === originalSequence.length;
 }
 function allRootsForMinimumHeightTrees(edges) {
-  var adjacencies = {},
-    inDegree = {},
-    leaves = [];
-  for (let i = 0; i < edges.length; i++) {
-    let [node1, node2] = edges[i];
-    if (adjacencies[node1] == null) adjacencies[node1] = [node2];
-    else adjacencies[node1].push(node2);
-    if (adjacencies[node2] == null) adjacencies[node2] = [node1];
-    else adjacencies[node2].push(node1);
-    inDegree.incrementKeyValue(node1);
-    inDegree.incrementKeyValue(node2);
-  }
-  leaves = Object.keys(inDegree)
-    .map((key) => Number.parseInt(key))
-    .filter((key) => inDegree[key] === 1);
-  while (Object.keys(inDegree).length > 2) {
-    let leaveSize = leaves.length;
-    for (let i = 0; i < leaveSize; i++) {
-      let node = leaves.shift();
-      inDegree.decrementKeyValue(node, { step: 1, deleteIfZero: true });
-      adjacencies[node].forEach((key) => {
-        inDegree.decrementKeyValue(key, { step: 1, deleteIfZero: true });
-        if (inDegree[key] === 1) leaves.push(key);
-      });
+    var adjacencies = {};
+    var inDegree = {};
+    var leaves = [];
+    var i = 0;
+    var node;
+    var leaveSize;
+    while (i < edges.length) {
+        leaves = edges[i];
+        if (Object.isNull(adjacencies[leaves[0]])) {
+            adjacencies[leaves[0]] = [leaves[1]];
+        } else {
+            adjacencies[leaves[0]].push(leaves[1]);
+        }
+        if (Object.isNull(adjacencies[leaves[1]])) {
+            adjacencies[leaves[1]] = [leaves[0]];
+        } else {
+            adjacencies[leaves[1]].push(leaves[0]);
+        }
+        inDegree.incrementKeyValue(leaves[0]);
+        inDegree.incrementKeyValue(leaves[1]);
+        i += 1;
     }
-  }
-  return leaves;
+    leaves = Object.keys(
+        inDegree
+    ).map((key) => Number.parseInt(key)).filter((key) => inDegree[key] === 1);
+    while (Object.keys(inDegree).length > 2) {
+        leaveSize = leaves.length;
+        i = 0;
+        while (i < leaveSize) {
+            node = leaves.shift();
+            inDegree.decrementKeyValue(node, {deleteIfZero: true, step: 1});
+            adjacencies[node].forEach(function (key) {
+                inDegree.decrementKeyValue(key, {deleteIfZero: true, step: 1});
+                if (inDegree[key] === 1) {
+                    leaves.push(key);
+                }
+            });
+            i += 1;
+        }
+    }
+    return leaves;
 }
 module.exports = {
-  topologicalSort,
-  canBeScheduled,
-  schedulingOrderToFinishTasks,
-  allPossibleScheduling,
-  characterOrderGivenSortedWords,
-  canReconstructOriginalSequenceFromSequences,
-  allRootsForMinimumHeightTrees,
+    allPossibleScheduling,
+    allRootsForMinimumHeightTrees,
+    canBeScheduled,
+    canReconstructOriginalSequenceFromSequences,
+    characterOrderGivenSortedWords,
+    schedulingOrderToFinishTasks,
+    topologicalSort
 };

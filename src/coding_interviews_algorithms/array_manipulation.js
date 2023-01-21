@@ -1572,6 +1572,26 @@ function medianOfMedians(list, low, high) {
     }
     return partition(medians, 0, medians.length - 1);
 }
+
+function group (array, fn) {
+    var result;
+    if (Array.isArray(array)) {
+        result = array.reduce(function (accumulator, current) {
+            var key = fn(current);
+            if (accumulator[key.toString()]) {
+                accumulator[key.toString()] = [
+                    ...accumulator[key.toString()],
+                    current
+                ];
+            } else {
+                accumulator[key.toString()] = [current];
+            }
+            return accumulator;
+        }, Object.create(null));
+        return result;
+    }
+}
+
 Array.prototype.maxSubArraySum = function (size) {
     return maximumArraySum(this, size);
 };
@@ -1746,6 +1766,9 @@ Array.prototype.kLargestSumPairsWith = function (array, k) {
 Array.prototype.smallestElement = function (k) {
     return smallestElement(this, k);
 };
+Array.prototype.group = function (fn) {
+    return group(this, fn);
+}
 module.exports = {
     kthSmallestElementInSortedMatrix
 };

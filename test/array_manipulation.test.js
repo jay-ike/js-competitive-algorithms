@@ -933,7 +933,7 @@ describe("k-way merge problems", function () {
     });
 });
 
-describe("array rotation", function () {
+describe("array utilities", function () {
     var input;
     var expected;
     before(function () {
@@ -957,4 +957,22 @@ describe("array rotation", function () {
             assert.deepEqual(input.rotate(-2), [4, 5, 1, 2, 3]);
         }
     );
+    it("should group items on an array", function () {
+        expected = Object.create(null);
+        expected.false = [1, 3, 5];
+        expected.true = [2, 4];
+        assert.deepEqual(input.group((value) => value % 2 === 0), expected);
+        input = [
+            {name: "Kengne Mouafo", country: "Cameroon"},
+            {name: "Mike Sutton", country: "USA"},
+            {name: "Jordan Henderson", country: "England"},
+            {name: "Benjamin Godfrey", country: "England"},
+            {name: "Oum Nyobe", country: "Cameroon"},
+        ];
+        expected = Object.create(null);
+        expected.Cameroon = [input[0], input[4]];
+        expected.USA = [input[1]];
+        expected.England = [input[2], input[3]];
+        assert.deepEqual(input.group((value) => value.country), expected);
+    });
 });

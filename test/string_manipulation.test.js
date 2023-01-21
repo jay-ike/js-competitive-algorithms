@@ -6,6 +6,7 @@
 const {assert} = require("chai");
 const {
     allCombinationsOfBalancedBracketsPairs,
+    basketProblemParser,
     getRowSpace,
     groupAnagrams,
     palindromePairsIndices
@@ -384,4 +385,25 @@ describe("frequency sort problems", function () {
             );
         }
     );
+});
+
+/*
+ * Problem statement:
+ * given a string containing a series of digit an instructions (C,D,+)
+ * with C => remove the last element in the basket
+ * D => replace the last element in the basket with its double
+ * + => replace the last elemtn with the sum of the two last elements
+ * digit => add the digit in the basket
+ * at the end of the parsing compute the sum of the elements in the basket
+ */
+describe("basket count problem", function (){
+    it("should compute the sum of the elements after parsing", function (){
+        var commands = "45D+C9";
+        var parser = basketProblemParser();
+        parser.parse(commands);
+        assert.equal(parser.computeResults(), 13);
+        commands = "7D2+4D+1C";
+        parser.parse(commands);
+        assert.equal(parser.computeResults(), 54);
+    });
 });

@@ -422,6 +422,26 @@ function countOfAllUniqueBSTStoringNumbersFromOneTo(number) {
     return count;
 }
 
+function leftLeavesSum(root) {
+    var leftValue = 0;
+    var rightValue = 0;
+
+    if (root == null) {
+        return 0;
+    }
+    if (root.left != null) {
+        leftValue = Number.isNaN(Number.parseInt(`${root.left.value}`, 10)) ? 0 : root.left.value;
+        leftValue += leftLeavesSum(root.left);
+    }
+    if (root.right != null) {
+        rightValue = leftLeavesSum(root.right);
+    }
+    return leftValue + rightValue;
+}
+
+TreeNode.prototype.leftLeavesSum = function () {
+    return leftLeavesSum(this);
+}
 TreeNode.prototype.levelOrderTraversal = function () {
     return levelOrderTraversal(this);
 };

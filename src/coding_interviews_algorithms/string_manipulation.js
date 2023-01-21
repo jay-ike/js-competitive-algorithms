@@ -791,6 +791,56 @@ function rearrangeBySeparatingSameCharactersAtLeastBy(str, k) {
         : ""
     );
 }
+
+function basketProblemParser() {
+    var basket = [];
+    function parse(string) {
+        basket = [];
+        string.split("").forEach(handleCommand);
+    }
+    function computeResults() {
+        return basket.reduce((prev, current) => prev + current);
+    }
+    function handleCommand(char) {
+        var digit = Number.parseInt(char, 10);
+        if (Number.isNaN(digit)) {
+            if (char === "+") {
+                handleAddition();
+            }
+            if (char.toLowerCase() === "c") {
+                handleDeletion();
+            }
+            if (char.toLowerCase() === "d") {
+                handleDouble();
+            }
+        } else {
+            basket.push(digit);
+        }
+    }
+    function handleDeletion() {
+        basket.pop();
+    }
+    function handleDouble() {
+        var lastValue;
+        if (basket.length >= 1) {
+            lastValue = basket.pop() * 2;
+            basket.push(lastValue);
+        }
+    }
+    function handleAddition() {
+        var lastValue;
+        if (basket.length >= 2) {
+            lastValue = basket.pop();
+            lastValue += basket[basket.length - 1];
+            basket.push(lastValue);
+        }
+    }
+    return {
+        computeResults,
+        parse
+    };
+}
+
 String.prototype.findAnagramIndices = function (word) {
     return findAnagramIndices(word, this);
 };
@@ -847,6 +897,7 @@ String.prototype.rearrangeBySeparatingSameCharactersAtLeastBy = function (k) {
 };
 module.exports = {
     allCombinationsOfBalancedBracketsPairs,
+    basketProblemParser,
     getRowSpace,
     groupAnagrams,
     palindromePairsIndices

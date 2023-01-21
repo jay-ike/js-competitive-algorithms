@@ -268,4 +268,11 @@ describe("tree manipulations", function () {
             assert.equal(countOfAllUniqueBSTStoringNumbersFromOneTo(4), 14);
         }
     );
+    it(
+        "should return the sum of all left leaves in a binary tree",
+        function () {
+            tree = TreeNode.fromArray([3, 9, 20, null, null, 15, 17]);
+            assert.equal(tree.leftLeavesSum(), 24);
+        }
+    );
 });

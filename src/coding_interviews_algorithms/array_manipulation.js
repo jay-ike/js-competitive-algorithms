@@ -1176,22 +1176,6 @@ function kGreatestNumbers(array, k) {
     }
     return heap.value().sort((a, b) => b - a);
 }
-function kSmallestNumber(array, k) {
-    var heap = buildHeap([], (a, b) => a > b);
-    var i = 0;
-    while (i < k) {
-        heap.push(array[i]);
-        i += 1;
-    }
-    while (i < array.length) {
-        if (array[i] < heap.peek()) {
-            heap.pop();
-            heap.push(array[i]);
-        }
-        i += 1;
-    }
-    return heap.peek();
-}
 function euclideanDistance(point) {
     return Math.sqrt(point[0] ** 2 + point[1] ** 2);
 }
@@ -1510,7 +1494,10 @@ function kLargestSumPairsWith(array1, array2, k) {
     }
 }
 function smallestElement(array, position) {
-    return recursiveSmallestElement(array, position, 0, array.length - 1);
+    if (array.length < position || position < 0) {
+        return null;
+    }
+    return recursiveSmallestElement(Array.from(array), position, 0, array.length - 1);
 }
 function recursiveSmallestElement(array, position, low, high) {
     var pivotIndex = partition(array, low, high);
@@ -1727,8 +1714,8 @@ Array.prototype.flipInvert = function () {
 Array.prototype.kGreatestNumbers = function (k) {
     return kGreatestNumbers(this, k);
 };
-Array.prototype.kSmallestNumber = function (k) {
-    return kSmallestNumber(this, k);
+Array.prototype.kSmallestElement = function (k) {
+    return smallestElement(this, k);
 };
 Array.prototype.kClosestPointsToOrigin = function (k) {
     return kClosestPointsToOrigin(this, k);

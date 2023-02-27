@@ -717,11 +717,12 @@ describe("top K elements problems", function () {
     });
     it("should return the k smallest number", function () {
         var input = [1, 5, 12, 2, 11, 5];
-        assert.equal(input.kSmallestNumber(3), 5);
-        input = [1, 5, 12, 2, 11, 5];
-        assert.equal(input.kSmallestNumber(4), 5);
+        assert.equal(input.kSmallestElement(-4), null);
+        assert.equal(input.kSmallestElement(10), null);
+        assert.equal(input.kSmallestElement(3), 5);
+        assert.equal(input.kSmallestElement(4), 5);
         input = [5, 12, 11, -1, 12];
-        assert.equal(input.kSmallestNumber(3), 11);
+        assert.equal(input.kSmallestElement(3), 11);
     });
     it("should return the k closest point to the origin", function () {
         var input = [

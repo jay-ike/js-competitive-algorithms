@@ -3,9 +3,6 @@
     */
 "use strict";
 
-let Node;
-let TreeNode;
-
 Object.prototype.method = function (name, func) {
     if (!this.hasOwnProperty(name)) {
         this[name] = func;
@@ -88,18 +85,26 @@ function Node(value, next) {
 };
 
 Node.fromArray = function (arr) {
+    let head = null;
     let node = null;
     if (Array.isArray(arr)) {
         arr.forEach(function (value) {
             let currentNode = new Node(value);
-            currentNode.next = node;
-            node = currentNode;
+            if (node === null) {
+                node = currentNode;
+            } else {
+                node.next = currentNode;
+                node = currentNode;
+            }
+            if (head === null) {
+                head = currentNode;
+            }
         });
     }
-    return node;
+    return head;
 };
 
-TreeNode = function (value, left = null, right = null, next = null) {
+function TreeNode(value, left = null, right = null, next = null) {
     let self = Object.create(this);
     self.value = value;
     self.left = left;

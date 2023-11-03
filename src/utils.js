@@ -3,8 +3,8 @@
     */
 "use strict";
 
-var Node;
-var TreeNode;
+let Node;
+let TreeNode;
 
 Object.prototype.method = function (name, func) {
     if (!this.hasOwnProperty(name)) {
@@ -16,14 +16,14 @@ Object.isNull = function (value) {
     return value === null || value === undefined;
 };
 
-Node = function (value, next) {
-    var self = Object.create(this);
+function Node(value, next) {
+    let self = Object.create(this);
     self.value = value;
     self.next = next;
 
     function appendNode(node) {
-        var moves = 0;
-        var currentNode = self;
+        let moves = 0;
+        let currentNode = self;
         if (typeof node !== typeof self) {
             return;
         }
@@ -37,8 +37,8 @@ Node = function (value, next) {
     }
 
     function makeNMoves(n) {
-        var index = 0;
-        var child = self;
+        let index = 0;
+        let child = self;
         if (n === 0) {
             return child;
         }
@@ -54,8 +54,8 @@ Node = function (value, next) {
     }
 
     function equals(node) {
-        var pointer1 = self;
-        var pointer2 = node;
+        let pointer1 = self;
+        let pointer2 = node;
         while (!Object.isNull(pointer1) && !Object.isNull(pointer2)) {
             if (pointer1.value !== pointer2.value) {
                 return false;
@@ -70,8 +70,8 @@ Node = function (value, next) {
     }
 
     function clone() {
-        var pointer = self;
-        var node = new Node(pointer.value);
+        let pointer = self;
+        let node = new Node(pointer.value);
         pointer = pointer.next;
         while (!Object.isNull(pointer)) {
             node.appendNode(new Node(pointer.value));
@@ -88,36 +88,29 @@ Node = function (value, next) {
 };
 
 Node.fromArray = function (arr) {
-    var node = null;
-    var index;
-    var currentNode;
-    if (arr.length < 1) {
-        throw new Error(`${arr} cannot be empty`);
+    let node = null;
+    if (Array.isArray(arr)) {
+        arr.forEach(function (value) {
+            let currentNode = new Node(value);
+            currentNode.next = node;
+            node = currentNode;
+        });
     }
-    index = arr.length - 1;
-
-    while (index >= 0) {
-        currentNode = new Node(arr[index]);
-        currentNode.next = node;
-        node = currentNode;
-        index -= 1;
-    }
-
     return node;
 };
 
 TreeNode = function (value, left = null, right = null, next = null) {
-    var self = Object.create(this);
+    let self = Object.create(this);
     self.value = value;
     self.left = left;
     self.right = right;
     self.next = next;
 
     function printLevelsOrder() {
-        var nextLevelRoot = self;
-        var result = [];
-        var current;
-        var levelValue;
+        let nextLevelRoot = self;
+        let result = [];
+        let current;
+        let levelValue;
         while (!Object.isNull(nextLevelRoot)) {
             current = nextLevelRoot;
             levelValue = "";
@@ -143,15 +136,15 @@ TreeNode = function (value, left = null, right = null, next = null) {
 };
 
 TreeNode.fromArray = function (array) {
-    var index;
-    var node;
+    let index;
+    let node;
     if (array.length < 1) {
         return null;
     }
     function buildNode(node, array, index) {
-        var leftNode;
-        var rightNode;
-        var value;
+        let leftNode;
+        let rightNode;
+        let value;
         if (2 * index + 1 < array.length) {
             value = array[2 * index + 1];
             leftNode = (
@@ -184,8 +177,8 @@ TreeNode.fromArray = function (array) {
 };
 
 function validateInterval(arr) {
-    var begin = arr[0];
-    var end = arr[1];
+    let begin = arr[0];
+    let end = arr[1];
     if (begin > end) {
         throw new RangeError(`${arr} is an invalid interval`);
     }
@@ -212,8 +205,8 @@ function job(arr) {
 }
 
 function buildHeap(array, comparator) {
-    var heap = array;
-    var i;
+    let heap = array;
+    let i;
     function checkHeap(capacity, position, index) {
         return (
             position < capacity
@@ -223,9 +216,9 @@ function buildHeap(array, comparator) {
     }
 
     function heapify(arr, index) {
-        var left = 2 * index + 1;
-        var peek;
-        var right = 2 * (index + 1);
+        let left = 2 * index + 1;
+        let peek;
+        let right = 2 * (index + 1);
         if (checkHeap(arr.length, left, index) === true) {
             peek = left;
         } else {
@@ -246,7 +239,7 @@ function buildHeap(array, comparator) {
     }
     return {
         delete(element) {
-            var index = heap.indexOf(element);
+            let index = heap.indexOf(element);
             if (index !== -1) {
                 heap = [...array.slice(0, index), ...array.slice(index + 1)];
                 heapify(heap, 0);
@@ -262,15 +255,15 @@ function buildHeap(array, comparator) {
         },
 
         pop() {
-            var peek = heap[0];
+            let peek = heap[0];
             heap = heap.slice(1);
             heapify(heap, 0);
             return peek;
         },
 
         push(element) {
-            var index;
-            var parent;
+            let index;
+            let parent;
             heap.push(element);
             index = heap.length - 1;
             parent = Math.floor(index / 2);
@@ -292,9 +285,9 @@ function buildHeap(array, comparator) {
 }
 
 function squareDigitsSum(number) {
-    var digit = 0;
-    var result = 0;
-    var copyNumber = number;
+    let digit = 0;
+    let result = 0;
+    let copyNumber = number;
     while (copyNumber > 0) {
         digit = copyNumber % 10;
         result += digit ** 2;
@@ -312,7 +305,7 @@ Number.prototype.squareDigitsSum = function () {
 };
 
 Set.prototype.exclude = function (otherSet) {
-    var set = new Set(this);
+    let set = new Set(this);
     otherSet.forEach(function (element) {
         set.delete(element);
     });
@@ -320,7 +313,7 @@ Set.prototype.exclude = function (otherSet) {
 };
 
 Set.prototype.union = function (otherSet) {
-    var set = new Set(this);
+    let set = new Set(this);
     otherSet.forEach(function (element) {
         if (!set.has(element)) {
             set.add(element);
@@ -330,10 +323,10 @@ Set.prototype.union = function (otherSet) {
 };
 
 Set.prototype.intersectWith = function (otherSet) {
-    var currentSize = this.size;
-    var otherSetSize = otherSet.size;
-    var lesserSet;
-    var biggerSet;
+    let currentSize = this.size;
+    let otherSetSize = otherSet.size;
+    let lesserSet;
+    let biggerSet;
     if (currentSize > otherSetSize) {
         lesserSet = otherSet;
         biggerSet = new Set(this);
@@ -350,8 +343,8 @@ Set.prototype.intersectWith = function (otherSet) {
 };
 
 Array.generate = function (length, builder) {
-    var index = 0;
-    var result = [];
+    let index = 0;
+    let result = [];
     while (index < length) {
         result.push(
             Object.isNull(builder)
@@ -376,7 +369,7 @@ function deleteIfZero(dictionary, key) {
 }
 
 function decrementKeyValue(dictionary, key, {deleteIfZero, step}) {
-    var defaultStep = step ?? 1;
+    let defaultStep = step ?? 1;
     if (Object.isNull(dictionary[key])) {
         return;
     }
@@ -409,8 +402,8 @@ function buildArrayReader(arr) {
 }
 
 function complementBase10Of(number) {
-    var largestNumberWithSameDigit = 0;
-    var numberOfDigits = 0;
+    let largestNumberWithSameDigit = 0;
+    let numberOfDigits = 0;
     if (number === 0) {
         return 1;
     }
@@ -422,9 +415,9 @@ function complementBase10Of(number) {
 }
 
 function positionInSortedArray(array, element, comparatorCallback) {
-    var left = 0;
-    var right = array.length - 1;
-    var mid;
+    let left = 0;
+    let right = array.length - 1;
+    let mid;
     while (left < right) {
         mid = left + Math.floor((right - left) / 2);
         if (array[mid] === element) {
@@ -440,24 +433,24 @@ function positionInSortedArray(array, element, comparatorCallback) {
 }
 
 function buildFrequencyStack() {
-    var frequencies = {};
-    var maxHeap = buildHeap([], function (a, b) {
+    let frequencies = {};
+    let maxHeap = buildHeap([], function (a, b) {
         if (a[1] !== b[1]) {
             return a[1] > b[1];
         }
         return a[2] > b[2];
     });
-    var sequence = 0;
+    let sequence = 0;
     return {
         pop() {
-            var number = maxHeap.pop()[0];
-            var params = {deleteIfZero: true, step: 1};
+            let number = maxHeap.pop()[0];
+            let params = {deleteIfZero: true, step: 1};
             frequencies.decrementKeyValue(number, params);
             return number;
         },
 
         push(number) {
-            var params = {condition: true, step: 1};
+            let params = {condition: true, step: 1};
             frequencies.incrementKeyValue(number, params);
             maxHeap.push([number, frequencies[number], sequence]);
             sequence += 1;
@@ -487,9 +480,9 @@ function nextCenterFromPalindrome(
     oldRadius,
     allRadii
 ) {
-    var mirroredCenter;
-    var maxMirroredRadius;
-    var radius = 0;
+    let mirroredCenter;
+    let maxMirroredRadius;
+    let radius = 0;
     while (center <= oldCenter + oldRadius) {
         mirroredCenter = 2 * oldCenter - center;
         maxMirroredRadius = oldCenter + oldRadius - center;
@@ -508,14 +501,14 @@ function nextCenterFromPalindrome(
 }
 
 Object.prototype.incrementKeyValue = function (key, options = {}) {
-    var condition = options.condition ?? true;
-    var step = options.step ?? 1;
+    let condition = options.condition ?? true;
+    let step = options.step ?? 1;
     incrementKeyValue(this, key, {condition, step});
 };
 
 Object.prototype.decrementKeyValue = function (key, options = {}) {
-    var del = options.deleteIfZero ?? true;
-    var step = options.step ?? 1;
+    let del = options.deleteIfZero ?? true;
+    let step = options.step ?? 1;
     decrementKeyValue(this, key, {deleteIfZero: del, step});
 };
 

@@ -586,18 +586,16 @@ function allCasePermutations(str) {
 function createParenthesesBuilder(str, openedBrackets, closedBrackets) {
     return {
         addCloseBracket() {
-            return createParenthesesBuilder(
-                `${str})`,
-                openedBrackets,
-                closedBrackets + 1
-            );
+            var result = Object.assign({}, this);
+            result.str += ")";
+            result.closedBrackets += 1;
+            return result;
         },
         addOpenBracket() {
-            return createParenthesesBuilder(
-                `${str}(`,
-                openedBrackets + 1,
-                closedBrackets
-            );
+            var result = Object.assign({}, this);
+            result.str += "(";
+            result.openedBrackets += 1;
+            return result;
         },
         closedBrackets,
         openedBrackets,

@@ -1,0 +1,25 @@
+{
+  "name": "algorithms",
+  "version": "1.0.0",
+  "description": "\"a set of algorithms written in javascript\"",
+  "main": "index.js",
+  "scripts": {
+    "doc": "jsdoc src",
+    "test": "mocha",
+    "coverage": "nyc --reporter=lcov npm run test"
+  },
+  "keywords": [
+    "\"algorithms;problem",
+    "solving\""
+  ],
+  "author": "Ndimah Tchougoua <ndimah22@protonmail.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "chai": "^4.3.4",
+    "jsdoc": "^4.0.3",
+    "mocha": "^10.7.3"
+  },
+  "mocha": {
+    "spec": "test/**/*.test.js"
+  }
+}

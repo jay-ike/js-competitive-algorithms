@@ -1,6 +1,11 @@
 /*jslint
  node,  this, bitwise
  */
+/**
+ * The builtin Array Object
+ * @external Array
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array | Array}
+ */
 "use strict";
 const {
     buildArrayReader,
@@ -676,13 +681,6 @@ function missingNumber(array) {
     }
     return n;
 }
-/**
- *
- * @param {Array} array
- * @returns Array<Number>
- * @description find all missing numbers in an array ranged from 1 to n
- *
- */
 function allMissingNumbers(array) {
     var result = [];
     var index = 0;
@@ -1579,6 +1577,12 @@ function group (array, fn) {
     }
 }
 
+/**
+ * compute the maximum sum of all possible subarray of a given size
+ * @function external:Array#maxSubArraySum
+ * @param {number} size - the size of the subarray
+ * @returns {number}
+ */
 Array.prototype.maxSubArraySum = function (size) {
     return maximumArraySum(this, size);
 };
@@ -1654,15 +1658,46 @@ Array.prototype.cyclicSort = function () {
 Array.prototype.missingNumber = function () {
     return missingNumber(this);
 };
-Array.prototype.allMissingNumbers = function () {
+/**
+ *
+ * @function external:Array#missingNumbers
+ * @returns {Array<Number>}
+ * @description find all missing numbers in an array ranged from 1 to n
+ * with n the size of the array
+ *
+ */
+Array.prototype.missingNumbers = function () {
     return allMissingNumbers(this);
 };
+/**
+ * get the first duplicated number in an array of numbers
+ * @function external:Array#duplicatedNumber
+ * @returns {number}
+ * */
 Array.prototype.duplicatedNumber = function () {
     return duplicatedNumber(this);
 };
-Array.prototype.findCorruptPair = function () {
+/**
+ * get the duplicated and missing number from an array for it to have all
+ * numbers ranged from 1 to n with n the size of the array
+ * @function external:Array#corruptPair
+ * @returns {Array<Number>}
+ * @example
+ * `
+ *  console.log([3,1,2,5,2].corruptPair())
+ *  // print [2, 4] because '2' is duplicated and '4' is missing
+ * `
+ * */
+Array.prototype.corruptPair = function () {
     return findCorruptPair(this);
 };
+/**
+ * get the k first positive numbers which are missing in an array of numbers for it to have all
+ * numbers ranging from 1 to n with n the size of the array
+ * @function external:Array#firstMissingNumbers
+ * @param {number} k - the count of missing numbers
+ * @returns {Array<Number>}
+ * */
 Array.prototype.firstKPositiveMissingNumbers = function (k) {
     return firstKPositiveMissingNumbers(this, k);
 };

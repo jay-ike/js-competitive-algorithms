@@ -459,9 +459,9 @@ describe("cyclic sort problems", function () {
         assert.equal(arrays[1].missingNumber(), 7);
     });
     it("should find all missing numbers", function () {
-        assert.deepEqual(duplicatedArrays[0].allMissingNumbers(), [4, 6, 7]);
-        assert.deepEqual(duplicatedArrays[1].allMissingNumbers(), [3]);
-        assert.deepEqual(duplicatedArrays[2].allMissingNumbers(), [4]);
+        assert.deepEqual(duplicatedArrays[0].missingNumbers(), [4, 6, 7]);
+        assert.deepEqual(duplicatedArrays[1].missingNumbers(), [3]);
+        assert.deepEqual(duplicatedArrays[2].missingNumbers(), [4]);
     });
     it("should return duplicated number", function () {
         assert.equal(duplicatedArrays[1].duplicatedNumber(), 4);
@@ -469,8 +469,8 @@ describe("cyclic sort problems", function () {
         assert.equal(duplicatedArrays[3].duplicatedNumber(), 3);
     });
     it("should return the corrupt pair", function () {
-        assert.deepEqual(duplicatedArrays[1].findCorruptPair(), [4, 3]);
-        assert.deepEqual(duplicatedArrays[2].findCorruptPair(), [2, 4]);
+        assert.deepEqual(duplicatedArrays[1].corruptPair(), [4, 3]);
+        assert.deepEqual(duplicatedArrays[2].corruptPair(), [2, 4]);
     });
     it("should return the smallest missing positive number", function () {
         assert.deepEqual(

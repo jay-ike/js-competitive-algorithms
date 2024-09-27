@@ -42,8 +42,8 @@ function totalElementsInBucket(bucket) {
     return Object.keys(bucket).reduce(
         (
             previousValue,
-            currentValue
-        ) => previousValue + bucket[currentValue],
+            currentKey
+        ) => previousValue + bucket[currentKey],
         0
     );
 }
@@ -55,7 +55,7 @@ function maxElementsInBaskets(array, baskets) {
     while (endIndex <= array.length) {
         if (
             Object.keys(bucket).length < baskets ||
-            !Object.isNull(bucket[array[endIndex]])
+            bucket[array[endIndex]]
         ) {
             bucket.incrementKeyValue(array[endIndex]);
             endIndex += 1;
@@ -1587,68 +1587,186 @@ Array.prototype.maxSubArraySum = function (size) {
     return maximumArraySum(this, size);
 };
 
+/**
+ * compute the maximum elements we can have in baskets
+ * with the restriction that each basket can only have one type of element
+ * @function external:Array#maxElementsInBaskets
+ * @param {number} baskets - the number of baskets available
+ * @returns {number} - the total of all elements in these baskets
+ */
 Array.prototype.maxElementsInBaskets = function (baskets = 2) {
     return maxElementsInBaskets(this, baskets);
 };
-Array.prototype.longestSubArrayAfterReplacement = function (replacements) {
+/**
+ * compute the longest contiguous subarray having all 1 if we are allowed
+ * to replace at most k zeros with ones in a list of binary datas
+ * @function external:Array#longestOnes
+ * @param {number} replacements - the most number of replacements allowed
+ * @returns {number} - the length of the subarray having only ones
+ */
+Array.prototype.longestOnes = function (replacements) {
     return longestSubArrayAfterReplacement(this, replacements);
 };
+/**
+ * compute the length of a list when there's no duplicated values
+ * @function external:Array#noDuplicateLength
+ * @returns {number} the length of the resulting list with removed duplicates
+ */
 Array.prototype.noDuplicateLength = function () {
     return noDuplicateLength(this);
 };
+/**
+ * compute the pair of indexes having their sum equals to the given sum
+ * @function external:Array#indicesWithSum
+ * @param {number} targetSum - the targeted sum
+ * @returns {Array<number>} - a tuple of indexes which the sum of their values is equal to the the targeted sum
+ */
 Array.prototype.indicesWithSum = function (targetSum) {
     return indicesWithSum(this, targetSum);
 };
+/**
+ * create a new version of an array rotated around a given index
+ * the result does not mutate the original Array
+ * @function external:Array#rotate
+ * @param {number} pivot = the index where the rotation should occur
+ * @returns {Array} - the rotated array
+ */
 Array.prototype.rotate = function (pivot) {
     return rotateArray(this, pivot);
 };
+/**
+ * create an array containing the squares of all number of
+ * the initial array in the sorted order
+ * this method assume the array only contains numbers
+ * @function external:Array#sortedSquares
+ * @returns {Array} - the array of squares of each elements in sorted order
+ */
 Array.prototype.sortedSquares = function () {
     return sortedSquares(this);
 };
-
+/**
+ * compute all triplets having their sum equals to zero
+ * this method assume the array only contains numbers
+ * @function external:Array#tripletsWhichSumIsZero
+ * @returns {Array<Array<number>>} - the list of triplets having zero as sum
+ */
 Array.prototype.tripletsWhichSumIsZero = function () {
     return tripletsWhichSumIsZero(this);
 };
+/**
+ * compute the smallest triplets having their sum close to a given value
+ * @function external:Array#smallestTripletSumCloseTo
+ * @param {number}  targetSum - the targeted sum
+ * @returns {Array<Array<number>>} - the list of triplets matching the criteria
+ */
 Array.prototype.smallestTripletSumCloseTo = function (targetSum) {
     return smallestTripletSumCloseTo(this, targetSum);
 };
-
+/**
+ * compute all triplets having their sums smaller than a given value
+ * @function external:ArrayWtripletsSumSmallerThan
+ * @param {number} targetSum - the targeted sum
+ * @returns {Array<Array<number>>} - the list all triplets matching the criteria
+ */
 Array.prototype.tripletsSumSmallerThan = function (targetSum) {
     return tripletsSumSmallerThan(this, targetSum);
 };
+/**
+ * compute all groups of elements that their products is lesser than a given value
+ * @function external:Array#subarraysProductLessThan
+ * @param {number} targetSum - the targeted sum
+ * @returns {Array<Array<number>>} - the list all groups matching the criteria
+ */
 Array.prototype.subArraysProductLessThan = function (targetSum) {
     return subArraysProductLessThan(this, targetSum);
 };
 Array.prototype.sortInPlace = function () {
     return sortInPlace(this);
 };
+/**
+ * compute all quadruplets having their sums equals to a given value
+ * @function external:Array#quadrupletsWithSum
+ * @param {number} targetSum - the targeted sum
+ * @returns {Array<Array<number>>} - the list of all quadruplets matching the criteria
+ */
 Array.prototype.quadrupletsWithSum = function (targetSum) {
     return quadrupletsWithSum(this, targetSum);
 };
+/**
+ * compute the subarray to be sorted for the whole array to be sorted
+ * @function external:Array#minimumArrayToBeSorted
+ * @returns {Array<number>} the subarray to be sorted
+ */
 Array.prototype.minimumArrayToBeSorted = function () {
     return minimumArrayToBeSorted(this);
 };
+/**
+ * check if a singly linkedlist has cycle
+ * the linkedlist is abstracted using list
+ * @function external:Array#hasCycle
+ * @returns {boolean} - wether the list has a cycle
+ */
 Array.prototype.hasCycle = function () {
     return hasCycle(this);
 };
+/**
+ * merge a list of intervals to produce a list on num overlapping intervals
+ * @function external:Array#mergeOverlappingIntervals
+ * @returns {Array<Array<number>>} - the list of non-overlapping intervals
+ */
 Array.prototype.mergeOverlappingIntervals = function () {
     return mergeOverlappingIntervals(this);
 };
-Array.prototype.mergeOverlappingIntervalsAfterInsert = function (newInterval) {
+/**
+ * compute the new non-overlapping intervals after the insertion of a new
+ * interval in a list of intervals
+ * @function external:Array#reorganizedIntervals
+ * @param {Array<number>} newInterval - the new interval to add in the list
+ * @returns {Array<Array<number>>} - the list of non-overlapping intervals
+ */
+Array.prototype.reorganizedIntervals = function (newInterval) {
     return mergeOverlappingIntervalsAfterInsert(this, newInterval);
 };
+/**
+ * compute the intersection between to list of sorted intervals
+ * @function external:Array#intersectionWithInterval
+ * @param {Array<Array<number>>} newInterval - the other sorted list of intervals
+ * @returns {Array<Array<number>>} - the result of the intervals intersection
+ */
 Array.prototype.intersectionWithInterval = function (newInterval) {
     return intersectionWithInterval(this, newInterval);
 };
+/**
+ * check if a list of intervals has overlapping intervals
+ * @function external:Array#hasOverlappingIntervals
+ * @returns {boolean}
+ */
 Array.prototype.hasOverlappingIntervals = function () {
     return hasOverlappingIntervals(this);
 };
+/**
+ * compute the minimum number of rooms necessary to hold a meeting knowing
+ * that a meeting is held in an interval
+ * @function external:Array#minimumRoomHoldingIntervals
+ * @returns {number} - the number of rooms to hold all meetings in the list of intervals
+ */
 Array.prototype.minimumRoomHoldingIntervals = function () {
     return minimumRoomHoldingIntervals(this);
 };
+/**
+ * compute the maximum CPU load at any time if all jobs ar running on the same machine
+ * given a list of jobs. Each job has a start, an end and a cpu load when it is running
+ * @function external:Array#maximumCPULoad
+ * @returns {number} - the maximum load for all the given jobs
+ */
 Array.prototype.maximumCpuLoad = function () {
     return maximumCpuLoad(this);
 };
+/**
+ * compute the free intervals given a list of intervals
+ * @function external:Array#freeIntervals
+ * @returns {Array<Array<number>>} - the list of free intervals
+ */
 Array.prototype.freeIntervals = function () {
     return freeIntervals(this);
 };

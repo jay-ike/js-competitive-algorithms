@@ -52,8 +52,8 @@ describe("longest subarray with ones after replacement", function () {
     it(
         "should return the length of that subarray",
         function () {
-            assert.equal(arrays[0].longestSubArrayAfterReplacement(2), 6);
-            assert.equal(arrays[1].longestSubArrayAfterReplacement(3), 9);
+            assert.equal(arrays[0].longestOnes(2), 6);
+            assert.equal(arrays[1].longestOnes(3), 9);
         }
     );
 });
@@ -207,7 +207,7 @@ describe("minimum window sort", function () {
 });
 describe("cycle in circular array", function () {
     it("should check if array has cycle", function () {
-        var input = [1, 2 - 1, 2, 2];
+        var input = [1, 2, - 1, 2, 2];
         assert.isTrue(input.hasCycle());
         input = [2, 2, -1, 2];
         assert.isTrue(input.hasCycle());
@@ -253,16 +253,16 @@ describe("intervals problems", function () {
             [2, 3],
             [5, 7]
         ];
-        assert.deepEqual(range1.mergeOverlappingIntervalsAfterInsert([4, 6]), [
+        assert.deepEqual(range1.reorganizedIntervals([4, 6]), [
             [1, 3],
             [4, 7],
             [8, 12]
         ]);
-        assert.deepEqual(range1.mergeOverlappingIntervalsAfterInsert([4, 9]), [
+        assert.deepEqual(range1.reorganizedIntervals([4, 9]), [
             [1, 3],
             [4, 12]
         ]);
-        assert.deepEqual(range3.mergeOverlappingIntervalsAfterInsert([1, 4]), [
+        assert.deepEqual(range3.reorganizedIntervals([1, 4]), [
             [1, 4],
             [5, 7]
         ]);

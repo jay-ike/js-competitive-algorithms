@@ -24,19 +24,20 @@ function maximumArraySum(array, size) {
     var endIndex = 0;
     var startIndex = 0;
     var sum = 0;
-    var currentMaxSum = Number.NEGATIVE_INFINITY;
+    var result = Number.NEGATIVE_INFINITY;
     while (endIndex < array.length) {
         sum += array[endIndex];
         endIndex += 1;
-        if (endIndex - startIndex >= size - 1) {
-            currentMaxSum = Math.max(sum, currentMaxSum);
+        if (endIndex - startIndex >= size) {
+            result = Math.max(sum, result);
             sum -= array[startIndex];
+            startIndex += 1;
         }
     }
-    if (currentMaxSum === Number.NEGATIVE_INFINITY || size < 1) {
+    if (!Number.isFinite(result) || size < 1) {
         throw new RangeError(`cannot have a subarray of size ${size}`);
     }
-    return currentMaxSum;
+    return result;
 }
 function totalElementsInBucket(bucket) {
     return Object.keys(bucket).reduce(

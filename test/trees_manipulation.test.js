@@ -1,7 +1,6 @@
 /*jslint
  node
  */
-/*global it, describe, beforeEach, before */
 
 const {
     TreeNode,
@@ -9,6 +8,7 @@ const {
     countOfAllUniqueBSTStoringNumbersFromOneTo
 } = require("../src/coding_interviews_algorithms/trees_manipulation");
 const {assert} = require("chai");
+const {before, beforeEach, describe, it} = require("mocha");
 
 describe("tree manipulations", function () {
     var tree;

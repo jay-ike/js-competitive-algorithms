@@ -7,14 +7,15 @@ const {
     kthSmallestElementInSortedMatrix
 } = require("../src/coding_interviews_algorithms/array_manipulation");
 const {assert} = require("chai");
+const {before, describe, it} = require("mocha");
 
 describe("find the max sum in an array", function () {
     var input = [0, 1, 2, 3, 4, -5, 6];
     it("should return the max sum of subarray of size 5", function () {
-        assert(input.maxSubArraySum(5), 10);
+        assert.equal(input.maxSubArraySum(5), 10);
     });
     it("should return the max sum of subarray of size 3", function () {
-        assert(input.maxSubArraySum(3), 9);
+        assert.equal(input.maxSubArraySum(3), 9);
     });
 
     it("should throw an error if the size is out of range", function () {
@@ -207,7 +208,7 @@ describe("minimum window sort", function () {
 });
 describe("cycle in circular array", function () {
     it("should check if array has cycle", function () {
-        var input = [1, 2, - 1, 2, 2];
+        var input = [1, 2, -1, 2, 2];
         assert.isTrue(input.hasCycle());
         input = [2, 2, -1, 2];
         assert.isTrue(input.hasCycle());
@@ -964,11 +965,11 @@ describe("array utilities", function () {
         expected.true = [2, 4];
         assert.deepEqual(input.group((value) => value % 2 === 0), expected);
         input = [
-            {name: "Kengne Mouafo", country: "Cameroon"},
-            {name: "Mike Sutton", country: "USA"},
-            {name: "Jordan Henderson", country: "England"},
-            {name: "Benjamin Godfrey", country: "England"},
-            {name: "Oum Nyobe", country: "Cameroon"},
+            {country: "Cameroon", name: "Kengne Mouafo"},
+            {country: "USA", name: "Mike Sutton"},
+            {country: "England", name: "Jordan Henderson"},
+            {country: "England", name: "Benjamin Godfrey"},
+            {country: "Cameroon", name: "Oum Nyobe"}
         ];
         expected = Object.create(null);
         expected.Cameroon = [input[0], input[4]];
